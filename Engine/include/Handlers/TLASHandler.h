@@ -1,23 +1,23 @@
 #pragma once
+#include <functional>
+#include <glm/glm.hpp>
+#include <string>
+#include <vector>
+
+#include "Common/interface/RefCntAutoPtr.hpp"
 #include "GlobalData/InstanceData.h"
 #include "GlobalData/Platform.h"
-#include "Common/interface/RefCntAutoPtr.hpp"
-#include <vector>
-#include <string>
-#include <glm/glm.hpp>
-#include <functional>
-
 
 namespace Diligent {
 struct IShaderBindingTable;
 struct IBuffer;
 struct ITopLevelAS;
 struct TLASBuildInstanceData;
-}
+}  // namespace Diligent
 
 namespace Prisma {
 class TLASHandler : public InstanceData<TLASHandler> {
-public:
+   public:
     TLASHandler();
     void update();
 
@@ -31,11 +31,9 @@ public:
     Diligent::RefCntAutoPtr<Diligent::IBuffer> primitiveData();
     Diligent::RefCntAutoPtr<Diligent::IBuffer> vertexLocation();
 
-    void addUpdates(std::function<void(Diligent::RefCntAutoPtr<Diligent::IBuffer>,
-                                       Diligent::RefCntAutoPtr<Diligent::IBuffer>,
-                                       Diligent::RefCntAutoPtr<Diligent::IBuffer>)> update);
+    void addUpdates(std::function<void(Diligent::RefCntAutoPtr<Diligent::IBuffer>, Diligent::RefCntAutoPtr<Diligent::IBuffer>, Diligent::RefCntAutoPtr<Diligent::IBuffer>)> update);
 
-private:
+   private:
     Diligent::RefCntAutoPtr<Diligent::ITopLevelAS> m_pTLAS;
     Diligent::RefCntAutoPtr<Diligent::IBuffer> m_InstanceBuffer;
     Diligent::RefCntAutoPtr<Diligent::IBuffer> m_ScratchBuffer;
@@ -44,9 +42,7 @@ private:
     Diligent::RefCntAutoPtr<Diligent::IBuffer> m_vertexLocation;
     Diligent::RefCntAutoPtr<Diligent::IShaderBindingTable> m_pSBT;
 
-    std::vector<std::function<void(Diligent::RefCntAutoPtr<Diligent::IBuffer>,
-                                   Diligent::RefCntAutoPtr<Diligent::IBuffer>,
-                                   Diligent::RefCntAutoPtr<Diligent::IBuffer>)>> m_updates;
+    std::vector<std::function<void(Diligent::RefCntAutoPtr<Diligent::IBuffer>, Diligent::RefCntAutoPtr<Diligent::IBuffer>, Diligent::RefCntAutoPtr<Diligent::IBuffer>)>> m_updates;
 
     void updateTLAS(bool update);
 
@@ -66,4 +62,4 @@ private:
         float padding;
     };
 };
-}
+}  // namespace Prisma

@@ -1,18 +1,15 @@
 #pragma once
-#include <memory>
-#include "GlobalData/Platform.h"
-#include "Graphics/GraphicsEngine/interface/Buffer.h"
-#include "Graphics/GraphicsEngine/interface/Texture.h"
-#include "Graphics/GraphicsEngine/interface/PipelineState.h"
 #include <Common/interface/RefCntAutoPtr.hpp>
+#include <memory>
 
 #include "Components/RenderComponent.h"
-#include "SceneObjects/Mesh.h"
-
+#include "GlobalData/Platform.h"
+#include "Graphics/GraphicsEngine/interface/Buffer.h"
+#include "Graphics/GraphicsEngine/interface/PipelineState.h"
+#include "Graphics/GraphicsEngine/interface/Texture.h"
 #include "Helpers/PrismaRender.h"
 #include "Helpers/TimeCounter.h"
-
-
+#include "SceneObjects/Mesh.h"
 
 namespace Prisma {
 class InstancingGrassComponent : public RenderComponent {

@@ -64,4 +64,4 @@ class CloudComponent : public RenderComponent {
 
     ComponentList m_status;
 };
-} 
+}  // namespace Prisma

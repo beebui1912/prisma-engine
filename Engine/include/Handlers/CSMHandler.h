@@ -1,13 +1,12 @@
 #pragma once
-#include "GlobalData/Platform.h"
-
-#include "GlobalData/InstanceData.h"
-
+#include <Common/interface/RefCntAutoPtr.hpp>
 #include <glm/glm.hpp>
 #include <vector>
-#include <Common/interface/RefCntAutoPtr.hpp>
-#include "Graphics/GraphicsEngine/interface/RenderDevice.h"
+
+#include "GlobalData/InstanceData.h"
+#include "GlobalData/Platform.h"
 #include "Graphics/GraphicsEngine/interface/DeviceContext.h"
+#include "Graphics/GraphicsEngine/interface/RenderDevice.h"
 
 namespace Prisma {
 class CSMHandler : public InstanceData<CSMHandler> {
@@ -25,7 +24,7 @@ class CSMHandler : public InstanceData<CSMHandler> {
 
     void createAnimation();
 
-public:
+   public:
     CSMHandler();
 
     struct CSMShadow {
@@ -45,4 +44,4 @@ public:
 
     void render(const CSMData& data);
 };
-}
+}  // namespace Prisma

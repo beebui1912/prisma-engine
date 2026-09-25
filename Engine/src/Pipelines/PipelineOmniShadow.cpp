@@ -1,33 +1,26 @@
 #include "Pipelines/PipelineOmniShadow.h"
-#include "glm/ext/matrix_clip_space.hpp"
-#include "glm/ext/matrix_transform.hpp"
-#include "SceneData/MeshIndirect.h"
-#include "GlobalData/GlobalData.h"
-#include "GlobalData/GlobalShaderNames.h"
-#include "Helpers/SettingsLoader.h"
+
 #include <glm/gtc/type_ptr.hpp>
 
+#include "GlobalData/GlobalData.h"
+#include "GlobalData/GlobalShaderNames.h"
 #include "Handlers/OmniShadowHandler.h"
+#include "Helpers/SettingsLoader.h"
+#include "SceneData/MeshIndirect.h"
+#include "glm/ext/matrix_clip_space.hpp"
+#include "glm/ext/matrix_transform.hpp"
 
-
-Prisma::PipelineOmniShadow::PipelineOmniShadow(unsigned int width, unsigned int height, bool post): m_width{width},
-                                                                                                    m_height{height} {
+Prisma::PipelineOmniShadow::PipelineOmniShadow(unsigned int width, unsigned int height, bool post) : m_width{width}, m_height{height} {
     if (!post) {
         init();
     }
 }
 
-void Prisma::PipelineOmniShadow::update(glm::vec3 lightPos) {
-    OmniShadowHandler::getInstance().render({m_depth, m_nearPlane, m_farPlane, m_width, m_height, lightPos});
-}
+void Prisma::PipelineOmniShadow::update(glm::vec3 lightPos) { OmniShadowHandler::getInstance().render({m_depth, m_nearPlane, m_farPlane, m_width, m_height, lightPos}); }
 
-Diligent::RefCntAutoPtr<Diligent::ITexture> Prisma::PipelineOmniShadow::shadowTexture() {
-    return m_depth;
-}
+Diligent::RefCntAutoPtr<Diligent::ITexture> Prisma::PipelineOmniShadow::shadowTexture() { return m_depth; }
 
-float Prisma::PipelineOmniShadow::farPlane() {
-    return m_farPlane;
-}
+float Prisma::PipelineOmniShadow::farPlane() { return m_farPlane; }
 
 void Prisma::PipelineOmniShadow::farPlane(float farPlane) {
     m_farPlane = farPlane;
@@ -70,9 +63,7 @@ void Prisma::PipelineOmniShadow::init() {
     m_init = true;
 }
 
-float Prisma::PipelineOmniShadow::nearPlane() {
-    return m_nearPlane;
-}
+float Prisma::PipelineOmniShadow::nearPlane() { return m_nearPlane; }
 
 void Prisma::PipelineOmniShadow::nearPlane(float nearPlane) {
     m_nearPlane = nearPlane;

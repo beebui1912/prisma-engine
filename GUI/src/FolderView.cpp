@@ -1,12 +1,13 @@
 #include "../include/FolderView.h"
+
+#include <Helpers/Logger.h>
+
 #include "../include/ImguiHelper.h"
+#include "../include/TextureInfo.h"
 #include "Handlers/LoadingHandler.h"
 #include "Helpers/StringHelper.h"
 #include "SceneData/MeshIndirect.h"
-#include "../include/TextureInfo.h"
 #include "ThirdParty/imgui/imgui.h"
-#include <Helpers/Logger.h>
-
 
 std::string Prisma::GUI::FileBrowser::windowsToString(std::wstring wStr) {
     // Create a codecvt facet for UTF-8 conversion
@@ -38,7 +39,7 @@ void Prisma::GUI::FileBrowser::listDirectoryContents() {
             for (int j = 0; j < numColumn; j++) {
                 if (i * numColumn + j < m_entries.size()) {
                     try {
-                        ImGui::TableNextColumn(); // Move to the next column
+                        ImGui::TableNextColumn();  // Move to the next column
                         auto entry = m_entries[i * numColumn + j];
                         std::string entryName = entry.path().filename().string();
 
@@ -46,20 +47,14 @@ void Prisma::GUI::FileBrowser::listDirectoryContents() {
 
                         if (entry.is_directory()) {
                             // Load your folder icon texture here
-                            ImGui::ImageButton(
-                                m_folder->texture()->GetDefaultView(
-                                    Diligent::TEXTURE_VIEW_TYPE::TEXTURE_VIEW_SHADER_RESOURCE),
-                                itemSize);
+                            ImGui::ImageButton(m_folder->texture()->GetDefaultView(Diligent::TEXTURE_VIEW_TYPE::TEXTURE_VIEW_SHADER_RESOURCE), itemSize);
                             if (ImGui::IsItemClicked()) {
                                 isDirectory = true;
                                 entryPath = entry;
                             }
                         } else {
                             // Load your file icon texture here
-                            ImGui::ImageButton(
-                                m_file->texture()->GetDefaultView(
-                                    Diligent::TEXTURE_VIEW_TYPE::TEXTURE_VIEW_SHADER_RESOURCE),
-                                itemSize);
+                            ImGui::ImageButton(m_file->texture()->GetDefaultView(Diligent::TEXTURE_VIEW_TYPE::TEXTURE_VIEW_SHADER_RESOURCE), itemSize);
                             if (ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(0)) {
                                 auto path = windowsToString(entry.path().c_str());
                                 if (StringHelper::getInstance().endsWith(path, ".prisma") || StringHelper::getInstance().endsWith(path, ".gltf")) {
@@ -120,18 +115,14 @@ void Prisma::GUI::FileBrowser::listDirectoryContents() {
 
 void Prisma::GUI::FileBrowser::addEntries() {
     for (const auto& entry : fs::directory_iterator(m_currentPath)) {
-        auto filter = StringHelper::getInstance().endsWith(entry.path().filename().string(), ".gltf") ||
-                      StringHelper::getInstance().endsWith(entry.path().filename().string(), ".prisma");
+        auto filter = StringHelper::getInstance().endsWith(entry.path().filename().string(), ".gltf") || StringHelper::getInstance().endsWith(entry.path().filename().string(), ".prisma");
         if (entry.is_directory() || filter) {
             m_entries.push_back(entry);
         }
     }
 
     // Custom sort function to ensure folders come first
-    std::sort(m_entries.begin(), m_entries.end(),
-              [](const fs::directory_entry& a, const fs::directory_entry& b) {
-                  return a.is_directory() > b.is_directory();
-              });
+    std::sort(m_entries.begin(), m_entries.end(), [](const fs::directory_entry& a, const fs::directory_entry& b) { return a.is_directory() > b.is_directory(); });
 }
 
 Prisma::GUI::FileBrowser::FileBrowser() : m_currentPath(fs::current_path().parent_path().parent_path().parent_path()) {
@@ -149,13 +140,11 @@ Prisma::GUI::FileBrowser::FileBrowser() : m_currentPath(fs::current_path().paren
     addEntries();
 }
 
-void Prisma::GUI::FileBrowser::show(unsigned int width, unsigned int height, float offset, float scale,
-                                    float translation) {
+void Prisma::GUI::FileBrowser::show(unsigned int width, unsigned int height, float offset, float scale, float translation) {
     ImGui::SetNextWindowPos(ImVec2(0, scale * height + offset));
     ImGui::SetNextWindowSize(ImVec2(width, height - (scale * height + offset)));
 
-    ImGui::Begin("File Browser", nullptr,
-                 ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse);
+    ImGui::Begin("File Browser", nullptr, ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse);
 
     ImGui::BeginTabBar("FOLDER VIEW");
 
@@ -170,10 +159,7 @@ void Prisma::GUI::FileBrowser::show(unsigned int width, unsigned int height, flo
     }
 
     if (ImGui::BeginTabItem("Folders##1")) {
-        if (ImGui::ImageButton(
-                m_back->texture()->
-                        GetDefaultView(Diligent::TEXTURE_VIEW_TYPE::TEXTURE_VIEW_SHADER_RESOURCE),
-                ImVec2(m_iconSize.x, m_iconSize.y)) && m_currentPath.has_parent_path()) {
+        if (ImGui::ImageButton(m_back->texture()->GetDefaultView(Diligent::TEXTURE_VIEW_TYPE::TEXTURE_VIEW_SHADER_RESOURCE), ImVec2(m_iconSize.x, m_iconSize.y)) && m_currentPath.has_parent_path()) {
             m_currentPath = m_currentPath.parent_path();
 
             m_entries.clear();

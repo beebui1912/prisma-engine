@@ -1,27 +1,21 @@
 #pragma once
 
-#include "../SceneObjects/Camera.h"
-#include "../SceneData/SceneLoader.h"
-#include "../Handlers/MeshHandler.h"
 #include <memory>
 
-#include "PipelineSkyboxRenderer.h"
 #include "../GlobalData/InstanceData.h"
+#include "../Handlers/MeshHandler.h"
+#include "../SceneData/SceneLoader.h"
+#include "../SceneObjects/Camera.h"
+#include "PipelineSkyboxRenderer.h"
 
 namespace Prisma {
 class PipelineSkybox : public InstanceData<PipelineSkybox> {
-public:
+   public:
     struct IBLData {
         glm::mat4 captureProjection = glm::perspective(glm::radians(90.0f), 1.0f, 0.1f, 10.0f);
-        glm::mat4 captureViews[6] =
-        {
-            lookAt(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f, 0.0f, 0.0f), glm::vec3(0.0f, -1.0f, 0.0f)),
-            lookAt(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(-1.0f, 0.0f, 0.0f), glm::vec3(0.0f, -1.0f, 0.0f)),
-            lookAt(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, -1.0f, 0.0f), glm::vec3(0.0f, 0.0f, -1.0f)),
-            lookAt(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f)),
-            lookAt(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f), glm::vec3(0.0f, -1.0f, 0.0f)),
-            lookAt(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, -1.0f), glm::vec3(0.0f, -1.0f, 0.0f))
-        };
+        glm::mat4 captureViews[6] = {lookAt(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f, 0.0f, 0.0f), glm::vec3(0.0f, -1.0f, 0.0f)),  lookAt(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(-1.0f, 0.0f, 0.0f), glm::vec3(0.0f, -1.0f, 0.0f)),
+                                     lookAt(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, -1.0f, 0.0f), glm::vec3(0.0f, 0.0f, -1.0f)), lookAt(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f)),
+                                     lookAt(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f), glm::vec3(0.0f, -1.0f, 0.0f)),  lookAt(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, -1.0f), glm::vec3(0.0f, -1.0f, 0.0f))};
     };
 
     struct IBLViewProjection {
@@ -38,17 +32,17 @@ public:
 
     bool isInit();
 
-    void addUpdate(std::pair<std::string,std::function<void()>> update);
+    void addUpdate(std::pair<std::string, std::function<void()>> update);
 
     void removeUpdate(const std::string& update);
 
     Diligent::RefCntAutoPtr<Diligent::ITexture> skybox();
 
-private:
+   private:
     Diligent::RefCntAutoPtr<Diligent::IBuffer> m_iblData;
     Diligent::RefCntAutoPtr<Diligent::ITextureView> m_pRTColor[6];
 
-    std::map<std::string,std::function<void()>> m_update;
+    std::map<std::string, std::function<void()>> m_update;
 
     void calculateSkybox();
 
@@ -68,4 +62,4 @@ private:
 
     bool m_init = false;
 };
-}
+}  // namespace Prisma

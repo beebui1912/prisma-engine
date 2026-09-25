@@ -1,19 +1,15 @@
 #include "Pipelines/PipelineSoftwareRT.h"
 
+#include <Helpers/BVHHelper.h>
+
 #include "GlobalData/GlobalShaderNames.h"
 #include "GlobalData/PrismaFunc.h"
 #include "Graphics/GraphicsTools/interface/MapHelper.hpp"
+#include "Helpers/BVHHelper.h"
 #include "Pipelines/PipelineHandler.h"
-#include <Helpers/BVHHelper.h>
-
 #include "engine.h"
-#include "Helpers/BVHHelper.h"
-#include "Helpers/BVHHelper.h"
-#include "Helpers/BVHHelper.h"
-#include "Helpers/BVHHelper.h"
-#include "Helpers/BVHHelper.h"
 
-Prisma::PipelineSoftwareRT::PipelineSoftwareRT(unsigned int width, unsigned int height): m_width{width}, m_height{height} {
+Prisma::PipelineSoftwareRT::PipelineSoftwareRT(unsigned int width, unsigned int height) : m_width{width}, m_height{height} {
     auto& contextData = PrismaFunc::getInstance().contextData();
 
     Diligent::ShaderCreateInfo ShaderCI;

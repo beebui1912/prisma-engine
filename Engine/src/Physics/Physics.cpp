@@ -1,12 +1,13 @@
 #include "Physics/Physics.h"
-#include "Physics/PhysicsData.h"
-#include "GlobalData/GlobalData.h"
-#include "glm/gtx/string_cast.hpp"
-#include "glm/gtx/matrix_decompose.hpp"
+
 #include "Components/PhysicsMeshComponent.h"
-#include "SceneData/MeshIndirect.h"
+#include "GlobalData/GlobalData.h"
 #include "Jolt/Physics/Collision/Shape/ScaledShape.h"
 #include "Jolt/Physics/SoftBody/SoftBodyMotionProperties.h"
+#include "Physics/PhysicsData.h"
+#include "SceneData/MeshIndirect.h"
+#include "glm/gtx/matrix_decompose.hpp"
+#include "glm/gtx/string_cast.hpp"
 
 struct PhysicsWorldJolt {
     Prisma::BPLayerInterfaceImpl broad_phase_layer_interface;
@@ -27,15 +28,12 @@ Prisma::Physics::Physics() {
     Factory::sInstance = new Factory();
     RegisterTypes();
     physicsWorldJolt->temp_allocator = std::make_shared<TempAllocatorImpl>(10 * 1024 * 1024);
-    physicsWorldJolt->job_system = std::make_shared<JobSystemThreadPool>(
-        cMaxPhysicsJobs, cMaxPhysicsBarriers, thread::hardware_concurrency() - 1);
+    physicsWorldJolt->job_system = std::make_shared<JobSystemThreadPool>(cMaxPhysicsJobs, cMaxPhysicsBarriers, thread::hardware_concurrency() - 1);
     constexpr uint cMaxBodies = 1024;
     constexpr uint cNumBodyMutexes = 0;
     constexpr uint cMaxBodyPairs = 1024;
     constexpr uint cMaxContactConstraints = 1024;
-    physicsWorldJolt->physics_system.Init(cMaxBodies, cNumBodyMutexes, cMaxBodyPairs, cMaxContactConstraints,
-                                          physicsWorldJolt->broad_phase_layer_interface,
-                                          physicsWorldJolt->object_vs_broadphase_layer_filter,
+    physicsWorldJolt->physics_system.Init(cMaxBodies, cNumBodyMutexes, cMaxBodyPairs, cMaxContactConstraints, physicsWorldJolt->broad_phase_layer_interface, physicsWorldJolt->object_vs_broadphase_layer_filter,
                                           physicsWorldJolt->object_vs_object_layer_filter);
     physicsWorldJolt->physics_system.SetBodyActivationListener(&physicsWorldJolt->body_activation_listener);
     physicsWorldJolt->physics_system.SetContactListener(&physicsWorldJolt->contact_listener);
@@ -46,19 +44,16 @@ Prisma::Physics::Physics() {
 }
 
 void Prisma::Physics::update(float delta) {
-    physicsWorldJolt->physics_system.Update(delta, 1, &*physicsWorldJolt->temp_allocator,
-                                            &*physicsWorldJolt->job_system);
+    physicsWorldJolt->physics_system.Update(delta, 1, &*physicsWorldJolt->temp_allocator, &*physicsWorldJolt->job_system);
 
     m_indexVbo = 0;
     for (const auto& mesh : GlobalData::getInstance().currentGlobalScene()->meshes) {
-        auto physicsComponent = std::dynamic_pointer_cast<PhysicsMeshComponent>(
-            mesh->components()["Physics"]);
+        auto physicsComponent = std::dynamic_pointer_cast<PhysicsMeshComponent>(mesh->components()["Physics"]);
         if (physicsComponent && physicsComponent->initPhysics()) {
             if (physicsComponent->collisionData().softBody) {
                 softBody(physicsComponent);
             } else {
-                BodyLockRead lock(physicsSystem().GetBodyLockInterface(),
-                                  physicsComponent->physicsId());
+                BodyLockRead lock(physicsSystem().GetBodyLockInterface(), physicsComponent->physicsId());
                 if (lock.Succeeded()) {
                     auto& bInterface = lock.GetBody();
                     const auto& matrix = mesh->parent()->matrix();
@@ -80,13 +75,9 @@ void Prisma::Physics::update(float delta) {
     }
 }
 
-BodyInterface& Prisma::Physics::bodyInterface() {
-    return physicsWorldJolt->physics_system.GetBodyInterface();
-}
+BodyInterface& Prisma::Physics::bodyInterface() { return physicsWorldJolt->physics_system.GetBodyInterface(); }
 
-PhysicsSystem& Prisma::Physics::physicsSystem() {
-    return physicsWorldJolt->physics_system;
-}
+PhysicsSystem& Prisma::Physics::physicsSystem() { return physicsWorldJolt->physics_system; }
 
 void Prisma::Physics::drawDebug() {
 #ifdef JPH_DEBUG_RENDERER
@@ -101,8 +92,7 @@ void Prisma::Physics::drawDebug() {
                 if (physicsComponent->collisionData().softBody) {
                     auto* softId = physicsComponent->softId();
                     if (softId) {
-                        auto mp = static_cast<SoftBodyMotionProperties*>(softId->
-                            GetMotionProperties());
+                        auto mp = static_cast<SoftBodyMotionProperties*>(softId->GetMotionProperties());
                         mp->DrawVertices(m_drawDebugger, Mat44::sIdentity());
                     }
                 }
@@ -112,9 +102,7 @@ void Prisma::Physics::drawDebug() {
 #endif
 }
 
-void Prisma::Physics::debug(bool debug) {
-    m_debug = debug;
-}
+void Prisma::Physics::debug(bool debug) { m_debug = debug; }
 
 bool Prisma::Physics::debug() {
     if (m_debug) {

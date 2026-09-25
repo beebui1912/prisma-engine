@@ -7,7 +7,7 @@
 
 namespace Prisma::GUI {
 class QueryGPU : public InstanceData<QueryGPU> {
-public:
+   public:
     struct QueryData {
         Diligent::QueryDataPipelineStatistics PipelineStats;
         Diligent::QueryDataOcclusion Occlusion;
@@ -24,7 +24,7 @@ public:
 
     QueryData& queryData();
 
-private:
+   private:
     std::unique_ptr<Diligent::ScopedQueryHelper> m_pPipelineStatsQuery;
     std::unique_ptr<Diligent::ScopedQueryHelper> m_pOcclusionQuery;
     std::unique_ptr<Diligent::ScopedQueryHelper> m_pDurationQuery;
@@ -35,4 +35,4 @@ private:
 
     QueryData m_QueryData;
 };
-}
+}  // namespace Prisma::GUI

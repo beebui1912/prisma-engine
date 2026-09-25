@@ -5,19 +5,19 @@
 
 #include <Graphics/GraphicsTools/interface/MapHelper.hpp>
 
+#include "GlobalData/GlobalShaderNames.h"
 #include "GlobalData/PrismaFunc.h"
+#include "Handlers/LightHandler.h"
 #include "Helpers/Logger.h"
 #include "Helpers/PrismaRender.h"
 #include "Helpers/SettingsLoader.h"
+#include "Pipelines/PipelineDiffuseIrradiance.h"
 #include "Pipelines/PipelineHandler.h"
+#include "Pipelines/PipelineLUT.h"
+#include "Pipelines/PipelinePrefilter.h"
 #include "Postprocess/Postprocess.h"
 #include "TextureLoader/interface/TextureLoader.h"
 #include "TextureLoader/interface/TextureUtilities.h"
-#include "GlobalData/GlobalShaderNames.h"
-#include "Handlers/LightHandler.h"
-#include "Pipelines/PipelineLUT.h"
-#include "Pipelines/PipelinePrefilter.h"
-#include "Pipelines/PipelineDiffuseIrradiance.h"
 #include "engine.h"
 
 using namespace Diligent;
@@ -38,7 +38,6 @@ void Prisma::WaterComponent::ui() {
     componentFrequency = std::make_tuple(TYPES::FLOAT, "Frequency", &m_waterConstants.waveFrequency);
     addGlobal({componentFrequency, false});
 
-
     ComponentType componentRun;
     m_run = [&]() {
         if (!isStart()) {
@@ -49,7 +48,7 @@ void Prisma::WaterComponent::ui() {
     addGlobal({componentRun, false});
 }
 
-void Prisma::WaterComponent::update() {  }
+void Prisma::WaterComponent::update() {}
 
 void Prisma::WaterComponent::start() {
     Component::start();
@@ -616,7 +615,7 @@ void Prisma::WaterComponent::createReflection() {
     // Define variable type that will be used by default
     PSOCreateInfo.PSODesc.ResourceLayout.DefaultVariableType = Diligent::SHADER_RESOURCE_VARIABLE_TYPE_STATIC;
 
-   Diligent::ShaderResourceVariableDesc Vars[] = {
+    Diligent::ShaderResourceVariableDesc Vars[] = {
         {Diligent::SHADER_TYPE_PIXEL, "screenTexture", Diligent::SHADER_RESOURCE_VARIABLE_TYPE_STATIC},
         //{Diligent::SHADER_TYPE_PIXEL, "waterMaskTexture", Diligent::SHADER_RESOURCE_VARIABLE_TYPE_STATIC},
         //{Diligent::SHADER_TYPE_PIXEL, "positionTexture", Diligent::SHADER_RESOURCE_VARIABLE_TYPE_STATIC},
@@ -648,7 +647,7 @@ void Prisma::WaterComponent::createReflection() {
     m_psoReflection->GetStaticVariableByName(Diligent::SHADER_TYPE_PIXEL, "waterMaskTexture")->Set(m_reflection->GetDefaultView(TEXTURE_VIEW_SHADER_RESOURCE));
     m_psoReflection->GetStaticVariableByName(Diligent::SHADER_TYPE_PIXEL, "positionTexture")->Set(Prisma::PipelineHandler::getInstance().deferredForward()->positionTexture()->GetDefaultView(TEXTURE_VIEW_SHADER_RESOURCE));
     m_psoReflection->GetStaticVariableByName(SHADER_TYPE_PIXEL, ShaderNames::CONSTANT_VIEW_PROJECTION.c_str())->Set(MeshHandler::getInstance().viewProjection());
-    
+
     m_psoReflection->CreateShaderResourceBinding(&m_srbReflection, true);
 
     m_blit = std::make_unique<Blit>(m_finalReflection);
@@ -690,8 +689,6 @@ void Prisma::WaterComponent::computeWater() {
     }
 
     m_waterConstants.time.r = m_counter.duration_seconds();
-
-
 
     Diligent::MapHelper<WaterConstants> waterData(contextData.immediateContext, m_constants, Diligent::MAP_WRITE, Diligent::MAP_FLAG_DISCARD);
 

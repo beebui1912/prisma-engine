@@ -1,25 +1,26 @@
 #pragma once
-#include <vector>
 #include <memory>
-#include "glm/glm.hpp"
 #include <string>
-#include "GlobalData/InstanceData.h"
+#include <vector>
+
 #include "Containers/Texture.h"
+#include "GlobalData/InstanceData.h"
+#include "glm/glm.hpp"
 
 namespace Prisma::GUI {
 class TextureInfo : public InstanceData<TextureInfo> {
-public:
+   public:
     TextureInfo();
 
     void showTextures();
 
     bool textureTab();
 
-private:
+   private:
     int m_index;
 
     bool m_textureTab = false;
 
     float m_scale = 1;
 };
-}
+}  // namespace Prisma::GUI

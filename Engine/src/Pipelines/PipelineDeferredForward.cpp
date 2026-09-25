@@ -1,3 +1,5 @@
+#include "Pipelines/PipelineDeferredForward.h"
+
 #include <Graphics/GraphicsTools/interface/MapHelper.hpp>
 #include <iostream>
 #include <memory>
@@ -21,7 +23,6 @@
 #include "Helpers/PrismaRender.h"
 #include "Helpers/SettingsLoader.h"
 #include "Pipelines/PipelineDIffuseIrradiance.h"
-#include "Pipelines/PipelineDeferredForward.h"
 #include "Pipelines/PipelineHandler.h"
 #include "Pipelines/PipelineLUT.h"
 #include "Pipelines/PipelinePrefilter.h"
@@ -29,9 +30,9 @@
 #include "Postprocess/Postprocess.h"
 #include "SceneData/MeshIndirect.h"
 #include "SceneObjects/Mesh.h"
+#include "engine.h"
 #include "glm/glm.hpp"
 #include "glm/gtc/matrix_transform.hpp"
-#include "engine.h"
 
 using namespace Diligent;
 
@@ -44,7 +45,6 @@ void Prisma::PipelineDeferredForward::render() {
     auto& contextData = PrismaFunc::getInstance().contextData();
 
     auto pDSV = PipelineHandler::getInstance().textureData().pDepthDSV->GetDefaultView(TEXTURE_VIEW_DEPTH_STENCIL);
-
 
     ITextureView* textures[] = {
         m_positionTexture->GetDefaultView(TEXTURE_VIEW_RENDER_TARGET),
@@ -74,7 +74,7 @@ void Prisma::PipelineDeferredForward::render() {
         contextData.immediateContext->CommitShaderResources(m_srbOpaque, RESOURCE_STATE_TRANSITION_MODE_TRANSITION);
         MeshIndirect::getInstance().renderMeshesOpaque();
     }
-    
+
     contextData.immediateContext->SetPipelineState(m_psoAnimation);
     if (!meshesAnimation.empty() && PipelineSkybox::getInstance().isInit()) {
         MeshIndirect::getInstance().setupBuffersAnimation();
@@ -100,7 +100,6 @@ void Prisma::PipelineDeferredForward::render() {
 
     Prisma::ComponentsHandler::getInstance().updateTransparentRender(Prisma::PipelineHandler::getInstance().forward()->forwardTransparent()->accum(), Prisma::PipelineHandler::getInstance().forward()->forwardTransparent()->reveal(),
                                                                      PipelineHandler::getInstance().textureData().pDepthDSV);
-
 
     auto& sprites = GlobalData::getInstance().currentGlobalScene()->sprites;
 
@@ -221,20 +220,18 @@ void Prisma::PipelineDeferredForward::create() {
     std::string samplerRepeatName = "textureRepeat_sampler";
     std::string samplerAnisotropicName = "textureAnisotropic_sampler";
 
-    PipelineResourceDesc Resources[] = {
-        {SHADER_TYPE_VERTEX, ShaderNames::MUTABLE_MODELS.c_str(), 1, SHADER_RESOURCE_TYPE_BUFFER_SRV, SHADER_RESOURCE_VARIABLE_TYPE_MUTABLE},
-        {SHADER_TYPE_VERTEX, ShaderNames::MUTABLE_INDEX_OPAQUE.c_str(), 1, SHADER_RESOURCE_TYPE_BUFFER_SRV, SHADER_RESOURCE_VARIABLE_TYPE_MUTABLE},
+    PipelineResourceDesc Resources[] = {{SHADER_TYPE_VERTEX, ShaderNames::MUTABLE_MODELS.c_str(), 1, SHADER_RESOURCE_TYPE_BUFFER_SRV, SHADER_RESOURCE_VARIABLE_TYPE_MUTABLE},
+                                        {SHADER_TYPE_VERTEX, ShaderNames::MUTABLE_INDEX_OPAQUE.c_str(), 1, SHADER_RESOURCE_TYPE_BUFFER_SRV, SHADER_RESOURCE_VARIABLE_TYPE_MUTABLE},
 
-        {SHADER_TYPE_VERTEX, ShaderNames::CONSTANT_VIEW_PROJECTION.c_str(), 1, SHADER_RESOURCE_TYPE_CONSTANT_BUFFER, SHADER_RESOURCE_VARIABLE_TYPE_STATIC},
-        {SHADER_TYPE_PIXEL, ShaderNames::MUTABLE_DIFFUSE_TEXTURE.c_str(), Define::MAX_MESHES, SHADER_RESOURCE_TYPE_TEXTURE_SRV, SHADER_RESOURCE_VARIABLE_TYPE_MUTABLE, PIPELINE_RESOURCE_FLAG_RUNTIME_ARRAY},
-        {SHADER_TYPE_PIXEL, ShaderNames::MUTABLE_NORMAL_TEXTURE.c_str(), Define::MAX_MESHES, SHADER_RESOURCE_TYPE_TEXTURE_SRV, SHADER_RESOURCE_VARIABLE_TYPE_MUTABLE, PIPELINE_RESOURCE_FLAG_RUNTIME_ARRAY},
-        {SHADER_TYPE_PIXEL, ShaderNames::MUTABLE_ROUGHNESS_METALNESS_TEXTURE.c_str(), Define::MAX_MESHES, SHADER_RESOURCE_TYPE_TEXTURE_SRV, SHADER_RESOURCE_VARIABLE_TYPE_MUTABLE, PIPELINE_RESOURCE_FLAG_RUNTIME_ARRAY},
+                                        {SHADER_TYPE_VERTEX, ShaderNames::CONSTANT_VIEW_PROJECTION.c_str(), 1, SHADER_RESOURCE_TYPE_CONSTANT_BUFFER, SHADER_RESOURCE_VARIABLE_TYPE_STATIC},
+                                        {SHADER_TYPE_PIXEL, ShaderNames::MUTABLE_DIFFUSE_TEXTURE.c_str(), Define::MAX_MESHES, SHADER_RESOURCE_TYPE_TEXTURE_SRV, SHADER_RESOURCE_VARIABLE_TYPE_MUTABLE, PIPELINE_RESOURCE_FLAG_RUNTIME_ARRAY},
+                                        {SHADER_TYPE_PIXEL, ShaderNames::MUTABLE_NORMAL_TEXTURE.c_str(), Define::MAX_MESHES, SHADER_RESOURCE_TYPE_TEXTURE_SRV, SHADER_RESOURCE_VARIABLE_TYPE_MUTABLE, PIPELINE_RESOURCE_FLAG_RUNTIME_ARRAY},
+                                        {SHADER_TYPE_PIXEL, ShaderNames::MUTABLE_ROUGHNESS_METALNESS_TEXTURE.c_str(), Define::MAX_MESHES, SHADER_RESOURCE_TYPE_TEXTURE_SRV, SHADER_RESOURCE_VARIABLE_TYPE_MUTABLE, PIPELINE_RESOURCE_FLAG_RUNTIME_ARRAY},
 
-        {SHADER_TYPE_PIXEL, samplerRepeatName.c_str(), 1, SHADER_RESOURCE_TYPE_SAMPLER, SHADER_RESOURCE_VARIABLE_TYPE_STATIC},
-        {SHADER_TYPE_PIXEL, samplerAnisotropicName.c_str(), 1, SHADER_RESOURCE_TYPE_SAMPLER, SHADER_RESOURCE_VARIABLE_TYPE_STATIC},
+                                        {SHADER_TYPE_PIXEL, samplerRepeatName.c_str(), 1, SHADER_RESOURCE_TYPE_SAMPLER, SHADER_RESOURCE_VARIABLE_TYPE_STATIC},
+                                        {SHADER_TYPE_PIXEL, samplerAnisotropicName.c_str(), 1, SHADER_RESOURCE_TYPE_SAMPLER, SHADER_RESOURCE_VARIABLE_TYPE_STATIC},
 
-        {SHADER_TYPE_PIXEL, ShaderNames::MUTABLE_STATUS.c_str(), 1, SHADER_RESOURCE_TYPE_BUFFER_SRV, SHADER_RESOURCE_VARIABLE_TYPE_MUTABLE}
-    };
+                                        {SHADER_TYPE_PIXEL, ShaderNames::MUTABLE_STATUS.c_str(), 1, SHADER_RESOURCE_TYPE_BUFFER_SRV, SHADER_RESOURCE_VARIABLE_TYPE_MUTABLE}};
 
     PipelineResourceSignatureDesc ResourceSignDesc;
     ResourceSignDesc.NumResources = _countof(Resources);
@@ -457,7 +454,6 @@ void Prisma::PipelineDeferredForward::createAnimation()
 
         {SHADER_TYPE_PIXEL, samplerRepeatName.c_str(), 1, SHADER_RESOURCE_TYPE_SAMPLER, SHADER_RESOURCE_VARIABLE_TYPE_STATIC},
         {SHADER_TYPE_PIXEL, samplerAnisotropicName.c_str(), 1, SHADER_RESOURCE_TYPE_SAMPLER, SHADER_RESOURCE_VARIABLE_TYPE_STATIC},
-
 
     };
 

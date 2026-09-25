@@ -1,19 +1,18 @@
 #pragma once
+#include <functional>
 #include <map>
 #include <memory>
-#include <functional>
 #include <string>
+
 #include "Component.h"
 
 namespace Prisma {
 class Factory {
-public:
+   public:
     using Creator = std::function<std::shared_ptr<Component>()>;
 
     // Method to register a class type with a name
-    static void registerClass(const std::string& className, Creator creator) {
-        getRegistry()[className] = creator;
-    }
+    static void registerClass(const std::string& className, Creator creator) { getRegistry()[className] = creator; }
 
     // Method to create an instance of a class by name
     static std::shared_ptr<Component> createInstance(const std::string& className) {
@@ -21,7 +20,7 @@ public:
         if (it != getRegistry().end()) {
             return it->second();
         }
-        return nullptr; // Return null if class name not found
+        return nullptr;  // Return null if class name not found
     }
 
     // Registry storing class name to creator function mappings
@@ -34,11 +33,9 @@ public:
 // Helper template to register classes
 template <typename T>
 class Registrar {
-public:
+   public:
     explicit Registrar(const std::string& className) {
-        Factory::registerClass(className, []() -> std::shared_ptr<Component> {
-            return std::make_shared<T>();
-        });
+        Factory::registerClass(className, []() -> std::shared_ptr<Component> { return std::make_shared<T>(); });
     }
 };
-}
+}  // namespace Prisma

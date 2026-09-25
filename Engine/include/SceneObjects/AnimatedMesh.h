@@ -1,10 +1,11 @@
 #pragma once
-#include <vector>
-#include <memory>
-#include "Mesh.h"
 #include <map>
+#include <memory>
+#include <vector>
+
 #include "../GlobalData/Defines.h"
 #include "../SceneData/Animator.h"
+#include "Mesh.h"
 
 namespace Prisma {
 struct BoneInfo {
@@ -15,7 +16,7 @@ struct BoneInfo {
 class Animator;
 
 class AnimatedMesh : public Mesh {
-public:
+   public:
     struct AnimateVertex {
         glm::vec3 position = glm::vec3(0, 0, 0);
         glm::vec3 normal = glm::vec3(0, 0, 0);
@@ -23,7 +24,7 @@ public:
         glm::vec3 tangent = glm::vec3(0, 0, 0);
         glm::vec3 bitangent = glm::vec3(0, 0, 0);
         int m_BoneIDs[Define::MAX_BONE_INFLUENCE];
-        //weights from each bone
+        // weights from each bone
         float m_Weights[Define::MAX_BONE_INFLUENCE];
     };
 
@@ -39,7 +40,6 @@ public:
     glm::mat4 finalMatrix() const override;
     std::shared_ptr<AnimateVerticesData> animateVerticesData();
 
-
     static std::shared_ptr<AnimatedMesh> instantiate(std::shared_ptr<AnimatedMesh> mesh);
 
     std::map<std::string, Prisma::BoneInfo>& boneInfoMap();
@@ -53,7 +53,7 @@ public:
 
     void path(std::string path);
 
-private:
+   private:
     std::map<std::string, Prisma::BoneInfo> m_BoneInfoMap;
     std::shared_ptr<AnimateVerticesData> m_animateVertices;
     std::shared_ptr<Animator> m_animator = nullptr;
@@ -61,4 +61,4 @@ private:
 
     int m_BoneCounter = 0;
 };
-}
+}  // namespace Prisma

@@ -1,8 +1,8 @@
 #include "Helpers/Interpolator.h"
+
 #include <glm/gtc/quaternion.hpp>
 
-Prisma::Interpolator::Interpolator() : m_currentIndex(0), m_elapsedTime(0.0f) {
-}
+Prisma::Interpolator::Interpolator() : m_currentIndex(0), m_elapsedTime(0.0f) {}
 
 glm::mat4 Prisma::Interpolator::next(float dt) {
     if (m_timeframe.empty()) return glm::mat4(1.0f);
@@ -13,7 +13,7 @@ glm::mat4 Prisma::Interpolator::next(float dt) {
         m_elapsedTime -= m_timeframe[m_currentIndex].duration;
         m_currentIndex++;
         if (m_currentIndex >= m_timeframe.size()) {
-            m_currentIndex = 0; // Looping behavior
+            m_currentIndex = 0;  // Looping behavior
         }
     }
 
@@ -28,12 +28,8 @@ glm::mat4 Prisma::Interpolator::next(float dt) {
     glm::quat rotB = quat_cast(m_timeframe[nextIndex].position);
     glm::quat interpRot = slerp(rotA, rotB, alpha);
 
-    auto scaleA = glm::vec3(length(m_timeframe[m_currentIndex].position[0]),
-                            length(m_timeframe[m_currentIndex].position[1]),
-                            length(m_timeframe[m_currentIndex].position[2]));
-    auto scaleB = glm::vec3(length(m_timeframe[nextIndex].position[0]),
-                            length(m_timeframe[nextIndex].position[1]),
-                            length(m_timeframe[nextIndex].position[2]));
+    auto scaleA = glm::vec3(length(m_timeframe[m_currentIndex].position[0]), length(m_timeframe[m_currentIndex].position[1]), length(m_timeframe[m_currentIndex].position[2]));
+    auto scaleB = glm::vec3(length(m_timeframe[nextIndex].position[0]), length(m_timeframe[nextIndex].position[1]), length(m_timeframe[nextIndex].position[2]));
     glm::vec3 interpScale = mix(scaleA, scaleB, alpha);
 
     glm::mat4 result = mat4_cast(interpRot);

@@ -1,10 +1,11 @@
 #pragma once
-#include <vector>
 #include <memory>
-#include "../SceneObjects/AnimatedMesh.h"
-#include "../SceneObjects/Camera.h"
+#include <vector>
+
 #include "../Components/MaterialComponent.h"
 #include "../GlobalData/InstanceData.h"
+#include "../SceneObjects/AnimatedMesh.h"
+#include "../SceneObjects/Camera.h"
 #include "Graphics/GraphicsTools/interface/GraphicsUtilities.h"
 
 namespace Prisma {
@@ -17,7 +18,7 @@ struct DrawElementsIndirectCommand {
 };
 
 class MeshIndirect : public InstanceData<MeshIndirect> {
-public:
+   public:
     struct MaterialView {
         std::vector<Diligent::IDeviceObject*> diffuse;
         std::vector<Diligent::IDeviceObject*> normal;
@@ -25,11 +26,11 @@ public:
         std::vector<Diligent::IDeviceObject*> specular;
     };
 
-    //std::shared_ptr<VAO> vao();
+    // std::shared_ptr<VAO> vao();
 
-    //std::shared_ptr<VBO> vbo();
+    // std::shared_ptr<VBO> vbo();
 
-    //std::shared_ptr<EBO> ebo();
+    // std::shared_ptr<EBO> ebo();
 
     Mesh::VerticesData& verticesData();
 
@@ -87,8 +88,8 @@ public:
     Diligent::RefCntAutoPtr<Diligent::IBuffer> indexBufferOpaque();
     Diligent::RefCntAutoPtr<Diligent::IBuffer> indexBufferTransparent();
 
-private:
-    //BINDING DATA
+   private:
+    // BINDING DATA
 
     MaterialView m_textureViews;
     MaterialView m_textureViewsAnimation;
@@ -110,7 +111,6 @@ private:
     Diligent::RefCntAutoPtr<Diligent::IBuffer> m_indexBufferOpaque;
     Diligent::RefCntAutoPtr<Diligent::IBuffer> m_indexBufferTransparent;
 
-
     Diligent::RefCntAutoPtr<Diligent::IBuffer> m_vBufferAnimation;
     Diligent::RefCntAutoPtr<Diligent::IBuffer> m_iBufferAnimation;
     Diligent::RefCntAutoPtr<Diligent::IBuffer> m_indirectBufferAnimation;
@@ -126,7 +126,7 @@ private:
 
     std::map<std::string, std::function<void(Diligent::RefCntAutoPtr<Diligent::IBuffer>, MaterialView&)>> m_resizeHandler;
 
-    //INDIRECT INDEX
+    // INDIRECT INDEX
 
     unsigned int m_currentIndex;
     unsigned int m_currentVertex;
@@ -135,7 +135,7 @@ private:
     unsigned int m_currentIndexAnimation;
     unsigned int m_currentVertexAnimation;
 
-    //CURRENT CACHE DATA
+    // CURRENT CACHE DATA
 
     const unsigned int m_cacheSize = 1000;
 
@@ -145,10 +145,9 @@ private:
     uint64_t m_currentVertexMaxAnimation = 0;
     uint64_t m_currentIndexMaxAnimation = 0;
 
-    //VERTICES DATA
+    // VERTICES DATA
 
     Mesh::VerticesData m_verticesData;
-
 
     AnimatedMesh::AnimateVerticesData m_verticesDataAnimation;
     std::vector<DrawElementsIndirectCommand> m_drawCommandsAnimation;
@@ -158,13 +157,11 @@ private:
     std::vector<unsigned int> m_cacheAddAnimate;
     std::vector<unsigned int> m_cacheRemoveAnimate;
 
-
     std::vector<unsigned int> m_cacheAdd;
     std::vector<unsigned int> m_cacheRemove;
 
     void updateIndirectBuffer();
     void updateIndirectBufferAnimation();
-
 
     unsigned int m_sizeLocation;
     unsigned int m_indicesCopyLocation;
@@ -188,9 +185,9 @@ private:
         glm::vec3 GlassReflectionColorMask = glm::vec3(0.22f, 0.83f, 0.93f);
         float GlassAbsorption = 0.5;
         glm::vec4 GlassMaterialColor = glm::vec4(1);
-        glm::vec2 GlassIndexOfRefraction = glm::vec2(1.5f, 1.02f); // min and max IOR
+        glm::vec2 GlassIndexOfRefraction = glm::vec2(1.5f, 1.02f);  // min and max IOR
         int GlassEnableDispersion = 0;
-        unsigned int DispersionSampleCount = 4; // 1..16
+        unsigned int DispersionSampleCount = 4;  // 1..16
         float metalness = 0;
         float roughness = 0;
         float emission = 0;
@@ -201,4 +198,4 @@ private:
     void updateTextureDataAnimation();
     void updatePso();
 };
-}
+}  // namespace Prisma

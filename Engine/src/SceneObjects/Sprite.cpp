@@ -1,11 +1,12 @@
 #include "SceneObjects/Sprite.h"
-#include "Helpers/PrismaRender.h"
+
 #include <glm/gtx/string_cast.hpp>
 
 #include "GlobalData/GlobalShaderNames.h"
 #include "GlobalData/PrismaFunc.h"
 #include "Graphics/GraphicsTools/interface/MapHelper.hpp"
 #include "Handlers/MeshHandler.h"
+#include "Helpers/PrismaRender.h"
 #include "Pipelines/PipelineHandler.h"
 
 struct PrivateSprite {
@@ -17,15 +18,15 @@ struct PrivateSprite {
 static PrivateSprite privateSprite;
 
 Prisma::Sprite::Sprite(BLENDING blending, DEPTH_WRITE depthWrite) : Prisma::Node{} {
-    //m_spriteShader = std::make_shared<Shader>("../../../Engine/Shaders/SpritePipeline/vertex.glsl",
-    //                                          "../../../Engine/Shaders/SpritePipeline/fragment.glsl", nullptr);
-    //m_spriteShader->use();
-    //m_spritePos = m_spriteShader->getUniformPosition("sprite");
-    //m_modelPos = m_spriteShader->getUniformPosition("model");
-    //m_sizePos = m_spriteShader->getUniformPosition("billboardSize");
-    //m_ssbo = std::make_shared<SSBO>(12);
-    //m_ssboTextures = std::make_shared<SSBO>(13);
-    //m_ssboIds = std::make_shared<SSBO>(14);
+    // m_spriteShader = std::make_shared<Shader>("../../../Engine/Shaders/SpritePipeline/vertex.glsl",
+    //                                           "../../../Engine/Shaders/SpritePipeline/fragment.glsl", nullptr);
+    // m_spriteShader->use();
+    // m_spritePos = m_spriteShader->getUniformPosition("sprite");
+    // m_modelPos = m_spriteShader->getUniformPosition("model");
+    // m_sizePos = m_spriteShader->getUniformPosition("billboardSize");
+    // m_ssbo = std::make_shared<SSBO>(12);
+    // m_ssboTextures = std::make_shared<SSBO>(13);
+    // m_ssboIds = std::make_shared<SSBO>(14);
 
     auto& contextData = PrismaFunc::getInstance().contextData();
 
@@ -104,8 +105,7 @@ Prisma::Sprite::Sprite(BLENDING blending, DEPTH_WRITE depthWrite) : Prisma::Node
         // In this tutorial, we will load shaders from file. To be able to do that,
         // we need to create a shader source stream factory
         Diligent::RefCntAutoPtr<Diligent::IShaderSourceInputStreamFactory> pShaderSourceFactory;
-        PrismaFunc::getInstance().contextData().engineFactory->CreateDefaultShaderSourceStreamFactory(
-            nullptr, &pShaderSourceFactory);
+        PrismaFunc::getInstance().contextData().engineFactory->CreateDefaultShaderSourceStreamFactory(nullptr, &pShaderSourceFactory);
         ShaderCI.pShaderSourceStreamFactory = pShaderSourceFactory;
         // Create a vertex shader
         {
@@ -153,21 +153,13 @@ Prisma::Sprite::Sprite(BLENDING blending, DEPTH_WRITE depthWrite) : Prisma::Node
     // Define variable type that will be used by default
     PSOCreateInfo.PSODesc.ResourceLayout.DefaultVariableType = Diligent::SHADER_RESOURCE_VARIABLE_TYPE_STATIC;
 
-    Diligent::PipelineResourceDesc Resources[] =
-    {
-        {Diligent::SHADER_TYPE_VERTEX, "SpritesData", 1, Diligent::SHADER_RESOURCE_TYPE_BUFFER_SRV,
-         Diligent::SHADER_RESOURCE_VARIABLE_TYPE_MUTABLE},
-        {Diligent::SHADER_TYPE_VERTEX, ShaderNames::CONSTANT_VIEW_PROJECTION.c_str(), 1,
-         Diligent::SHADER_RESOURCE_TYPE_CONSTANT_BUFFER, Diligent::SHADER_RESOURCE_VARIABLE_TYPE_STATIC},
-        {Diligent::SHADER_TYPE_VERTEX, "ModelSizes", 1, Diligent::SHADER_RESOURCE_TYPE_CONSTANT_BUFFER,
-         Diligent::SHADER_RESOURCE_VARIABLE_TYPE_STATIC},
-        {Diligent::SHADER_TYPE_PIXEL, "SpriteIds", 1, Diligent::SHADER_RESOURCE_TYPE_BUFFER_SRV,
-         Diligent::SHADER_RESOURCE_VARIABLE_TYPE_MUTABLE},
-        {Diligent::SHADER_TYPE_PIXEL, "spriteTextures", Define::MAX_SPRITES,
-         Diligent::SHADER_RESOURCE_TYPE_TEXTURE_SRV, Diligent::SHADER_RESOURCE_VARIABLE_TYPE_MUTABLE,
-         Diligent::PIPELINE_RESOURCE_FLAG_RUNTIME_ARRAY},
-        {Diligent::SHADER_TYPE_PIXEL, "textureClamp_sampler", 1, Diligent::SHADER_RESOURCE_TYPE_SAMPLER,
-         Diligent::SHADER_RESOURCE_VARIABLE_TYPE_STATIC},
+    Diligent::PipelineResourceDesc Resources[] = {
+        {Diligent::SHADER_TYPE_VERTEX, "SpritesData", 1, Diligent::SHADER_RESOURCE_TYPE_BUFFER_SRV, Diligent::SHADER_RESOURCE_VARIABLE_TYPE_MUTABLE},
+        {Diligent::SHADER_TYPE_VERTEX, ShaderNames::CONSTANT_VIEW_PROJECTION.c_str(), 1, Diligent::SHADER_RESOURCE_TYPE_CONSTANT_BUFFER, Diligent::SHADER_RESOURCE_VARIABLE_TYPE_STATIC},
+        {Diligent::SHADER_TYPE_VERTEX, "ModelSizes", 1, Diligent::SHADER_RESOURCE_TYPE_CONSTANT_BUFFER, Diligent::SHADER_RESOURCE_VARIABLE_TYPE_STATIC},
+        {Diligent::SHADER_TYPE_PIXEL, "SpriteIds", 1, Diligent::SHADER_RESOURCE_TYPE_BUFFER_SRV, Diligent::SHADER_RESOURCE_VARIABLE_TYPE_MUTABLE},
+        {Diligent::SHADER_TYPE_PIXEL, "spriteTextures", Define::MAX_SPRITES, Diligent::SHADER_RESOURCE_TYPE_TEXTURE_SRV, Diligent::SHADER_RESOURCE_VARIABLE_TYPE_MUTABLE, Diligent::PIPELINE_RESOURCE_FLAG_RUNTIME_ARRAY},
+        {Diligent::SHADER_TYPE_PIXEL, "textureClamp_sampler", 1, Diligent::SHADER_RESOURCE_TYPE_SAMPLER, Diligent::SHADER_RESOURCE_VARIABLE_TYPE_STATIC},
     };
 
     Diligent::PipelineResourceSignatureDesc ResourceSignDesc;

@@ -1,3 +1,5 @@
+#include "Pipelines/PipelineDeferred.h"
+
 #include <Graphics/GraphicsTools/interface/MapHelper.hpp>
 #include <iostream>
 #include <memory>
@@ -21,7 +23,6 @@
 #include "Helpers/PrismaRender.h"
 #include "Helpers/SettingsLoader.h"
 #include "Pipelines/PipelineDIffuseIrradiance.h"
-#include "Pipelines/PipelineDeferred.h"
 #include "Pipelines/PipelineHandler.h"
 #include "Pipelines/PipelineLUT.h"
 #include "Pipelines/PipelinePrefilter.h"
@@ -29,9 +30,9 @@
 #include "Postprocess/Postprocess.h"
 #include "SceneData/MeshIndirect.h"
 #include "SceneObjects/Mesh.h"
+#include "engine.h"
 #include "glm/glm.hpp"
 #include "glm/gtc/matrix_transform.hpp"
-#include "engine.h"
 
 using namespace Diligent;
 
@@ -43,7 +44,6 @@ Prisma::PipelineDeferred::PipelineDeferred(Diligent::RefCntAutoPtr<Diligent::ITe
 void Prisma::PipelineDeferred::render() {
     auto& contextData = PrismaFunc::getInstance().contextData();
 
-            
     if (Prisma::Engine::getInstance().engineSettings().ssao) {
         m_ssao->render();
     } else {

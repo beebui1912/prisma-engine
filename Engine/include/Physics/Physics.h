@@ -1,27 +1,23 @@
 #pragma once
 
-#include "glm/glm.hpp"
-#include <memory>
-#include "../GlobalData/InstanceData.h"
 #include <Jolt/Jolt.h>
 #include <Jolt/Physics/PhysicsSystem.h>
+
+#include <memory>
+
+#include "../GlobalData/InstanceData.h"
+#include "glm/glm.hpp"
 #ifdef JPH_DEBUG_RENDERER
 #include "DrawDebugger.h"
 #endif
 #include "Jolt/Physics/SoftBody/SoftBodySharedSettings.h"
 
-
 namespace Prisma {
 class PhysicsMeshComponent;
 
 class Physics : public InstanceData<Physics> {
-public:
-    enum Collider {
-        BOX_COLLIDER,
-        SPHERE_COLLIDER,
-        LANDSCAPE_COLLIDER,
-        CONVEX_COLLIDER
-    };
+   public:
+    enum Collider { BOX_COLLIDER, SPHERE_COLLIDER, LANDSCAPE_COLLIDER, CONVEX_COLLIDER };
 
     struct CollisionData {
         Collider collider = BOX_COLLIDER;
@@ -63,12 +59,12 @@ public:
 
     void destroy();
 
-private:
+   private:
     void softBody(std::shared_ptr<PhysicsMeshComponent> physics);
 #ifdef JPH_DEBUG_RENDERER
     DrawDebugger* m_drawDebugger;
 #endif
-    bool m_debug=false;
+    bool m_debug = false;
     unsigned int m_indexVbo = 0;
 };
-}
+}  // namespace Prisma

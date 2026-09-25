@@ -2,6 +2,7 @@
 
 #include <functional>
 #include <string>
+
 #include "glm/glm.hpp"
 #include "glm/gtc/matrix_transform.hpp"
 
@@ -22,4 +23,4 @@ struct CallbackHandler {
     std::function<void(int key, int scancode, int action, int mods)> keyboard;
     std::function<void(double xOffset, double yOffset)> rollMouse;
 };
-}
+}  // namespace Prisma

@@ -1,11 +1,13 @@
 #include "../include/MeshInfo.h"
-#include "../include/ImGuiDebug.h"
-#include "glm/gtx/string_cast.hpp"
+
 #include <tuple>
+
+#include "../include/ImGuiDebug.h"
+#include "../include/NodeViewer.h"
 #include "Components/PhysicsMeshComponent.h"
 #include "Helpers/WindowsHelper.h"
-#include "../include/NodeViewer.h"
 #include "ThirdParty/imgui/imgui.h"
+#include "glm/gtx/string_cast.hpp"
 
 void Prisma::GUI::MeshInfo::showSelected(const NodeViewer::NodeData& meshData) {
     if (meshData.node) {
@@ -28,8 +30,7 @@ void Prisma::GUI::MeshInfo::showSelected(const NodeViewer::NodeData& meshData) {
             std::string numberVertices = "";
 
             if (isAnimate) {
-                numberVertices = "Vertices: " + std::to_string(
-                                     isAnimate->animateVerticesData()->vertices.size());
+                numberVertices = "Vertices: " + std::to_string(isAnimate->animateVerticesData()->vertices.size());
             } else {
                 numberVertices = "Vertices: " + std::to_string(mesh->verticesData().vertices.size());
             }
@@ -56,7 +57,7 @@ void Prisma::GUI::MeshInfo::showSelected(const NodeViewer::NodeData& meshData) {
                 auto name = getLast(animation->name());
                 ImGui::Text("%s", name.c_str());
                 float current = animator->currentTime();
-                //ImGui::ProgressBar(current);
+                // ImGui::ProgressBar(current);
                 if (ImGui::SliderFloat("Frames", &current, 0.0f, animation->duration())) {
                     animator->frame(current);
                 }
@@ -64,10 +65,8 @@ void Prisma::GUI::MeshInfo::showSelected(const NodeViewer::NodeData& meshData) {
             if (ImGui::Button("Load animation")) {
                 auto location = WindowsHelper::getInstance().openFolder("All Files");
                 if (!location.empty()) {
-                    auto nodeData = std::dynamic_pointer_cast<AnimatedMesh>(
-                        GlobalData::getInstance().sceneNodes()[isAnimate->uuid()]);
-                    auto animation = std::make_shared<Animation>(
-                        location, nodeData);
+                    auto nodeData = std::dynamic_pointer_cast<AnimatedMesh>(GlobalData::getInstance().sceneNodes()[isAnimate->uuid()]);
+                    auto animation = std::make_shared<Animation>(location, nodeData);
                     auto animator = std::make_shared<Animator>(animation);
                     isAnimate->animator(animator);
                 }
@@ -77,5 +76,4 @@ void Prisma::GUI::MeshInfo::showSelected(const NodeViewer::NodeData& meshData) {
     }
 }
 
-Prisma::GUI::MeshInfo::MeshInfo() {
-}
+Prisma::GUI::MeshInfo::MeshInfo() {}

@@ -4,12 +4,13 @@
 #include <limits>
 #include <numeric>
 #include <vector>
+
 #include "Pipelines/PipelineSoftwareRT.h"
 
 namespace Prisma {
 // -------- BVH Class --------
 class BVH {
-public:
+   public:
     struct Triangle {
         glm::vec4 v0, v1, v2;
         glm::vec4 index;
@@ -36,8 +37,8 @@ public:
     // -------- Flat BVH Node (GPU-friendly) --------
     struct BVHNode {
         AABB bounds;
-        glm::vec4 leftFirst; // index to child (internal) or primitive offset (leaf)
-        glm::vec4 count; // if 0 = internal, >0 = leaf with count triangles
+        glm::vec4 leftFirst;  // index to child (internal) or primitive offset (leaf)
+        glm::vec4 count;      // if 0 = internal, >0 = leaf with count triangles
     };
 
     BVH(const std::vector<PipelineSoftwareRT::Vertex>& vertices, const std::vector<unsigned int>& indices, const std::vector<PipelineSoftwareRT::Sizes>& sizes) {
@@ -64,7 +65,7 @@ public:
     const std::vector<BVHNode>& getFlatNodes() const { return flatNodes; }
     const std::vector<Triangle>& getTriangles() const { return triangles; }
 
-private:
+   private:
     struct Node {
         AABB bounds;
         int left = -1, right = -1;
@@ -95,7 +96,7 @@ private:
         int nodeIndex = static_cast<int>(nodes.size());
         nodes.push_back(node);
 
-        if (node.count <= 2) return nodeIndex; // Leaf
+        if (node.count <= 2) return nodeIndex;  // Leaf
 
         // Split axis using centroid
         AABB centroidBounds;
@@ -127,7 +128,7 @@ private:
 
         nodes[nodeIndex].left = left;
         nodes[nodeIndex].right = right;
-        nodes[nodeIndex].count = 0; // mark as internal
+        nodes[nodeIndex].count = 0;  // mark as internal
 
         return nodeIndex;
     }
@@ -152,4 +153,4 @@ private:
         return flatIndex;
     }
 };
-}
+}  // namespace Prisma

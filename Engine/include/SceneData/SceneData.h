@@ -1,11 +1,12 @@
 #pragma once
-#include "../SceneObjects/Node.h"
-#include "../SceneObjects/Mesh.h"
-#include "../SceneObjects/AnimatedMesh.h"
-#include "../SceneObjects/Light.h"
-#include "../SceneObjects/Camera.h"
-#include <vector>
 #include <string>
+#include <vector>
+
+#include "../SceneObjects/AnimatedMesh.h"
+#include "../SceneObjects/Camera.h"
+#include "../SceneObjects/Light.h"
+#include "../SceneObjects/Mesh.h"
+#include "../SceneObjects/Node.h"
 #include "../SceneObjects/Sprite.h"
 
 namespace Prisma {
@@ -16,17 +17,13 @@ namespace LightType {
 struct LightDir;
 struct LightOmni;
 struct LightSpot;
-}
+}  // namespace LightType
 
 struct SceneHandler {
-    std::function<void()> onBeginRender = []() {
-    };
-    std::function<void(std::pair<std::string, int>)> onLoading = [](std::pair<std::string, int> node) {
-    };
-    std::function<void()> onEndRender = []() {
-    };
-    std::function<void()> onDestroy = []() {
-    };
+    std::function<void()> onBeginRender = []() {};
+    std::function<void(std::pair<std::string, int>)> onLoading = [](std::pair<std::string, int> node) {};
+    std::function<void()> onEndRender = []() {};
+    std::function<void()> onDestroy = []() {};
 };
 
 struct UserData {
@@ -47,4 +44,4 @@ struct Scene {
     std::vector<std::shared_ptr<Sprite>> sprites;
     std::string name;
 };
-}
+}  // namespace Prisma

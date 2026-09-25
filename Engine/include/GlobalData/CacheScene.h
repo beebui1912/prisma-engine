@@ -1,12 +1,12 @@
 #pragma once
 
 #include <memory>
-#include "../GlobalData/InstanceData.h"
 
+#include "../GlobalData/InstanceData.h"
 
 namespace Prisma {
 class CacheScene : public InstanceData<CacheScene> {
-public:
+   public:
     bool updateLights();
 
     void updateLights(bool value);
@@ -18,7 +18,6 @@ public:
     bool updateShadows();
 
     void updateShadows(bool value);
-
 
     bool updateSizes() const;
 
@@ -42,7 +41,7 @@ public:
 
     CacheScene() = default;
 
-private:
+   private:
     bool m_updateLights = false;
     bool m_updateSizeLights = false;
     bool m_updateShadows = false;
@@ -51,4 +50,4 @@ private:
     bool m_updateTextures = false;
     bool m_updateStatus = false;
 };
-}
+}  // namespace Prisma

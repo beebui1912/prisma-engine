@@ -1,14 +1,16 @@
 #include "SceneData/SceneLoader.h"
-#include "GlobalData/Defines.h"
+
 #include <iostream>
 #include <memory>
-#include "glm/gtx/string_cast.hpp"
+
 #include "Components/Component.h"
 #include "Components/MaterialComponent.h"
+#include "GlobalData/Defines.h"
 #include "Helpers/Logger.h"
 #include "Helpers/PrismaMath.h"
 #include "Helpers/StringHelper.h"
 #include "Pipelines/PipelineHandler.h"
+#include "glm/gtx/string_cast.hpp"
 
 std::shared_ptr<Prisma::Scene> Prisma::SceneLoader::loadScene(std::string scene, SceneParameters sceneParameters) {
     m_sceneParameters = sceneParameters;
@@ -57,16 +59,12 @@ std::shared_ptr<Prisma::Scene> Prisma::SceneLoader::loadScene(std::string scene,
             } else if (isLightSpot) {
                 m_scene->spotLights.push_back(isLightSpot);
             }
-
         });
 
         return m_scene;
     }
     Assimp::Importer importer;
-    m_aScene = importer.ReadFile(
-        scene,
-        aiProcess_Triangulate | aiProcess_GenSmoothNormals | aiProcess_FlipUVs | aiProcess_CalcTangentSpace |
-        aiProcess_TransformUVCoords);
+    m_aScene = importer.ReadFile(scene, aiProcess_Triangulate | aiProcess_GenSmoothNormals | aiProcess_FlipUVs | aiProcess_CalcTangentSpace | aiProcess_TransformUVCoords);
     if (m_aScene) {
         m_scene = std::make_shared<Scene>();
         auto root = std::make_shared<Node>();
@@ -139,10 +137,9 @@ std::shared_ptr<Prisma::Scene> Prisma::SceneLoader::hasFinish() {
                 m_scene->dirLights.push_back(isLightDir);
             } else if (isLightOmni) {
                 m_scene->omniLights.push_back(isLightOmni);
-            }else if (isLightSpot) {
+            } else if (isLightSpot) {
                 m_scene->spotLights.push_back(isLightSpot);
             }
-
         });
         return m_scene;
     }
@@ -152,17 +149,11 @@ std::shared_ptr<Prisma::Scene> Prisma::SceneLoader::hasFinish() {
     return nullptr;
 }
 
-const aiScene* Prisma::SceneLoader::assimpScene() {
-    return m_aScene;
-}
+const aiScene* Prisma::SceneLoader::assimpScene() { return m_aScene; }
 
-Prisma::Exporter& Prisma::SceneLoader::exporter() {
-    return m_exporter;
-}
+Prisma::Exporter& Prisma::SceneLoader::exporter() { return m_exporter; }
 
-void Prisma::SceneLoader::onLoading(std::function<void()> loading) {
-    m_loading = loading;
-}
+void Prisma::SceneLoader::onLoading(std::function<void()> loading) { m_loading = loading; }
 
 float Prisma::SceneLoader::calculateOmniLightRadius(float Kc, float Kl, float Kq, float I_threshold) {
     // Calculate coefficients for the quadratic equation
@@ -175,7 +166,7 @@ float Prisma::SceneLoader::calculateOmniLightRadius(float Kc, float Kl, float Kq
 
     // Check if the discriminant is negative (no real roots)
     if (discriminant < 0) {
-        return -1; // No real roots, light never reaches threshold
+        return -1;  // No real roots, light never reaches threshold
     }
 
     // Calculate the roots using the quadratic formula
@@ -276,8 +267,7 @@ std::shared_ptr<Prisma::Mesh> Prisma::SceneLoader::getMesh(aiMesh* mesh, const a
         }
         for (unsigned int i = 0; i < mesh->mNumFaces; i++) {
             aiFace face = mesh->mFaces[i];
-            for (unsigned int j = 0; j < face.mNumIndices; j++)
-                data->indices.push_back(face.mIndices[j]);
+            for (unsigned int j = 0; j < face.mNumIndices; j++) data->indices.push_back(face.mIndices[j]);
         }
     } else {
         for (unsigned int i = 0; i < mesh->mNumVertices; i++) {
@@ -319,11 +309,9 @@ std::shared_ptr<Prisma::Mesh> Prisma::SceneLoader::getMesh(aiMesh* mesh, const a
         }
         for (unsigned int i = 0; i < mesh->mNumFaces; i++) {
             aiFace face = mesh->mFaces[i];
-            for (unsigned int j = 0; j < face.mNumIndices; j++)
-                animeteData->indices.push_back(face.mIndices[j]);
+            for (unsigned int j = 0; j < face.mNumIndices; j++) animeteData->indices.push_back(face.mIndices[j]);
         }
-        extractBoneWeightForVertices(std::dynamic_pointer_cast<AnimatedMesh>(currentMesh), animeteData, mesh,
-                                     scene);
+        extractBoneWeightForVertices(std::dynamic_pointer_cast<AnimatedMesh>(currentMesh), animeteData, mesh, scene);
     }
 
     aiMaterial* material = scene->mMaterials[mesh->mMaterialIndex];
@@ -343,7 +331,7 @@ std::shared_ptr<Prisma::Mesh> Prisma::SceneLoader::getMesh(aiMesh* mesh, const a
 
     currentMaterial->roughness(roughness);
     currentMaterial->metalness(metalness);
-    //currentMaterial->emission(emission);
+    // currentMaterial->emission(emission);
 
     /*std::vector<Texture> emptyVector;
     if (currentMaterial->diffuse().empty())
@@ -458,8 +446,7 @@ void Prisma::SceneLoader::loadLights(const aiScene* currentScene, std::shared_pt
                 auto lightNode = m_nodeFinder.find(root, light->name());
                 lightNode->addChild(light, false);
                 light->finalMatrix(lightNode->finalMatrix(), false);
-                light->createShadow(Define::MAX_SHADOW_DIR_TEXTURE_SIZE,
-                                    Define::MAX_SHADOW_DIR_TEXTURE_SIZE);
+                light->createShadow(Define::MAX_SHADOW_DIR_TEXTURE_SIZE, Define::MAX_SHADOW_DIR_TEXTURE_SIZE);
 
                 m_scene->dirLights.push_back(light);
 
@@ -487,17 +474,14 @@ void Prisma::SceneLoader::loadLights(const aiScene* currentScene, std::shared_pt
                 lightOmni.farPlane.x = 100.0f;
                 lightOmni.radius = 5;
 
-                lightOmni.attenuation = glm::vec4(assimpLight->mAttenuationConstant,
-                                                  assimpLight->mAttenuationLinear,
-                                                  assimpLight->mAttenuationQuadratic, 1.0f);
+                lightOmni.attenuation = glm::vec4(assimpLight->mAttenuationConstant, assimpLight->mAttenuationLinear, assimpLight->mAttenuationQuadratic, 1.0f);
 
                 light->type(lightOmni);
                 light->name(assimpLight->mName.C_Str());
                 auto lightNode = m_nodeFinder.find(root, light->name());
                 lightNode->addChild(light, false);
                 light->finalMatrix(lightNode->finalMatrix(), false);
-                light->createShadow(Define::MAX_SHADOW_OMNI_TEXTURE_SIZE,
-                                    Define::MAX_SHADOW_OMNI_TEXTURE_SIZE);
+                light->createShadow(Define::MAX_SHADOW_OMNI_TEXTURE_SIZE, Define::MAX_SHADOW_OMNI_TEXTURE_SIZE);
 
                 m_scene->omniLights.push_back(light);
                 break;

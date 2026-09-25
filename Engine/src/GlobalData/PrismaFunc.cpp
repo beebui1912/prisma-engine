@@ -1,19 +1,17 @@
 #include "GlobalData/PrismaFunc.h"
-#include "GlobalData/GlobalData.h"
-#include "GlobalData/Defines.h"
-#include "Helpers/Settings.h"
-#include "Helpers/SettingsLoader.h"
-#include "Helpers/Logger.h"
-
-#include <iostream>
 
 #include <fstream>
+#include <iostream>
 
-
+#include "GlobalData/Defines.h"
+#include "GlobalData/GlobalData.h"
 #include "Graphics/GraphicsEngineD3D11/interface/EngineFactoryD3D11.h"
 #include "Graphics/GraphicsEngineD3D12/interface/EngineFactoryD3D12.h"
 #include "Graphics/GraphicsEngineOpenGL/interface/EngineFactoryOpenGL.h"
 #include "Graphics/GraphicsEngineVulkan/interface/EngineFactoryVk.h"
+#include "Helpers/Logger.h"
+#include "Helpers/Settings.h"
+#include "Helpers/SettingsLoader.h"
 
 #define GLFW_EXPOSE_NATIVE_WIN32
 #define GLFW_EXPOSE_NATIVE_WGL
@@ -26,7 +24,6 @@
 #include "Helpers/stb_image.h"
 
 using namespace Diligent;
-
 
 struct PrivatePrisma {
     std::shared_ptr<Prisma::CallbackHandler> callback;
@@ -41,7 +38,7 @@ namespace Prisma {
 void framebufferSizeCallback(GLFWwindow* window, int width, int height) {
     if (privatePrisma->callback->resize) {
         if (width > 0 && height > 0) {
-            privatePrisma->callback->resize(width, height);        
+            privatePrisma->callback->resize(width, height);
         }
     }
 }
@@ -81,23 +78,15 @@ void rollCallback(GLFWwindow* window, double x, double y) {
         privatePrisma->callback->rollMouse(x, y);
     }
 }
-}
+}  // namespace Prisma
 
+Prisma::PrismaFunc::PrismaFunc() {}
 
-Prisma::PrismaFunc::PrismaFunc() {
-}
+Prisma::PrismaFunc::RenderTargetFormat Prisma::PrismaFunc::renderFormat() const { return m_renderFormat; }
 
-Prisma::PrismaFunc::RenderTargetFormat Prisma::PrismaFunc::renderFormat() const {
-    return m_renderFormat;
-}
+Prisma::PrismaFunc::ContextData& Prisma::PrismaFunc::contextData() { return m_contextData; }
 
-Prisma::PrismaFunc::ContextData& Prisma::PrismaFunc::contextData() {
-    return m_contextData;
-}
-
-void Prisma::PrismaFunc::inputUI(UIInput inputUi) {
-    privatePrisma->inputUi = inputUi;
-}
+void Prisma::PrismaFunc::inputUI(UIInput inputUi) { privatePrisma->inputUi = inputUi; }
 
 void Prisma::PrismaFunc::init() {
     m_settings = SettingsLoader::getInstance().getSettings();
@@ -125,7 +114,7 @@ void Prisma::PrismaFunc::init() {
         }
 
         glfwSetWindowUserPointer(m_window, this);
-    
+
     } else {
         glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE);  // Allow resizing
         glfwWindowHint(GLFW_DECORATED, GLFW_TRUE);
@@ -155,25 +144,23 @@ void Prisma::PrismaFunc::init() {
         style &= ~WS_MINIMIZEBOX;  // Remove minimize button
         SetWindowLong(hwnd, GWL_STYLE, style);
         SetWindowPos(hwnd, NULL, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_FRAMECHANGED);
-    
     }
 
 #if PLATFORM_WIN32
     Win32NativeWindow Window{glfwGetWin32Window(m_window)};
 #endif
 #if PLATFORM_LINUX
-	LinuxNativeWindow Window;
-	Window.WindowId = glfwGetX11Window(m_Window);
-	Window.pDisplay = glfwGetX11Display();
-	if (DevType == RENDER_DEVICE_TYPE_GL)
-		glfwMakeContextCurrent(m_Window);
+    LinuxNativeWindow Window;
+    Window.WindowId = glfwGetX11Window(m_Window);
+    Window.pDisplay = glfwGetX11Display();
+    if (DevType == RENDER_DEVICE_TYPE_GL) glfwMakeContextCurrent(m_Window);
 #endif
 #if PLATFORM_MACOS
-	MacOSNativeWindow Window;
-	if (DevType == RENDER_DEVICE_TYPE_GL)
-		glfwMakeContextCurrent(m_Window);
-	else
-		Window.pNSView = GetNSWindowView(m_Window);
+    MacOSNativeWindow Window;
+    if (DevType == RENDER_DEVICE_TYPE_GL)
+        glfwMakeContextCurrent(m_Window);
+    else
+        Window.pNSView = GetNSWindowView(m_Window);
 #endif
 
     SwapChainDesc SCDesc;
@@ -182,65 +169,54 @@ void Prisma::PrismaFunc::init() {
 #if D3D11_SUPPORTED
         case RENDER_DEVICE_TYPE_D3D11: {
             EngineD3D11CreateInfo EngineCI;
-#    if ENGINE_DLL
+#if ENGINE_DLL
             // Load the dll and import GetEngineFactoryD3D11() function
             auto* GetEngineFactoryD3D11 = LoadGraphicsEngineD3D11();
-#    endif
+#endif
             auto* pFactoryD3D11 = GetEngineFactoryD3D11();
-            pFactoryD3D11->CreateDeviceAndContextsD3D11(EngineCI, &m_contextData.device,
-                                                        &m_contextData.immediateContext);
-            pFactoryD3D11->CreateSwapChainD3D11(m_contextData.device, m_contextData.immediateContext,
-                                                SCDesc, FullScreenModeDesc{}, Window,
-                                                &m_contextData.swapChain);
+            pFactoryD3D11->CreateDeviceAndContextsD3D11(EngineCI, &m_contextData.device, &m_contextData.immediateContext);
+            pFactoryD3D11->CreateSwapChainD3D11(m_contextData.device, m_contextData.immediateContext, SCDesc, FullScreenModeDesc{}, Window, &m_contextData.swapChain);
             m_contextData.engineFactory = pFactoryD3D11;
-        }
-        break;
+        } break;
 #endif
 
 #if D3D12_SUPPORTED
         case RENDER_DEVICE_TYPE_D3D12: {
-#    if ENGINE_DLL
+#if ENGINE_DLL
             // Load the dll and import GetEngineFactoryD3D12() function
             auto GetEngineFactoryD3D12 = LoadGraphicsEngineD3D12();
-#    endif
+#endif
             EngineD3D12CreateInfo EngineCI;
 
             auto* pFactoryD3D12 = GetEngineFactoryD3D12();
-            pFactoryD3D12->CreateDeviceAndContextsD3D12(EngineCI, &m_contextData.device,
-                                                        &m_contextData.immediateContext);
-            pFactoryD3D12->CreateSwapChainD3D12(m_contextData.device, m_contextData.immediateContext,
-                                                SCDesc, FullScreenModeDesc{}, Window,
-                                                &m_contextData.swapChain);
+            pFactoryD3D12->CreateDeviceAndContextsD3D12(EngineCI, &m_contextData.device, &m_contextData.immediateContext);
+            pFactoryD3D12->CreateSwapChainD3D12(m_contextData.device, m_contextData.immediateContext, SCDesc, FullScreenModeDesc{}, Window, &m_contextData.swapChain);
             m_contextData.engineFactory = pFactoryD3D12;
-        }
-        break;
+        } break;
 #endif
 
 #if GL_SUPPORTED
         case RENDER_DEVICE_TYPE_GL: {
-#    if EXPLICITLY_LOAD_ENGINE_GL_DLL
+#if EXPLICITLY_LOAD_ENGINE_GL_DLL
             // Load the dll and import GetEngineFactoryOpenGL() function
             auto GetEngineFactoryOpenGL = LoadGraphicsEngineOpenGL();
-#    endif
+#endif
             auto* pFactoryOpenGL = GetEngineFactoryOpenGL();
 
             EngineGLCreateInfo EngineCI;
             EngineCI.Window = Window;
 
-            pFactoryOpenGL->CreateDeviceAndSwapChainGL(EngineCI, &m_contextData.device,
-                                                       &m_contextData.immediateContext, SCDesc,
-                                                       &m_contextData.swapChain);
+            pFactoryOpenGL->CreateDeviceAndSwapChainGL(EngineCI, &m_contextData.device, &m_contextData.immediateContext, SCDesc, &m_contextData.swapChain);
             m_contextData.engineFactory = pFactoryOpenGL;
-        }
-        break;
+        } break;
 #endif
 
 #if VULKAN_SUPPORTED
         case RENDER_DEVICE_TYPE_VULKAN: {
-#    if EXPLICITLY_LOAD_ENGINE_VK_DLL
+#if EXPLICITLY_LOAD_ENGINE_VK_DLL
             // Load the dll and import GetEngineFactoryVk() function
             auto* GetEngineFactoryVk = LoadGraphicsEngineVk();
-#    endif
+#endif
             auto* pFactoryVk = GetEngineFactoryVk();
 
             EngineVkCreateInfo EngineCI;
@@ -265,27 +241,23 @@ void Prisma::PrismaFunc::init() {
                                                            const Char*                 Function,
                                                            const Char*                 File,
                                                            int                         Line){
-                
+
                     if (Severity == DEBUG_MESSAGE_SEVERITY ::DEBUG_MESSAGE_SEVERITY_ERROR) {
-                
+
                                     std::cout << "aaaaaaaaaaaaaaaaaaaaa" << std::endl;
 
-                    }                
+                    }
                 };
 
 
             pFactoryVk->SetMessageCallback(debugType);
             */
 
-            pFactoryVk->CreateDeviceAndContextsVk(EngineCI, &m_contextData.device,
-                                                  &m_contextData.immediateContext);
-            pFactoryVk->CreateSwapChainVk(m_contextData.device, m_contextData.immediateContext,
-                                          SCDesc, Window, &m_contextData.swapChain);
-            
+            pFactoryVk->CreateDeviceAndContextsVk(EngineCI, &m_contextData.device, &m_contextData.immediateContext);
+            pFactoryVk->CreateSwapChainVk(m_contextData.device, m_contextData.immediateContext, SCDesc, Window, &m_contextData.swapChain);
 
             m_contextData.engineFactory = pFactoryVk;
-        }
-        break;
+        } break;
 #endif
 
         default:
@@ -331,12 +303,10 @@ void Prisma::PrismaFunc::init() {
     GlobalData::getInstance().dummyTextureArray(pDummyTextureArray);
 }
 
-void Prisma::PrismaFunc::poll() {
-    glfwPollEvents();
-}
+void Prisma::PrismaFunc::poll() { glfwPollEvents(); }
 
 void Prisma::PrismaFunc::update() {
-    //m_contextData.immediateContext->Flush();
+    // m_contextData.immediateContext->Flush();
     m_contextData.swapChain->Present(m_settings.vsync);
 }
 
@@ -350,22 +320,18 @@ void Prisma::PrismaFunc::bindMainRenderTarget() {
 void Prisma::PrismaFunc::clear() {
     auto pRTV = m_contextData.swapChain->GetCurrentBackBufferRTV();
     auto pDSV = m_contextData.swapChain->GetDepthBufferDSV();
-    m_contextData.immediateContext->ClearRenderTarget(pRTV, value_ptr(Define::CLEAR_COLOR),
-                                                      RESOURCE_STATE_TRANSITION_MODE_TRANSITION);
-    m_contextData.immediateContext->ClearDepthStencil(pDSV, CLEAR_DEPTH_FLAG, 1.f, 0,
-                                                      RESOURCE_STATE_TRANSITION_MODE_TRANSITION);
+    m_contextData.immediateContext->ClearRenderTarget(pRTV, value_ptr(Define::CLEAR_COLOR), RESOURCE_STATE_TRANSITION_MODE_TRANSITION);
+    m_contextData.immediateContext->ClearDepthStencil(pDSV, CLEAR_DEPTH_FLAG, 1.f, 0, RESOURCE_STATE_TRANSITION_MODE_TRANSITION);
 }
 
 void Prisma::PrismaFunc::setCallback(std::shared_ptr<CallbackHandler> callbackHandler) {
-    auto projection =glm::perspective(glm::radians(GlobalData::getInstance().currentGlobalScene()->camera->angle()), static_cast<float>(m_settings.width) / static_cast<float>(m_settings.height), GlobalData::getInstance().currentGlobalScene()->camera->nearPlane(),
-                         GlobalData::getInstance().currentGlobalScene()->camera->farPlane());
-    callbackHandler->resize = [&](int width, int height) {
-        GlobalData::getInstance().currentProjection(projection);
-    };
+    auto projection = glm::perspective(glm::radians(GlobalData::getInstance().currentGlobalScene()->camera->angle()), static_cast<float>(m_settings.width) / static_cast<float>(m_settings.height),
+                                       GlobalData::getInstance().currentGlobalScene()->camera->nearPlane(), GlobalData::getInstance().currentGlobalScene()->camera->farPlane());
+    callbackHandler->resize = [&](int width, int height) { GlobalData::getInstance().currentProjection(projection); };
     GlobalData::getInstance().currentProjection(projection);
     privatePrisma->callback = callbackHandler;
     if (!privatePrisma->initCallback) {
-        //glfwSetFramebufferSizeCallback(m_window, framebufferSizeCallback);
+        // glfwSetFramebufferSizeCallback(m_window, framebufferSizeCallback);
         glfwSetCursorPosCallback(m_window, mouseCallback);
         glfwSetMouseButtonCallback(m_window, mouseButtonCallback);
         glfwSetKeyCallback(m_window, keyboardCallback);
@@ -374,29 +340,22 @@ void Prisma::PrismaFunc::setCallback(std::shared_ptr<CallbackHandler> callbackHa
     }
 }
 
-void Prisma::PrismaFunc::closeWindow() {
-    glfwSetWindowShouldClose(m_window, true);
-}
+void Prisma::PrismaFunc::closeWindow() { glfwSetWindowShouldClose(m_window, true); }
 
-bool Prisma::PrismaFunc::shouldClose() {
-    return glfwWindowShouldClose(m_window);
-}
+bool Prisma::PrismaFunc::shouldClose() { return glfwWindowShouldClose(m_window); }
 
-void Prisma::PrismaFunc::hiddenMouse(bool hidden) {
-    glfwSetInputMode(m_window, GLFW_CURSOR, hidden ? GLFW_CURSOR_NORMAL : GLFW_CURSOR_DISABLED);
-}
+void Prisma::PrismaFunc::hiddenMouse(bool hidden) { glfwSetInputMode(m_window, GLFW_CURSOR, hidden ? GLFW_CURSOR_NORMAL : GLFW_CURSOR_DISABLED); }
 
 void Prisma::PrismaFunc::msaa(bool isMsaa, int samples) {
     if (isMsaa) {
-        //glfwWindowHint(GLFW_SAMPLES, samples);
-        //glEnable(GL_MULTISAMPLE);
+        // glfwWindowHint(GLFW_SAMPLES, samples);
+        // glEnable(GL_MULTISAMPLE);
     } else {
-        //glDisable(GL_MULTISAMPLE);
+        // glDisable(GL_MULTISAMPLE);
     }
 }
 
-GLFWwindow* Prisma::PrismaFunc::window() {
-    return m_window; }
+GLFWwindow* Prisma::PrismaFunc::window() { return m_window; }
 
 void Prisma::PrismaFunc::setIcon(const std::string& icon) {
     GLFWimage images[1];
@@ -405,13 +364,10 @@ void Prisma::PrismaFunc::setIcon(const std::string& icon) {
     stbi_image_free(images[0].pixels);
 }
 
-void* Prisma::PrismaFunc::windowNative() {
-    return glfwGetWin32Window(m_window);
-}
+void* Prisma::PrismaFunc::windowNative() { return glfwGetWin32Window(m_window); }
 
 void Prisma::PrismaFunc::destroy() {
-    if (m_contextData.immediateContext)
-        m_contextData.immediateContext->Flush();
+    if (m_contextData.immediateContext) m_contextData.immediateContext->Flush();
 
     m_contextData.swapChain = nullptr;
     m_contextData.immediateContext = nullptr;
@@ -421,6 +377,6 @@ void Prisma::PrismaFunc::destroy() {
         glfwDestroyWindow(m_window);
         glfwTerminate();
     }
-    //glfwDestroyWindow(m_window);
-    //glfwTerminate();
+    // glfwDestroyWindow(m_window);
+    // glfwTerminate();
 }

@@ -1,20 +1,21 @@
 #pragma once
 
 #include <vector>
+
+#include "Common/interface/RefCntAutoPtr.hpp"
 #include "GenericShadow.h"
 #include "GlobalData/Platform.h"
-#include "Common/interface/RefCntAutoPtr.hpp"
 
 namespace Diligent {
 struct ITexture;
 struct IBuffer;
 struct ITextureView;
 struct IShaderResourceBinding;
-}
+}  // namespace Diligent
 
 namespace Prisma {
 class PipelineOmniShadow : public GenericShadow {
-public:
+   public:
     PipelineOmniShadow(unsigned int width, unsigned int height, bool post = false);
     float farPlane() override;
     void farPlane(float farPlane) override;
@@ -26,7 +27,7 @@ public:
 
     Diligent::RefCntAutoPtr<Diligent::ITexture> shadowTexture() override;
 
-private:
+   private:
     unsigned int m_width;
     unsigned int m_height;
     float m_nearPlane = 0.1f;
@@ -42,4 +43,4 @@ private:
 
     bool m_init = false;
 };
-}
+}  // namespace Prisma

@@ -1,22 +1,21 @@
 #pragma once
 
-#include "SceneObjects/Light.h"
+#include <functional>
+
 #include "GlobalData/GlobalData.h"
 #include "Helpers/PrismaMath.h"
-#include "glm/gtx/matrix_decompose.hpp"
-#include <functional>
 #include "NodeViewer.h"
+#include "SceneObjects/Light.h"
+#include "glm/gtx/matrix_decompose.hpp"
 
 namespace Prisma::GUI {
 class LightInfo {
-public:
-    void showSelectedDir(std::shared_ptr<Light<LightType::LightDir>> lightData,
-                         const NodeViewer::NodeData& meshData);
-    void showSelectedOmni(std::shared_ptr<Light<LightType::LightOmni>> lightData,
-                          const NodeViewer::NodeData& meshData);
+   public:
+    void showSelectedDir(std::shared_ptr<Light<LightType::LightDir>> lightData, const NodeViewer::NodeData& meshData);
+    void showSelectedOmni(std::shared_ptr<Light<LightType::LightOmni>> lightData, const NodeViewer::NodeData& meshData);
     void showSelectedSpot(std::shared_ptr<Light<LightType::LightSpot>> lightData, const NodeViewer::NodeData& meshData);
 
    private:
     glm::vec3 directionToEulerAngles(const glm::vec3& direction);
 };
-}
+}  // namespace Prisma::GUI

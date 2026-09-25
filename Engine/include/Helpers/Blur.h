@@ -1,20 +1,19 @@
 #pragma once
 
 #include <Common/interface/RefCntAutoPtr.hpp>
+#include <array>
 
 #include "GlobalData/Platform.h"
 #include "Graphics/GraphicsEngine/interface/Buffer.h"
 #include "Graphics/GraphicsEngine/interface/PipelineState.h"
 #include "Graphics/GraphicsEngine/interface/Texture.h"
-#include <array>
 
 namespace Prisma {
 class Blur {
    public:
     Blur(Diligent::RefCntAutoPtr<Diligent::ITexture> texture);
-    void render(unsigned int amount=10);
-    std::array<Diligent::RefCntAutoPtr<Diligent::ITexture>,2> pingPong();
-
+    void render(unsigned int amount = 10);
+    std::array<Diligent::RefCntAutoPtr<Diligent::ITexture>, 2> pingPong();
 
    private:
     Diligent::RefCntAutoPtr<Diligent::IPipelineState> m_pso;

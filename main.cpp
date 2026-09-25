@@ -1,5 +1,5 @@
-#include "UserEngine/include/UserEngine.h"
 #include "GUI/include/ImGuiDebug.h"
+#include "UserEngine/include/UserEngine.h"
 
 int main(int argc, const char* const* argv) {
     auto userEngine = std::make_shared<UserEngine>();

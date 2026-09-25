@@ -7,12 +7,12 @@ struct IPipelineState;
 }
 
 class ParticleController {
-public:
+   public:
     void init(std::shared_ptr<Prisma::Node> root, int numParticles = 1000);
 
     void update();
 
-private:
+   private:
     struct TimeData {
         float delta;
         float time;

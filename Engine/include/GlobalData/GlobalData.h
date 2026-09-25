@@ -1,19 +1,19 @@
 #pragma once
-#include "PrismaFunc.h"
-#include "Platform.h"
-
-#include "../SceneData/SceneData.h"
 #include <memory>
 #include <unordered_map>
+
+#include "../SceneData/SceneData.h"
+#include "Platform.h"
+#include "PrismaFunc.h"
 
 namespace Prisma::LightType {
 struct LightDir;
 struct LightOmni;
-}
+}  // namespace Prisma::LightType
 
 namespace Prisma {
 class GlobalData : public InstanceData<GlobalData> {
-public:
+   public:
     struct GlobalTextureInfo {
         Diligent::RefCntAutoPtr<Diligent::ITexture> texture;
         std::string name = "";
@@ -26,9 +26,9 @@ public:
     void currentGlobalScene(const std::shared_ptr<Scene>& currentGlobalScene);
 
     // Getter and Setter for m_fboTarget
-    //std::shared_ptr<FBO> fboTarget() const;
+    // std::shared_ptr<FBO> fboTarget() const;
 
-    //void fboTarget(const std::shared_ptr<FBO>& fboTarget);
+    // void fboTarget(const std::shared_ptr<FBO>& fboTarget);
 
     // Getter and Setter for m_sceneComponents
     std::unordered_map<uint64_t, Component*>& sceneComponents();
@@ -83,9 +83,9 @@ public:
 
     void dummyTextureArray(Diligent::RefCntAutoPtr<Diligent::ITexture> dummy);
 
-private:
+   private:
     std::shared_ptr<Scene> m_currentGlobalScene;
-    //std::shared_ptr<FBO> m_fboTarget;
+    // std::shared_ptr<FBO> m_fboTarget;
     std::unordered_map<uint64_t, Component*> m_sceneComponents;
     std::unordered_map<uint64_t, std::shared_ptr<Node>> m_sceneNodes;
     std::vector<GlobalTextureInfo> m_textures;
@@ -98,4 +98,4 @@ private:
     Diligent::RefCntAutoPtr<Diligent::ITexture> m_pDummySRV;
     Diligent::RefCntAutoPtr<Diligent::ITexture> m_pDummyArraySRV;
 };
-}
+}  // namespace Prisma

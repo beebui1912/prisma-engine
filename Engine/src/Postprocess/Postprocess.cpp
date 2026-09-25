@@ -1,7 +1,6 @@
 #include "Postprocess/Postprocess.h"
 
-Prisma::Postprocess::Postprocess() {
-}
+Prisma::Postprocess::Postprocess() {}
 
 void Prisma::Postprocess::render() {
     for (auto effect : m_effects) {
@@ -9,9 +8,7 @@ void Prisma::Postprocess::render() {
     }
 }
 
-void Prisma::Postprocess::addPostProcess(std::shared_ptr<PostprocessEffect> postprocessEffect) {
-    m_effects.push_back(postprocessEffect);
-}
+void Prisma::Postprocess::addPostProcess(std::shared_ptr<PostprocessEffect> postprocessEffect) { m_effects.push_back(postprocessEffect); }
 
 void Prisma::Postprocess::removePostProcess(std::shared_ptr<PostprocessEffect> postprocessEffect) {
     // Find the effect in the m_effects list

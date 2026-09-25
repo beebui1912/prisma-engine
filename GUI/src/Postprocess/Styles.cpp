@@ -12,9 +12,7 @@ void Prisma::GUI::PostprocessingStyles::render(EFFECTS effect) {
     }
 }
 
-Prisma::GUI::PostprocessingStyles::PostprocessingStyles() {
-    createShaderEffects();
-}
+Prisma::GUI::PostprocessingStyles::PostprocessingStyles() { createShaderEffects(); }
 
 void Prisma::GUI::PostprocessingStyles::createShaderEffects() {
     auto& contextData = PrismaFunc::getInstance().contextData();
@@ -109,15 +107,8 @@ void Prisma::GUI::PostprocessingStyles::createShaderEffects() {
     PSOCreateInfo.PSODesc.ResourceLayout.Variables = Vars;
     PSOCreateInfo.PSODesc.ResourceLayout.NumVariables = _countof(Vars);
 
-    Diligent::SamplerDesc SamLinearClampDesc
-    {
-        Diligent::FILTER_TYPE_LINEAR, Diligent::FILTER_TYPE_LINEAR, Diligent::FILTER_TYPE_LINEAR,
-        Diligent::TEXTURE_ADDRESS_WRAP, Diligent::TEXTURE_ADDRESS_WRAP, Diligent::TEXTURE_ADDRESS_WRAP
-    };
-    Diligent::ImmutableSamplerDesc ImtblSamplers[] =
-    {
-        {Diligent::SHADER_TYPE_PIXEL, "screenTexture", SamLinearClampDesc}
-    };
+    Diligent::SamplerDesc SamLinearClampDesc{Diligent::FILTER_TYPE_LINEAR, Diligent::FILTER_TYPE_LINEAR, Diligent::FILTER_TYPE_LINEAR, Diligent::TEXTURE_ADDRESS_WRAP, Diligent::TEXTURE_ADDRESS_WRAP, Diligent::TEXTURE_ADDRESS_WRAP};
+    Diligent::ImmutableSamplerDesc ImtblSamplers[] = {{Diligent::SHADER_TYPE_PIXEL, "screenTexture", SamLinearClampDesc}};
     // clang-format on
     PSOCreateInfo.PSODesc.ResourceLayout.ImmutableSamplers = ImtblSamplers;
     PSOCreateInfo.PSODesc.ResourceLayout.NumImmutableSamplers = _countof(ImtblSamplers);
@@ -172,8 +163,8 @@ void Prisma::GUI::PostprocessingStyles::renderEffects(EFFECTS effect) {
     // Set texture SRV in the SRB
     contextData.immediateContext->CommitShaderResources(m_srb, Diligent::RESOURCE_STATE_TRANSITION_MODE_TRANSITION);
 
-    Diligent::DrawIndexedAttribs DrawAttrs; // This is an indexed draw call
-    DrawAttrs.IndexType = Diligent::VT_UINT32; // Index type
+    Diligent::DrawIndexedAttribs DrawAttrs;     // This is an indexed draw call
+    DrawAttrs.IndexType = Diligent::VT_UINT32;  // Index type
     DrawAttrs.NumIndices = quadBuffer.iBufferSize;
     // Verify the state of vertex and index buffers
     DrawAttrs.Flags = Diligent::DRAW_FLAG_VERIFY_ALL;

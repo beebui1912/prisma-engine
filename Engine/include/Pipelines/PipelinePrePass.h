@@ -1,15 +1,16 @@
 #pragma once
 
-#include "../SceneObjects/Camera.h"
 #include <memory>
+
+#include "../SceneObjects/Camera.h"
 
 namespace Prisma {
 class PipelinePrePass {
-public:
+   public:
     PipelinePrePass();
     void render();
 
-    //std::shared_ptr<Shader> m_shader;
-    //std::shared_ptr<Shader> m_shaderAnimate;
+    // std::shared_ptr<Shader> m_shader;
+    // std::shared_ptr<Shader> m_shaderAnimate;
 };
-}
+}  // namespace Prisma

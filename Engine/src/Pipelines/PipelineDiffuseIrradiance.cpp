@@ -1,8 +1,9 @@
 #include "Pipelines/PipelineDIffuseIrradiance.h"
+
+#include "Graphics/GraphicsTools/interface/MapHelper.hpp"
 #include "Helpers/PrismaRender.h"
 #include "Helpers/SettingsLoader.h"
 #include "glm/gtc/type_ptr.inl"
-#include "Graphics/GraphicsTools/interface/MapHelper.hpp"
 
 Prisma::PipelineDiffuseIrradiance::PipelineDiffuseIrradiance() {
     auto& contextData = PrismaFunc::getInstance().contextData();
@@ -86,10 +87,7 @@ Prisma::PipelineDiffuseIrradiance::PipelineDiffuseIrradiance() {
     // Define variable type that will be used by default
     PSOCreateInfo.PSODesc.ResourceLayout.DefaultVariableType = Diligent::SHADER_RESOURCE_VARIABLE_TYPE_STATIC;
 
-    Diligent::ShaderResourceVariableDesc Vars[] =
-    {
-        {Diligent::SHADER_TYPE_PIXEL, "environmentMap", Diligent::SHADER_RESOURCE_VARIABLE_TYPE_MUTABLE}
-    };
+    Diligent::ShaderResourceVariableDesc Vars[] = {{Diligent::SHADER_TYPE_PIXEL, "environmentMap", Diligent::SHADER_RESOURCE_VARIABLE_TYPE_MUTABLE}};
     // clang-format on
     PSOCreateInfo.PSODesc.ResourceLayout.Variables = Vars;
     PSOCreateInfo.PSODesc.ResourceLayout.NumVariables = _countof(Vars);
@@ -126,7 +124,7 @@ Prisma::PipelineDiffuseIrradiance::PipelineDiffuseIrradiance() {
 
     Diligent::TextureDesc RTColorDesc;
     RTColorDesc.Name = "Offscreen render target";
-    RTColorDesc.Type = Diligent::RESOURCE_DIM_TEX_CUBE; // Set cubemap type
+    RTColorDesc.Type = Diligent::RESOURCE_DIM_TEX_CUBE;  // Set cubemap type
     RTColorDesc.Width = m_dimensions.x;
     RTColorDesc.Height = m_dimensions.y;
     RTColorDesc.MipLevels = 1;
@@ -147,7 +145,7 @@ Prisma::PipelineDiffuseIrradiance::PipelineDiffuseIrradiance() {
         RTVDesc.TextureDim = Diligent::RESOURCE_DIM_TEX_2D;
         RTVDesc.MostDetailedMip = 0;
         RTVDesc.NumMipLevels = 1;
-        RTVDesc.FirstArraySlice = i; // Select the specific face
+        RTVDesc.FirstArraySlice = i;  // Select the specific face
         RTVDesc.NumArraySlices = 1;
 
         m_pMSColorRTV->CreateView(RTVDesc, &m_pRTColor[i]);
@@ -157,21 +155,17 @@ Prisma::PipelineDiffuseIrradiance::PipelineDiffuseIrradiance() {
 void Prisma::PipelineDiffuseIrradiance::texture(Diligent::RefCntAutoPtr<Diligent::ITexture> texture) {
     m_srb.Release();
     m_pso->CreateShaderResourceBinding(&m_srb, true);
-    m_srb->GetVariableByName(Diligent::SHADER_TYPE_PIXEL, "environmentMap")->Set(
-        texture->GetDefaultView(Diligent::TEXTURE_VIEW_SHADER_RESOURCE));
+    m_srb->GetVariableByName(Diligent::SHADER_TYPE_PIXEL, "environmentMap")->Set(texture->GetDefaultView(Diligent::TEXTURE_VIEW_SHADER_RESOURCE));
     auto& contextData = PrismaFunc::getInstance().contextData();
     for (unsigned int i = 0; i < 6; ++i) {
-        Diligent::MapHelper<PipelineSkybox::IBLViewProjection> viewProjection(
-            contextData.immediateContext, m_iblData, Diligent::MAP_WRITE, Diligent::MAP_FLAG_DISCARD);
+        Diligent::MapHelper<PipelineSkybox::IBLViewProjection> viewProjection(contextData.immediateContext, m_iblData, Diligent::MAP_WRITE, Diligent::MAP_FLAG_DISCARD);
         viewProjection->view = m_iblTransform.captureViews[i];
         viewProjection->projection = m_iblTransform.captureProjection;
         Diligent::ITextureView* ppRTVs[] = {m_pRTColor[i]};
 
-        contextData.immediateContext->SetRenderTargets(1, ppRTVs, nullptr,
-                                                       Diligent::RESOURCE_STATE_TRANSITION_MODE_TRANSITION);
+        contextData.immediateContext->SetRenderTargets(1, ppRTVs, nullptr, Diligent::RESOURCE_STATE_TRANSITION_MODE_TRANSITION);
 
-        contextData.immediateContext->ClearRenderTarget(m_pRTColor[i], value_ptr(Define::CLEAR_COLOR),
-                                                        Diligent::RESOURCE_STATE_TRANSITION_MODE_TRANSITION);
+        contextData.immediateContext->ClearRenderTarget(m_pRTColor[i], value_ptr(Define::CLEAR_COLOR), Diligent::RESOURCE_STATE_TRANSITION_MODE_TRANSITION);
 
         contextData.immediateContext->SetPipelineState(m_pso);
 
@@ -180,56 +174,52 @@ void Prisma::PipelineDiffuseIrradiance::texture(Diligent::RefCntAutoPtr<Diligent
         // Bind vertex and index buffers
         constexpr Diligent::Uint64 offset = 0;
         Diligent::IBuffer* pBuffs[] = {cubeBuffer.vBuffer};
-        contextData.immediateContext->SetVertexBuffers(0, 1, pBuffs, &offset,
-                                                       Diligent::RESOURCE_STATE_TRANSITION_MODE_TRANSITION,
-                                                       Diligent::SET_VERTEX_BUFFERS_FLAG_RESET);
-        contextData.immediateContext->SetIndexBuffer(cubeBuffer.iBuffer, 0,
-                                                     Diligent::RESOURCE_STATE_TRANSITION_MODE_TRANSITION);
+        contextData.immediateContext->SetVertexBuffers(0, 1, pBuffs, &offset, Diligent::RESOURCE_STATE_TRANSITION_MODE_TRANSITION, Diligent::SET_VERTEX_BUFFERS_FLAG_RESET);
+        contextData.immediateContext->SetIndexBuffer(cubeBuffer.iBuffer, 0, Diligent::RESOURCE_STATE_TRANSITION_MODE_TRANSITION);
 
         // Set texture SRV in the SRB
-        contextData.immediateContext->CommitShaderResources(
-            m_srb, Diligent::RESOURCE_STATE_TRANSITION_MODE_TRANSITION);
+        contextData.immediateContext->CommitShaderResources(m_srb, Diligent::RESOURCE_STATE_TRANSITION_MODE_TRANSITION);
 
-        Diligent::DrawIndexedAttribs DrawAttrs; // This is an indexed draw call
-        DrawAttrs.IndexType = Diligent::VT_UINT32; // Index type
+        Diligent::DrawIndexedAttribs DrawAttrs;     // This is an indexed draw call
+        DrawAttrs.IndexType = Diligent::VT_UINT32;  // Index type
         DrawAttrs.NumIndices = cubeBuffer.iBufferSize;
         // Verify the state of vertex and index buffers
         DrawAttrs.Flags = Diligent::DRAW_FLAG_VERIFY_ALL;
         contextData.immediateContext->DrawIndexed(DrawAttrs);
     }
     PrismaFunc::getInstance().bindMainRenderTarget();
-    //if (m_id)
+    // if (m_id)
     //{
     //	glMakeTextureHandleNonResidentARB(m_id);
     //	glDeleteTextures(1, &m_diffuseIrradiance);
-    //}
+    // }
     //// pbr: create an irradiance cubemap, and re-scale capture FBO to irradiance scale.
     //// --------------------------------------------------------------------------------
-    //glGenTextures(1, &m_diffuseIrradiance);
-    //glBindTexture(GL_TEXTURE_CUBE_MAP, m_diffuseIrradiance);
-    //for (unsigned int i = 0; i < 6; ++i)
+    // glGenTextures(1, &m_diffuseIrradiance);
+    // glBindTexture(GL_TEXTURE_CUBE_MAP, m_diffuseIrradiance);
+    // for (unsigned int i = 0; i < 6; ++i)
     //{
     //	glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGB16F, 32, 32, 0, GL_RGB, GL_FLOAT, nullptr);
-    //}
-    //glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-    //glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-    //glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
-    //glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    //glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    // }
+    // glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    // glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    // glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+    // glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    // glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-    //glBindFramebuffer(GL_FRAMEBUFFER, PrismaRender::getInstance().data().fbo);
-    //glBindRenderbuffer(GL_RENDERBUFFER, PrismaRender::getInstance().data().rbo);
-    //glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, 32, 32);
+    // glBindFramebuffer(GL_FRAMEBUFFER, PrismaRender::getInstance().data().fbo);
+    // glBindRenderbuffer(GL_RENDERBUFFER, PrismaRender::getInstance().data().rbo);
+    // glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, 32, 32);
 
     //// pbr: solve diffuse integral by convolution to create an irradiance (cube)map.
     //// -----------------------------------------------------------------------------
-    //m_shader->use();
-    //m_shader->setInt64(m_shader->getUniformPosition("environmentMap"), texture.id());
-    //m_shader->setMat4(m_shader->getUniformPosition("projection"), PrismaRender::getInstance().data().captureProjection);
+    // m_shader->use();
+    // m_shader->setInt64(m_shader->getUniformPosition("environmentMap"), texture.id());
+    // m_shader->setMat4(m_shader->getUniformPosition("projection"), PrismaRender::getInstance().data().captureProjection);
 
-    //glViewport(0, 0, 32, 32); // don't forget to configure the viewport to the capture dimensions.
-    //glBindFramebuffer(GL_FRAMEBUFFER, PrismaRender::getInstance().data().fbo);
-    //for (unsigned int i = 0; i < 6; ++i)
+    // glViewport(0, 0, 32, 32); // don't forget to configure the viewport to the capture dimensions.
+    // glBindFramebuffer(GL_FRAMEBUFFER, PrismaRender::getInstance().data().fbo);
+    // for (unsigned int i = 0; i < 6; ++i)
     //{
     //	m_shader->setMat4(m_shader->getUniformPosition("view"), PrismaRender::getInstance().data().captureViews[i]);
     //	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, m_diffuseIrradiance,
@@ -238,17 +228,14 @@ void Prisma::PipelineDiffuseIrradiance::texture(Diligent::RefCntAutoPtr<Diligent
 
     //	//PrismaRender::getInstance().renderCube();
     //}
-    //glViewport(0, 0, Prisma::SettingsLoader().getInstance().getSettings().width,
+    // glViewport(0, 0, Prisma::SettingsLoader().getInstance().getSettings().width,
     //           Prisma::SettingsLoader().getInstance().getSettings().height);
     //// don't forget to configure the viewport to the capture dimensions.
 
-    //m_id = glGetTextureHandleARB(m_diffuseIrradiance);
-    //glMakeTextureHandleResidentARB(m_id);
+    // m_id = glGetTextureHandleARB(m_diffuseIrradiance);
+    // glMakeTextureHandleResidentARB(m_id);
 
-    //glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    // glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
-
-Diligent::RefCntAutoPtr<Diligent::ITexture> Prisma::PipelineDiffuseIrradiance::irradianceTexture() {
-    return m_pMSColorRTV;
-}
+Diligent::RefCntAutoPtr<Diligent::ITexture> Prisma::PipelineDiffuseIrradiance::irradianceTexture() { return m_pMSColorRTV; }

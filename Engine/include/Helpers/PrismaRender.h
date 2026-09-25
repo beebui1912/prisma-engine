@@ -1,9 +1,9 @@
 #pragma once
 
-#include "../GlobalData/InstanceData.h"
-#include <memory>
 #include <glm/glm.hpp>
+#include <memory>
 
+#include "../GlobalData/InstanceData.h"
 #include "Common/interface/RefCntAutoPtr.hpp"
 #include "glm/ext/matrix_clip_space.hpp"
 #include "glm/ext/matrix_transform.hpp"
@@ -14,7 +14,7 @@ struct IBuffer;
 
 namespace Prisma {
 class PrismaRender : public InstanceData<PrismaRender> {
-public:
+   public:
     struct BufferData {
         Diligent::RefCntAutoPtr<Diligent::IBuffer> vBuffer;
         Diligent::RefCntAutoPtr<Diligent::IBuffer> iBuffer;
@@ -25,10 +25,9 @@ public:
 
     BufferData cubeBuffer();
 
-
     PrismaRender();
 
-private:
+   private:
     BufferData m_quadBufferData;
     BufferData m_cubeBufferData;
 
@@ -40,4 +39,4 @@ private:
     bool m_initQuad = false;
     bool m_initCube = false;
 };
-}
+}  // namespace Prisma

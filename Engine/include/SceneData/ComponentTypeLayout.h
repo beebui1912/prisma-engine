@@ -1,32 +1,21 @@
 #pragma once
 #include <nlohmann/json.hpp>
-#include "../Physics/Physics.h"
-#include "../Components/CloudComponent.h"
 
+#include "../Components/CloudComponent.h"
+#include "../Physics/Physics.h"
 
 namespace Prisma {
 using json = nlohmann::json;
 
-
 // Conversion functions to/from JSON for Collider enum
-NLOHMANN_JSON_SERIALIZE_ENUM(Prisma::Physics::Collider, {
-                             {Prisma::Physics::Collider::BOX_COLLIDER, "BOX_COLLIDER"},
-                             {Prisma::Physics::Collider::SPHERE_COLLIDER, "SPHERE_COLLIDER"},
-                             {Prisma::Physics::Collider::LANDSCAPE_COLLIDER, "LANDSCAPE_COLLIDER"},
-                             {Prisma::Physics::Collider::CONVEX_COLLIDER, "CONVEX_COLLIDER"}
-                             })
+NLOHMANN_JSON_SERIALIZE_ENUM(Prisma::Physics::Collider, {{Prisma::Physics::Collider::BOX_COLLIDER, "BOX_COLLIDER"},
+                                                         {Prisma::Physics::Collider::SPHERE_COLLIDER, "SPHERE_COLLIDER"},
+                                                         {Prisma::Physics::Collider::LANDSCAPE_COLLIDER, "LANDSCAPE_COLLIDER"},
+                                                         {Prisma::Physics::Collider::CONVEX_COLLIDER, "CONVEX_COLLIDER"}})
 
 // Conversion functions to/from JSON for CollisionData
 void to_json(json& j, const Physics::CollisionData& data) {
-    j = json{
-        {"collider", data.collider},
-        {"mass", data.mass},
-        {"dynamic", data.dynamic},
-        {"softBody", data.softBody},
-        {"friction", data.friction},
-        {"restitution", data.restitution},
-        {"pressure", data.pressure}
-    };
+    j = json{{"collider", data.collider}, {"mass", data.mass}, {"dynamic", data.dynamic}, {"softBody", data.softBody}, {"friction", data.friction}, {"restitution", data.restitution}, {"pressure", data.pressure}};
 }
 
 void from_json(const json& j, Physics::CollisionData& data) {
@@ -46,19 +35,11 @@ void to_json(json& j, const Physics::SoftBodySettings& settings) {
         data.push_back({{v.first.x, v.first.y, v.first.z}, v.second});
     }
 
-    j = json{
-        {"numIteration", settings.numIteration},
-        {"sleep", settings.sleep},
-        {"updatePosition", settings.updatePosition},
-        {"customVertices", data},
-        {
-            "vertexAttributes", {
-                {"attribute1", settings.vertexAttributes.mBendCompliance},
-                {"attribute2", settings.vertexAttributes.mCompliance},
-                {"attribute3", settings.vertexAttributes.mShearCompliance}
-            }
-        }
-    };
+    j = json{{"numIteration", settings.numIteration},
+             {"sleep", settings.sleep},
+             {"updatePosition", settings.updatePosition},
+             {"customVertices", data},
+             {"vertexAttributes", {{"attribute1", settings.vertexAttributes.mBendCompliance}, {"attribute2", settings.vertexAttributes.mCompliance}, {"attribute3", settings.vertexAttributes.mShearCompliance}}}};
 }
 
 void from_json(const json& j, Physics::SoftBodySettings& settings) {
@@ -82,12 +63,7 @@ void to_json(json& j, const Physics::LandscapeData& data) {
     for (auto landscape : data.landscape) {
         landscapeData.push_back(landscape);
     }
-    j = json{
-        {"landscape", landscapeData},
-        {"offset", {data.offset.GetX(), data.offset.GetY(), data.offset.GetZ()}},
-        {"scale", {data.scale.GetX(), data.scale.GetY(), data.scale.GetZ()}},
-        {"width", data.width}
-    };
+    j = json{{"landscape", landscapeData}, {"offset", {data.offset.GetX(), data.offset.GetY(), data.offset.GetZ()}}, {"scale", {data.scale.GetX(), data.scale.GetY(), data.scale.GetZ()}}, {"width", data.width}};
 }
 
 void from_json(const json& j, Physics::LandscapeData& data) {
@@ -108,7 +84,5 @@ void from_json(const json& j, Physics::LandscapeData& data) {
 }
 
 // Serialization for glm::vec3
-void to_json(json& j, const glm::vec3& vec) {
-    j = json{vec.x, vec.y, vec.z};
-}
-}
+void to_json(json& j, const glm::vec3& vec) { j = json{vec.x, vec.y, vec.z}; }
+}  // namespace Prisma

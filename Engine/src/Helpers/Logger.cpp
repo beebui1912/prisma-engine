@@ -14,9 +14,7 @@ void Prisma::Logger::log(LogLevel level, const std::string& message) {
     logMap[level] = logMap[level] + logEntry.str() + "\n";
 }
 
-const std::string& Prisma::Logger::getLogs(LogLevel level) const {
-    return logMap.at(level);
-}
+const std::string& Prisma::Logger::getLogs(LogLevel level) const { return logMap.at(level); }
 
 std::string Prisma::Logger::toString(LogLevel level) const {
     switch (level) {

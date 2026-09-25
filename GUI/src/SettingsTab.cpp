@@ -1,18 +1,17 @@
-#include <iostream>
-#include <iostream>
-
 #include "../include/SettingsTab.h"
-#include "GlobalData/PrismaFunc.h"
-#include "GlobalData/CacheScene.h"
-#include "engine.h"
-#include "Postprocess/Postprocess.h"
-#include "../include/ImGuiDebug.h"
-#include "../include/TextureInfo.h"
+
 #include <ThirdParty/imgui/imgui.h>
 
-#include "Handlers/TLASHandler.h"
+#include <iostream>
 
+#include "../include/ImGuiDebug.h"
+#include "../include/TextureInfo.h"
+#include "GlobalData/CacheScene.h"
+#include "GlobalData/PrismaFunc.h"
+#include "Handlers/TLASHandler.h"
 #include "Pipelines/PipelineHandler.h"
+#include "Postprocess/Postprocess.h"
+#include "engine.h"
 
 Prisma::GUI::ImguiDebug::ImGuiStatus m_status;
 
@@ -70,27 +69,22 @@ void Prisma::GUI::SettingsTab::drawSettings() {
                     PipelineHandler::getInstance().raytracing();
                     TLASHandler::getInstance().updateSizeTLAS();
 
-                    int maxHardware = PipelineHandler::getInstance().raytracing()->
-                                                                     hardwareMaxReflection();
+                    int maxHardware = PipelineHandler::getInstance().raytracing()->hardwareMaxReflection();
 
-                    int maxRecursionDepth = PipelineHandler::getInstance().raytracing()->
-                                                                           maxRecursion();
+                    int maxRecursionDepth = PipelineHandler::getInstance().raytracing()->maxRecursion();
 
                     ImGui::SliderInt("Max Recursion Depth##1", &maxRecursionDepth, 1, maxHardware);
 
-                    int maxRecursionReflection = PipelineHandler::getInstance().raytracing()->
-                                                                                maxRecursionReflection();
+                    int maxRecursionReflection = PipelineHandler::getInstance().raytracing()->maxRecursionReflection();
 
-                    ImGui::SliderInt("Max Recursion Reflection##1", &maxRecursionReflection, 1,
-                                     maxHardware);
+                    ImGui::SliderInt("Max Recursion Reflection##1", &maxRecursionReflection, 1, maxHardware);
                     break;
             }
             CacheScene::getInstance().updateSizes(true);
         }
 
-        ImGui::Combo("POSTPROCESS", &m_status.currentPostprocess, m_status.postprocess.data(),
-                     m_status.postprocess.size());
-        
+        ImGui::Combo("POSTPROCESS", &m_status.currentPostprocess, m_status.postprocess.data(), m_status.postprocess.size());
+
         bool isFxaa = m_fxaa->apply();
 
         ImGui::Checkbox("FXAA", &isFxaa);
@@ -103,17 +97,17 @@ void Prisma::GUI::SettingsTab::drawSettings() {
 
         ImGui::Checkbox("SCREEN SPACE REFLECTIONS", &settings.ssr);
 
-        //ImGui::Checkbox("SCREEN SPACE AMBIENT OCCLUSION", &settings.ssao);
-        
+        // ImGui::Checkbox("SCREEN SPACE AMBIENT OCCLUSION", &settings.ssao);
+
         bool debugPhysics = Physics::getInstance().debug();
 
         ImGui::Checkbox("PHYSICS DEBUG", &debugPhysics);
         Physics::getInstance().debug(debugPhysics);
 
         //
-        //bool sortTransparencies = Prisma::GlobalData::getInstance().transparencies();
+        // bool sortTransparencies = Prisma::GlobalData::getInstance().transparencies();
         //
-        //ImGui::Checkbox("SORT TRANSPARENCIES", &sortTransparencies);
+        // ImGui::Checkbox("SORT TRANSPARENCIES", &sortTransparencies);
 
         float scale = ImguiDebug::getInstance().scale();
 
@@ -130,11 +124,9 @@ void Prisma::GUI::SettingsTab::drawSettings() {
 
                 ImGui::SliderInt("Max Recursion Depth##1", &maxRecursionDepth, 1, maxHardware);
 
-                int maxRecursionReflection = PipelineHandler::getInstance().raytracing()->
-                                                                            maxRecursionReflection();
+                int maxRecursionReflection = PipelineHandler::getInstance().raytracing()->maxRecursionReflection();
 
-                ImGui::SliderInt("Max Recursion Reflection##1", &maxRecursionReflection, 1,
-                                 maxHardware);
+                ImGui::SliderInt("Max Recursion Reflection##1", &maxRecursionReflection, 1, maxHardware);
 
                 bool raytracingEasy = PipelineHandler::getInstance().raytracing()->raytracingEasy();
 
@@ -143,8 +135,7 @@ void Prisma::GUI::SettingsTab::drawSettings() {
                 PipelineHandler::getInstance().raytracing()->raytracingEasy(raytracingEasy);
 
                 PipelineHandler::getInstance().raytracing()->maxRecursion(maxRecursionDepth);
-                PipelineHandler::getInstance().raytracing()->maxRecursionReflection(
-                    maxRecursionReflection);
+                PipelineHandler::getInstance().raytracing()->maxRecursionReflection(maxRecursionReflection);
                 break;
         }
 
@@ -167,7 +158,7 @@ void Prisma::GUI::SettingsTab::drawSettings() {
             case PostprocessingStyles::EFFECTS::RAYS: {
                 auto volumetric = m_effects->volumetricRaysRender();
                 auto volumetricSettings = volumetric->volumetricSettings();
-                ImGui::SliderFloat("Density", &volumetricSettings.density.r,0,1);
+                ImGui::SliderFloat("Density", &volumetricSettings.density.r, 0, 1);
                 ImGui::SliderFloat("Decay", &volumetricSettings.decay.r, 0, 1);
                 ImGui::SliderFloat("Exposure", &volumetricSettings.exposure.r, 0, 1);
                 ImGui::SliderFloat("Weight", &volumetricSettings.weight.r, 0, 1);
@@ -178,14 +169,13 @@ void Prisma::GUI::SettingsTab::drawSettings() {
             }
         }
 
-        //Prisma::GlobalData::getInstance().transparencies(sortTransparencies);
+        // Prisma::GlobalData::getInstance().transparencies(sortTransparencies);
 
         Engine::getInstance().engineSettings(settings);
 
         ImguiDebug::getInstance().scale(scale);
 
-        if (!closed)
-            ImGui::CloseCurrentPopup();
+        if (!closed) ImGui::CloseCurrentPopup();
         ImGui::EndPopup();
     }
 }

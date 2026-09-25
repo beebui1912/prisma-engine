@@ -1,19 +1,20 @@
 #include "Components/InstancingComponent.h"
-#include "GlobalData/PrismaFunc.h"
-#include "Pipelines/PipelineHandler.h"
+
 #include "GlobalData/GlobalShaderNames.h"
+#include "GlobalData/PrismaFunc.h"
 #include "Handlers/LightHandler.h"
+#include "Pipelines/PipelineDiffuseIrradiance.h"
+#include "Pipelines/PipelineHandler.h"
 #include "Pipelines/PipelineLUT.h"
 #include "Pipelines/PipelinePrefilter.h"
-#include "Pipelines/PipelineDiffuseIrradiance.h"
 
 using namespace Diligent;
 
 Prisma::InstancingComponent::InstancingComponent() : RenderComponent{} { name("Instancing"); }
 
-void Prisma::InstancingComponent::start() { 
-	Component::start(); 
-	auto& contextData = PrismaFunc::getInstance().contextData();
+void Prisma::InstancingComponent::start() {
+    Component::start();
+    auto& contextData = PrismaFunc::getInstance().contextData();
 
     GraphicsPipelineStateCreateInfo PSOCreateInfo;
 
@@ -24,7 +25,7 @@ void Prisma::InstancingComponent::start() {
     // This is a graphics pipeline
     PSOCreateInfo.PSODesc.PipelineType = PIPELINE_TYPE_GRAPHICS;
 
-        // clang-format off
+    // clang-format off
     // This tutorial will render to a single render target
     PSOCreateInfo.GraphicsPipeline.NumRenderTargets = 1;
     // Set render target format which is the format of the swap chain's color buffer
@@ -38,46 +39,46 @@ void Prisma::InstancingComponent::start() {
     PSOCreateInfo.GraphicsPipeline.RasterizerDesc.CullMode = CULL_MODE_BACK;
     // Enable depth testing
     PSOCreateInfo.GraphicsPipeline.DepthStencilDesc.DepthEnable = true;
-        // clang-format on
+    // clang-format on
 
-        ShaderCreateInfo ShaderCI;
+    ShaderCreateInfo ShaderCI;
 
-        // Tell the system that the shader source code is in HLSL.
-        // For OpenGL, the engine will convert this into GLSL under the hood.
-        ShaderCI.SourceLanguage = SHADER_SOURCE_LANGUAGE_GLSL;
-        ShaderCI.CompileFlags |= SHADER_COMPILE_FLAG_ENABLE_UNBOUNDED_ARRAYS;
+    // Tell the system that the shader source code is in HLSL.
+    // For OpenGL, the engine will convert this into GLSL under the hood.
+    ShaderCI.SourceLanguage = SHADER_SOURCE_LANGUAGE_GLSL;
+    ShaderCI.CompileFlags |= SHADER_COMPILE_FLAG_ENABLE_UNBOUNDED_ARRAYS;
 
-        // OpenGL backend requires emulated combined HLSL texture samplers (g_Texture + g_Texture_sampler combination)
-        ShaderCI.Desc.UseCombinedTextureSamplers = true;
+    // OpenGL backend requires emulated combined HLSL texture samplers (g_Texture + g_Texture_sampler combination)
+    ShaderCI.Desc.UseCombinedTextureSamplers = true;
 
-        // Pack matrices in row-major order
+    // Pack matrices in row-major order
 
-        // In this tutorial, we will load shaders from file. To be able to do that,
-        // we need to create a shader source stream factory
-        RefCntAutoPtr<IShaderSourceInputStreamFactory> pShaderSourceFactory;
-        contextData.engineFactory->CreateDefaultShaderSourceStreamFactory(nullptr, &pShaderSourceFactory);
-        ShaderCI.pShaderSourceStreamFactory = pShaderSourceFactory;
-        // Create a vertex shader
-        RefCntAutoPtr<IShader> pVS;
-        {
-            ShaderCI.Desc.ShaderType = SHADER_TYPE_VERTEX;
-            ShaderCI.EntryPoint = "main";
-            ShaderCI.Desc.Name = "Forward VS Instancing Renderer";
-            ShaderCI.FilePath = "../../../Engine/Shaders/ForwardInstancingPipeline/vertex.glsl";
-            contextData.device->CreateShader(ShaderCI, &pVS);
-        }
+    // In this tutorial, we will load shaders from file. To be able to do that,
+    // we need to create a shader source stream factory
+    RefCntAutoPtr<IShaderSourceInputStreamFactory> pShaderSourceFactory;
+    contextData.engineFactory->CreateDefaultShaderSourceStreamFactory(nullptr, &pShaderSourceFactory);
+    ShaderCI.pShaderSourceStreamFactory = pShaderSourceFactory;
+    // Create a vertex shader
+    RefCntAutoPtr<IShader> pVS;
+    {
+        ShaderCI.Desc.ShaderType = SHADER_TYPE_VERTEX;
+        ShaderCI.EntryPoint = "main";
+        ShaderCI.Desc.Name = "Forward VS Instancing Renderer";
+        ShaderCI.FilePath = "../../../Engine/Shaders/ForwardInstancingPipeline/vertex.glsl";
+        contextData.device->CreateShader(ShaderCI, &pVS);
+    }
 
-        // Create a pixel shader
-        RefCntAutoPtr<IShader> pPS;
-        {
-            ShaderCI.Desc.ShaderType = SHADER_TYPE_PIXEL;
-            ShaderCI.EntryPoint = "main";
-            ShaderCI.Desc.Name = "Forward PS Instancing Renderer";
-            ShaderCI.FilePath = "../../../Engine/Shaders/ForwardInstancingPipeline/fragment.glsl";
-            contextData.device->CreateShader(ShaderCI, &pPS);
-        }
+    // Create a pixel shader
+    RefCntAutoPtr<IShader> pPS;
+    {
+        ShaderCI.Desc.ShaderType = SHADER_TYPE_PIXEL;
+        ShaderCI.EntryPoint = "main";
+        ShaderCI.Desc.Name = "Forward PS Instancing Renderer";
+        ShaderCI.FilePath = "../../../Engine/Shaders/ForwardInstancingPipeline/fragment.glsl";
+        contextData.device->CreateShader(ShaderCI, &pPS);
+    }
 
-        // clang-format off
+    // clang-format off
     // Define vertex shader input layout
     LayoutElement LayoutElems[] =
     {
@@ -92,54 +93,54 @@ void Prisma::InstancingComponent::start() {
 
         LayoutElement{4, 0, 3, VT_FLOAT32, False}
     };
-        // clang-format on
-        PSOCreateInfo.GraphicsPipeline.InputLayout.LayoutElements = LayoutElems;
-        PSOCreateInfo.GraphicsPipeline.InputLayout.NumElements = _countof(LayoutElems);
+    // clang-format on
+    PSOCreateInfo.GraphicsPipeline.InputLayout.LayoutElements = LayoutElems;
+    PSOCreateInfo.GraphicsPipeline.InputLayout.NumElements = _countof(LayoutElems);
 
-        PSOCreateInfo.pVS = pVS;
-        PSOCreateInfo.pPS = pPS;
+    PSOCreateInfo.pVS = pVS;
+    PSOCreateInfo.pPS = pPS;
 
-        // Define variable type that will be used by default
-        PSOCreateInfo.PSODesc.ResourceLayout.DefaultVariableType = SHADER_RESOURCE_VARIABLE_TYPE_STATIC;
+    // Define variable type that will be used by default
+    PSOCreateInfo.PSODesc.ResourceLayout.DefaultVariableType = SHADER_RESOURCE_VARIABLE_TYPE_STATIC;
 
-        std::string samplerClampName = "textureClamp_sampler";
-        std::string samplerRepeatName = "textureRepeat_sampler";
+    std::string samplerClampName = "textureClamp_sampler";
+    std::string samplerRepeatName = "textureRepeat_sampler";
 
-        PipelineResourceDesc Resources[] = {
-            {SHADER_TYPE_VERTEX, ShaderNames::MUTABLE_MODELS.c_str(), 1, SHADER_RESOURCE_TYPE_BUFFER_SRV, SHADER_RESOURCE_VARIABLE_TYPE_MUTABLE},
-            {SHADER_TYPE_VERTEX, ShaderNames::MUTABLE_INDEX_OPAQUE.c_str(), 1, SHADER_RESOURCE_TYPE_BUFFER_SRV, SHADER_RESOURCE_VARIABLE_TYPE_MUTABLE},
+    PipelineResourceDesc Resources[] = {
+        {SHADER_TYPE_VERTEX, ShaderNames::MUTABLE_MODELS.c_str(), 1, SHADER_RESOURCE_TYPE_BUFFER_SRV, SHADER_RESOURCE_VARIABLE_TYPE_MUTABLE},
+        {SHADER_TYPE_VERTEX, ShaderNames::MUTABLE_INDEX_OPAQUE.c_str(), 1, SHADER_RESOURCE_TYPE_BUFFER_SRV, SHADER_RESOURCE_VARIABLE_TYPE_MUTABLE},
 
-            {SHADER_TYPE_PIXEL, ShaderNames::MUTABLE_STATUS.c_str(), 1, SHADER_RESOURCE_TYPE_BUFFER_SRV, SHADER_RESOURCE_VARIABLE_TYPE_MUTABLE},
-            {SHADER_TYPE_VERTEX, ShaderNames::CONSTANT_VIEW_PROJECTION.c_str(), 1, SHADER_RESOURCE_TYPE_CONSTANT_BUFFER, SHADER_RESOURCE_VARIABLE_TYPE_STATIC},
-            {SHADER_TYPE_PIXEL, ShaderNames::CONSTANT_VIEW_PROJECTION.c_str(), 1, SHADER_RESOURCE_TYPE_CONSTANT_BUFFER, SHADER_RESOURCE_VARIABLE_TYPE_STATIC},
-            {SHADER_TYPE_PIXEL, ShaderNames::CONSTANT_LIGHT_SIZES.c_str(), 1, SHADER_RESOURCE_TYPE_CONSTANT_BUFFER, SHADER_RESOURCE_VARIABLE_TYPE_STATIC},
-            {SHADER_TYPE_PIXEL, ShaderNames::CONSTANT_OMNI_DATA.c_str(), 1, SHADER_RESOURCE_TYPE_BUFFER_SRV, SHADER_RESOURCE_VARIABLE_TYPE_STATIC},
-            {SHADER_TYPE_PIXEL, ShaderNames::CONSTANT_SPOT_DATA.c_str(), 1, SHADER_RESOURCE_TYPE_BUFFER_SRV, SHADER_RESOURCE_VARIABLE_TYPE_STATIC},
+        {SHADER_TYPE_PIXEL, ShaderNames::MUTABLE_STATUS.c_str(), 1, SHADER_RESOURCE_TYPE_BUFFER_SRV, SHADER_RESOURCE_VARIABLE_TYPE_MUTABLE},
+        {SHADER_TYPE_VERTEX, ShaderNames::CONSTANT_VIEW_PROJECTION.c_str(), 1, SHADER_RESOURCE_TYPE_CONSTANT_BUFFER, SHADER_RESOURCE_VARIABLE_TYPE_STATIC},
+        {SHADER_TYPE_PIXEL, ShaderNames::CONSTANT_VIEW_PROJECTION.c_str(), 1, SHADER_RESOURCE_TYPE_CONSTANT_BUFFER, SHADER_RESOURCE_VARIABLE_TYPE_STATIC},
+        {SHADER_TYPE_PIXEL, ShaderNames::CONSTANT_LIGHT_SIZES.c_str(), 1, SHADER_RESOURCE_TYPE_CONSTANT_BUFFER, SHADER_RESOURCE_VARIABLE_TYPE_STATIC},
+        {SHADER_TYPE_PIXEL, ShaderNames::CONSTANT_OMNI_DATA.c_str(), 1, SHADER_RESOURCE_TYPE_BUFFER_SRV, SHADER_RESOURCE_VARIABLE_TYPE_STATIC},
+        {SHADER_TYPE_PIXEL, ShaderNames::CONSTANT_SPOT_DATA.c_str(), 1, SHADER_RESOURCE_TYPE_BUFFER_SRV, SHADER_RESOURCE_VARIABLE_TYPE_STATIC},
 
-            {SHADER_TYPE_PIXEL, ShaderNames::CONSTANT_DIR_DATA.c_str(), 1, SHADER_RESOURCE_TYPE_BUFFER_SRV, SHADER_RESOURCE_VARIABLE_TYPE_STATIC},
-            {SHADER_TYPE_PIXEL, ShaderNames::CONSTANT_CLUSTERS.c_str(), 1, SHADER_RESOURCE_TYPE_BUFFER_SRV, SHADER_RESOURCE_VARIABLE_TYPE_STATIC},
-            {SHADER_TYPE_PIXEL, ShaderNames::CONSTANT_CLUSTERS_DATA.c_str(), 1, SHADER_RESOURCE_TYPE_CONSTANT_BUFFER, SHADER_RESOURCE_VARIABLE_TYPE_STATIC},
-            {SHADER_TYPE_PIXEL, ShaderNames::CONSTANT_DIR_DATA_SHADOW.c_str(), 1, SHADER_RESOURCE_TYPE_CONSTANT_BUFFER, SHADER_RESOURCE_VARIABLE_TYPE_STATIC},
-            {SHADER_TYPE_PIXEL, ShaderNames::MUTABLE_OMNI_DATA_SHADOW.c_str(), Define::MAX_OMNI_SHADOW, SHADER_RESOURCE_TYPE_TEXTURE_SRV, SHADER_RESOURCE_VARIABLE_TYPE_MUTABLE, PIPELINE_RESOURCE_FLAG_RUNTIME_ARRAY},
-            {SHADER_TYPE_PIXEL, ShaderNames::MUTABLE_DIR_SHADOW.c_str(), 1, SHADER_RESOURCE_TYPE_TEXTURE_SRV, SHADER_RESOURCE_VARIABLE_TYPE_MUTABLE},
-            {SHADER_TYPE_PIXEL, ShaderNames::MUTABLE_DIFFUSE_TEXTURE.c_str(), Define::MAX_MESHES, SHADER_RESOURCE_TYPE_TEXTURE_SRV, SHADER_RESOURCE_VARIABLE_TYPE_MUTABLE, PIPELINE_RESOURCE_FLAG_RUNTIME_ARRAY},
-            {SHADER_TYPE_PIXEL, ShaderNames::MUTABLE_NORMAL_TEXTURE.c_str(), Define::MAX_MESHES, SHADER_RESOURCE_TYPE_TEXTURE_SRV, SHADER_RESOURCE_VARIABLE_TYPE_MUTABLE, PIPELINE_RESOURCE_FLAG_RUNTIME_ARRAY},
-            {SHADER_TYPE_PIXEL, ShaderNames::MUTABLE_ROUGHNESS_METALNESS_TEXTURE.c_str(), Define::MAX_MESHES, SHADER_RESOURCE_TYPE_TEXTURE_SRV, SHADER_RESOURCE_VARIABLE_TYPE_MUTABLE, PIPELINE_RESOURCE_FLAG_RUNTIME_ARRAY},
+        {SHADER_TYPE_PIXEL, ShaderNames::CONSTANT_DIR_DATA.c_str(), 1, SHADER_RESOURCE_TYPE_BUFFER_SRV, SHADER_RESOURCE_VARIABLE_TYPE_STATIC},
+        {SHADER_TYPE_PIXEL, ShaderNames::CONSTANT_CLUSTERS.c_str(), 1, SHADER_RESOURCE_TYPE_BUFFER_SRV, SHADER_RESOURCE_VARIABLE_TYPE_STATIC},
+        {SHADER_TYPE_PIXEL, ShaderNames::CONSTANT_CLUSTERS_DATA.c_str(), 1, SHADER_RESOURCE_TYPE_CONSTANT_BUFFER, SHADER_RESOURCE_VARIABLE_TYPE_STATIC},
+        {SHADER_TYPE_PIXEL, ShaderNames::CONSTANT_DIR_DATA_SHADOW.c_str(), 1, SHADER_RESOURCE_TYPE_CONSTANT_BUFFER, SHADER_RESOURCE_VARIABLE_TYPE_STATIC},
+        {SHADER_TYPE_PIXEL, ShaderNames::MUTABLE_OMNI_DATA_SHADOW.c_str(), Define::MAX_OMNI_SHADOW, SHADER_RESOURCE_TYPE_TEXTURE_SRV, SHADER_RESOURCE_VARIABLE_TYPE_MUTABLE, PIPELINE_RESOURCE_FLAG_RUNTIME_ARRAY},
+        {SHADER_TYPE_PIXEL, ShaderNames::MUTABLE_DIR_SHADOW.c_str(), 1, SHADER_RESOURCE_TYPE_TEXTURE_SRV, SHADER_RESOURCE_VARIABLE_TYPE_MUTABLE},
+        {SHADER_TYPE_PIXEL, ShaderNames::MUTABLE_DIFFUSE_TEXTURE.c_str(), Define::MAX_MESHES, SHADER_RESOURCE_TYPE_TEXTURE_SRV, SHADER_RESOURCE_VARIABLE_TYPE_MUTABLE, PIPELINE_RESOURCE_FLAG_RUNTIME_ARRAY},
+        {SHADER_TYPE_PIXEL, ShaderNames::MUTABLE_NORMAL_TEXTURE.c_str(), Define::MAX_MESHES, SHADER_RESOURCE_TYPE_TEXTURE_SRV, SHADER_RESOURCE_VARIABLE_TYPE_MUTABLE, PIPELINE_RESOURCE_FLAG_RUNTIME_ARRAY},
+        {SHADER_TYPE_PIXEL, ShaderNames::MUTABLE_ROUGHNESS_METALNESS_TEXTURE.c_str(), Define::MAX_MESHES, SHADER_RESOURCE_TYPE_TEXTURE_SRV, SHADER_RESOURCE_VARIABLE_TYPE_MUTABLE, PIPELINE_RESOURCE_FLAG_RUNTIME_ARRAY},
 
-            {SHADER_TYPE_PIXEL, samplerClampName.c_str(), 1, SHADER_RESOURCE_TYPE_SAMPLER, SHADER_RESOURCE_VARIABLE_TYPE_STATIC},
-            {SHADER_TYPE_PIXEL, samplerRepeatName.c_str(), 1, SHADER_RESOURCE_TYPE_SAMPLER, SHADER_RESOURCE_VARIABLE_TYPE_STATIC},
+        {SHADER_TYPE_PIXEL, samplerClampName.c_str(), 1, SHADER_RESOURCE_TYPE_SAMPLER, SHADER_RESOURCE_VARIABLE_TYPE_STATIC},
+        {SHADER_TYPE_PIXEL, samplerRepeatName.c_str(), 1, SHADER_RESOURCE_TYPE_SAMPLER, SHADER_RESOURCE_VARIABLE_TYPE_STATIC},
 
-            {SHADER_TYPE_PIXEL, ShaderNames::CONSTANT_LUT.c_str(), 1, SHADER_RESOURCE_TYPE_TEXTURE_SRV, SHADER_RESOURCE_VARIABLE_TYPE_STATIC},
-            {SHADER_TYPE_PIXEL, ShaderNames::MUTABLE_PREFILTER.c_str(), 1, SHADER_RESOURCE_TYPE_TEXTURE_SRV, SHADER_RESOURCE_VARIABLE_TYPE_MUTABLE},
-            {SHADER_TYPE_PIXEL, ShaderNames::MUTABLE_IRRADIANCE.c_str(), 1, SHADER_RESOURCE_TYPE_TEXTURE_SRV, SHADER_RESOURCE_VARIABLE_TYPE_MUTABLE},
+        {SHADER_TYPE_PIXEL, ShaderNames::CONSTANT_LUT.c_str(), 1, SHADER_RESOURCE_TYPE_TEXTURE_SRV, SHADER_RESOURCE_VARIABLE_TYPE_STATIC},
+        {SHADER_TYPE_PIXEL, ShaderNames::MUTABLE_PREFILTER.c_str(), 1, SHADER_RESOURCE_TYPE_TEXTURE_SRV, SHADER_RESOURCE_VARIABLE_TYPE_MUTABLE},
+        {SHADER_TYPE_PIXEL, ShaderNames::MUTABLE_IRRADIANCE.c_str(), 1, SHADER_RESOURCE_TYPE_TEXTURE_SRV, SHADER_RESOURCE_VARIABLE_TYPE_MUTABLE},
 
-        };
+    };
 
-        PipelineResourceSignatureDesc ResourceSignDesc;
-        ResourceSignDesc.NumResources = _countof(Resources);
-        ResourceSignDesc.Resources = Resources;
+    PipelineResourceSignatureDesc ResourceSignDesc;
+    ResourceSignDesc.NumResources = _countof(Resources);
+    ResourceSignDesc.Resources = Resources;
 
-        // clang-format off
+    // clang-format off
     // Define immutable sampler for g_Texture. Immutable samplers should be used whenever possible
     SamplerDesc SamLinearClampDesc
     {

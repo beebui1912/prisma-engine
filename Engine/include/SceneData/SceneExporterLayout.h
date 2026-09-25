@@ -1,21 +1,20 @@
 #pragma once
 
-#include <iostream>
 #include <fstream>
-#include <nlohmann/json.hpp>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
+#include <glm/gtx/string_cast.hpp>
+#include <iostream>
+#include <nlohmann/json.hpp>
 
 #include "../Components/RegisterComponent.h"
+#include "../Helpers/Logger.h"
+#include "../Helpers/WindowsHelper.h"
 #include "../Pipelines/PipelineSkybox.h"
-#include "../SceneObjects/Node.h"
 #include "../SceneObjects/AnimatedMesh.h"
 #include "../SceneObjects/Light.h"
-#include "../Helpers/WindowsHelper.h"
-#include <glm/gtx/string_cast.hpp>
-
-#include "../Helpers/Logger.h"
+#include "../SceneObjects/Node.h"
 
 namespace Prisma {
 using json = nlohmann::json;
@@ -25,9 +24,7 @@ struct Transform {
     glm::mat4 transform;
 
     // Serialize Transform to JSON
-    friend void to_json(json& j, const Transform& t) {
-        j = json{{"t", std::vector<float>(value_ptr(t.transform), value_ptr(t.transform) + 16)}};
-    }
+    friend void to_json(json& j, const Transform& t) { j = json{{"t", std::vector<float>(value_ptr(t.transform), value_ptr(t.transform) + 16)}}; }
 
     // Deserialize Transform from JSON
     friend void from_json(const json& j, Transform& t) {
@@ -42,21 +39,16 @@ static int counter;
 static int percentage;
 static std::mutex mutex;
 static std::string skybox = "";
-}
+}  // namespace SceneExporterLayout
 
 void to_json(json& j, std::shared_ptr<Node> n) {
     Transform t;
     Transform k;
     t.transform = n->matrix();
     k.transform = n->finalMatrix();
-    j = json{
-        {"name", n->name()},
-        {"t", t},
-        {"k", k},
-        {"c", n->children()}
-    };
+    j = json{{"name", n->name()}, {"t", t}, {"k", k}, {"c", n->children()}};
     j["type"] = "NODE";
-    std::vector<std::tuple<std::string, std::string,bool,bool>> textures;
+    std::vector<std::tuple<std::string, std::string, bool, bool>> textures;
     if (std::dynamic_pointer_cast<AnimatedMesh>(n)) {
         auto mesh = std::dynamic_pointer_cast<AnimatedMesh>(n);
 
@@ -64,7 +56,7 @@ void to_json(json& j, std::shared_ptr<Node> n) {
         if (mesh->material()->diffuse().size() > 0) {
             std::string textureName = mesh->material()->diffuse()[0].name();
             if (textureName == "") {
-                textures.push_back({"DIFFUSE", "NO_TEXTURE", true,false});
+                textures.push_back({"DIFFUSE", "NO_TEXTURE", true, false});
             } else {
                 textures.push_back({"DIFFUSE", WindowsHelper::getInstance().relativePath(textureName), mesh->material()->diffuse()[0].parameters().srgb, mesh->material()->diffuse()[0].parameters().compress});
             }
@@ -74,7 +66,7 @@ void to_json(json& j, std::shared_ptr<Node> n) {
         if (mesh->material()->normal().size() > 0) {
             std::string textureName = mesh->material()->normal()[0].name();
             if (textureName == "") {
-                textures.push_back({"NORMAL", "NO_TEXTURE",false,false});
+                textures.push_back({"NORMAL", "NO_TEXTURE", false, false});
             } else {
                 textures.push_back({"NORMAL", WindowsHelper::getInstance().relativePath(textureName), mesh->material()->normal()[0].parameters().srgb, mesh->material()->normal()[0].parameters().compress});
             }
@@ -84,16 +76,16 @@ void to_json(json& j, std::shared_ptr<Node> n) {
         if (mesh->material()->roughnessMetalness().size() > 0) {
             std::string textureName = mesh->material()->roughnessMetalness()[0].name();
             if (textureName == "") {
-                textures.push_back({"ROUGHNESS", "NO_TEXTURE",false,false});
+                textures.push_back({"ROUGHNESS", "NO_TEXTURE", false, false});
             } else {
-                textures.push_back({"ROUGHNESS", WindowsHelper::getInstance().relativePath(textureName), mesh->material()->roughnessMetalness()[0].parameters().srgb,mesh->material()->roughnessMetalness()[0].parameters().compress});
+                textures.push_back({"ROUGHNESS", WindowsHelper::getInstance().relativePath(textureName), mesh->material()->roughnessMetalness()[0].parameters().srgb, mesh->material()->roughnessMetalness()[0].parameters().compress});
             }
         }
 
         if (mesh->material()->specular().size() > 0) {
             std::string textureName = mesh->material()->specular()[0].name();
             if (textureName == "") {
-                textures.push_back({"SPECULAR", "NO_TEXTURE",false,false});
+                textures.push_back({"SPECULAR", "NO_TEXTURE", false, false});
             } else {
                 textures.push_back({"SPECULAR", WindowsHelper::getInstance().relativePath(textureName), mesh->material()->specular()[0].parameters().srgb, mesh->material()->specular()[0].parameters().compress});
             }
@@ -101,7 +93,7 @@ void to_json(json& j, std::shared_ptr<Node> n) {
         if (mesh->material()->ambientOcclusion().size() > 0) {
             std::string textureName = mesh->material()->ambientOcclusion()[0].name();
             if (textureName == "") {
-                textures.push_back({"AMBIENT_OCCLUSION", "NO_TEXTURE",false,false});
+                textures.push_back({"AMBIENT_OCCLUSION", "NO_TEXTURE", false, false});
             } else {
                 textures.push_back({"AMBIENT_OCCLUSION", WindowsHelper::getInstance().relativePath(textureName), mesh->material()->ambientOcclusion()[0].parameters().srgb, mesh->material()->ambientOcclusion()[0].parameters().compress});
             }
@@ -112,8 +104,7 @@ void to_json(json& j, std::shared_ptr<Node> n) {
         j["roughness"] = mesh->material()->roughness();
         j["metalness"] = mesh->material()->metalness();
         j["plain"] = mesh->material()->plain();
-        j["color"] = {mesh->material()->color().x, mesh->material()->color().y, mesh->material()->color().z,
-                      mesh->material()->color().w};
+        j["color"] = {mesh->material()->color().x, mesh->material()->color().y, mesh->material()->color().z, mesh->material()->color().w};
         j["transparent"] = mesh->material()->transparent();
         auto rtMaterial = mesh->material()->rtMaterial();
 
@@ -127,23 +118,13 @@ void to_json(json& j, std::shared_ptr<Node> n) {
         // Convert Vertex properties to arrays of floats
         std::vector<json> verticesJson;
         for (const auto& vertex : mesh->animateVerticesData()->vertices) {
-            verticesJson.push_back({
-                {"p", {vertex.position.x, vertex.position.y, vertex.position.z}},
-                {
-                    "boneId",
-                    {vertex.m_BoneIDs[0], vertex.m_BoneIDs[1], vertex.m_BoneIDs[2],
-                     vertex.m_BoneIDs[3]}
-                },
-                {
-                    "weight",
-                    {vertex.m_Weights[0], vertex.m_Weights[1], vertex.m_Weights[2],
-                     vertex.m_Weights[3]}
-                },
-                {"n", {vertex.normal.x, vertex.normal.y, vertex.normal.z}},
-                {"texCoords", {vertex.texCoords.x, vertex.texCoords.y}},
-                {"ta", {vertex.tangent.x, vertex.tangent.y, vertex.tangent.z}},
-                {"bi", {vertex.bitangent.x, vertex.bitangent.y, vertex.bitangent.z}}
-            });
+            verticesJson.push_back({{"p", {vertex.position.x, vertex.position.y, vertex.position.z}},
+                                    {"boneId", {vertex.m_BoneIDs[0], vertex.m_BoneIDs[1], vertex.m_BoneIDs[2], vertex.m_BoneIDs[3]}},
+                                    {"weight", {vertex.m_Weights[0], vertex.m_Weights[1], vertex.m_Weights[2], vertex.m_Weights[3]}},
+                                    {"n", {vertex.normal.x, vertex.normal.y, vertex.normal.z}},
+                                    {"texCoords", {vertex.texCoords.x, vertex.texCoords.y}},
+                                    {"ta", {vertex.tangent.x, vertex.tangent.y, vertex.tangent.z}},
+                                    {"bi", {vertex.bitangent.x, vertex.bitangent.y, vertex.bitangent.z}}});
         }
         std::vector<std::vector<float>> data;
 
@@ -158,14 +139,9 @@ void to_json(json& j, std::shared_ptr<Node> n) {
 
             data.push_back({vertex.bitangent.x, vertex.bitangent.y, vertex.bitangent.z});
 
-            data.push_back({
-                static_cast<float>(vertex.m_BoneIDs[0]), static_cast<float>(vertex.m_BoneIDs[1]),
-                static_cast<float>(vertex.m_BoneIDs[2]), static_cast<float>(vertex.m_BoneIDs[3])
-            });
+            data.push_back({static_cast<float>(vertex.m_BoneIDs[0]), static_cast<float>(vertex.m_BoneIDs[1]), static_cast<float>(vertex.m_BoneIDs[2]), static_cast<float>(vertex.m_BoneIDs[3])});
 
-            data.push_back({
-                vertex.m_Weights[0], vertex.m_Weights[1], vertex.m_Weights[2], vertex.m_Weights[3]
-            });
+            data.push_back({vertex.m_Weights[0], vertex.m_Weights[1], vertex.m_Weights[2], vertex.m_Weights[3]});
         }
 
         j["type"] = "MESH_ANIMATE";
@@ -191,11 +167,10 @@ void to_json(json& j, std::shared_ptr<Node> n) {
         } else {
             j["animationPath"] = "";
         }
-        
+
     } else if (std::dynamic_pointer_cast<Mesh>(n)) {
         auto mesh = std::dynamic_pointer_cast<Mesh>(n);
 
-        
         // Add the diffuse texture property
         if (mesh->material()->diffuse().size() > 0) {
             std::string textureName = mesh->material()->diffuse()[0].name();
@@ -260,8 +235,7 @@ void to_json(json& j, std::shared_ptr<Node> n) {
         j["faces"] = mesh->verticesData().indices;
         j["plain"] = mesh->material()->plain();
         j["transparent"] = mesh->material()->transparent();
-        j["color"] = {mesh->material()->color().x, mesh->material()->color().y, mesh->material()->color().z,
-                      mesh->material()->color().w};
+        j["color"] = {mesh->material()->color().x, mesh->material()->color().y, mesh->material()->color().z, mesh->material()->color().w};
         auto rtMaterial = mesh->material()->rtMaterial();
 
         j["DispersionSampleCount"] = rtMaterial.DispersionSampleCount;
@@ -288,10 +262,7 @@ void to_json(json& j, std::shared_ptr<Node> n) {
         j["diffuse"] = {light->type().diffuse.x, light->type().diffuse.y, light->type().diffuse.z};
         j["specular"] = {light->type().specular.x, light->type().specular.y, light->type().specular.z};
         j["radius"] = light->type().radius;
-        j["attenuation"] = {
-            light->type().attenuation.x, light->type().attenuation.y, light->type().attenuation.z,
-            light->type().attenuation.w
-        };
+        j["attenuation"] = {light->type().attenuation.x, light->type().attenuation.y, light->type().attenuation.z, light->type().attenuation.w};
         j["farPlane"] = light->type().farPlane.x;
         j["shadow"] = light->hasShadow();
         j["intensity"] = light->intensity();
@@ -335,9 +306,7 @@ void from_json(json& j, std::shared_ptr<Node> n) {
     std::vector<json> childrenJson;
     j.at("c").get_to(childrenJson);
     SceneExporterLayout::mutex.lock();
-    SceneExporterLayout::status = std::make_pair(
-        name, (static_cast<float>(SceneExporterLayout::percentage) / static_cast<float>(
-                   SceneExporterLayout::counter)) * 100);
+    SceneExporterLayout::status = std::make_pair(name, (static_cast<float>(SceneExporterLayout::percentage) / static_cast<float>(SceneExporterLayout::counter)) * 100);
     SceneExporterLayout::percentage++;
     SceneExporterLayout::mutex.unlock();
     for (json& childJson : childrenJson) {
@@ -348,7 +317,7 @@ void from_json(json& j, std::shared_ptr<Node> n) {
             child = std::make_shared<Light<LightType::LightDir>>();
         } else if (childJson["type"] == "LIGHT_OMNI") {
             child = std::make_shared<Light<LightType::LightOmni>>();
-        }else if (childJson["type"] == "LIGHT_SPOT") {
+        } else if (childJson["type"] == "LIGHT_SPOT") {
             child = std::make_shared<Light<LightType::LightSpot>>();
         } else if (childJson["type"] == "MESH_ANIMATE") {
             child = std::make_shared<AnimatedMesh>();
@@ -491,17 +460,10 @@ void from_json(json& j, std::shared_ptr<Node> n) {
     } else if (type == "LIGHT_DIRECTIONAL") {
         auto light = std::dynamic_pointer_cast<Light<LightType::LightDir>>(n);
         LightType::LightDir lightType;
-        lightType.direction = glm::vec4(j.at("direction").get<std::vector<float>>().at(0),
-                                        j.at("direction").get<std::vector<float>>().at(1),
-                                        j.at("direction").get<std::vector<float>>().at(2), 1.0);
-        lightType.diffuse = glm::vec4(j.at("diffuse").get<std::vector<float>>().at(0),
-                                      j.at("diffuse").get<std::vector<float>>().at(1),
-                                      j.at("diffuse").get<std::vector<float>>().at(2), 1.0);
-        lightType.specular = glm::vec4(j.at("specular").get<std::vector<float>>().at(0),
-                                       j.at("specular").get<std::vector<float>>().at(1),
-                                       j.at("specular").get<std::vector<float>>().at(2), 1.0);
-        lightType.padding = glm::vec4(glm::vec2(j.at("padding").get<std::vector<float>>().at(0),
-                                                j.at("padding").get<std::vector<float>>().at(1)), 0, 0);
+        lightType.direction = glm::vec4(j.at("direction").get<std::vector<float>>().at(0), j.at("direction").get<std::vector<float>>().at(1), j.at("direction").get<std::vector<float>>().at(2), 1.0);
+        lightType.diffuse = glm::vec4(j.at("diffuse").get<std::vector<float>>().at(0), j.at("diffuse").get<std::vector<float>>().at(1), j.at("diffuse").get<std::vector<float>>().at(2), 1.0);
+        lightType.specular = glm::vec4(j.at("specular").get<std::vector<float>>().at(0), j.at("specular").get<std::vector<float>>().at(1), j.at("specular").get<std::vector<float>>().at(2), 1.0);
+        lightType.padding = glm::vec4(glm::vec2(j.at("padding").get<std::vector<float>>().at(0), j.at("padding").get<std::vector<float>>().at(1)), 0, 0);
         bool hasShadow = false;
         j.at("shadow").get_to(hasShadow);
 
@@ -520,20 +482,11 @@ void from_json(json& j, std::shared_ptr<Node> n) {
     } else if (type == "LIGHT_OMNI") {
         auto light = std::dynamic_pointer_cast<Light<LightType::LightOmni>>(n);
         LightType::LightOmni lightType;
-        lightType.position = glm::vec4(j.at("position").get<std::vector<float>>().at(0),
-                                       j.at("position").get<std::vector<float>>().at(1),
-                                       j.at("position").get<std::vector<float>>().at(2), 1.0);
-        lightType.diffuse = glm::vec4(j.at("diffuse").get<std::vector<float>>().at(0),
-                                      j.at("diffuse").get<std::vector<float>>().at(1),
-                                      j.at("diffuse").get<std::vector<float>>().at(2), 1.0);
-        lightType.specular = glm::vec4(j.at("specular").get<std::vector<float>>().at(0),
-                                       j.at("specular").get<std::vector<float>>().at(1),
-                                       j.at("specular").get<std::vector<float>>().at(2), 1.0);
+        lightType.position = glm::vec4(j.at("position").get<std::vector<float>>().at(0), j.at("position").get<std::vector<float>>().at(1), j.at("position").get<std::vector<float>>().at(2), 1.0);
+        lightType.diffuse = glm::vec4(j.at("diffuse").get<std::vector<float>>().at(0), j.at("diffuse").get<std::vector<float>>().at(1), j.at("diffuse").get<std::vector<float>>().at(2), 1.0);
+        lightType.specular = glm::vec4(j.at("specular").get<std::vector<float>>().at(0), j.at("specular").get<std::vector<float>>().at(1), j.at("specular").get<std::vector<float>>().at(2), 1.0);
         lightType.radius = j.at("radius").get<float>();
-        lightType.attenuation = glm::vec4(j.at("attenuation").get<std::vector<float>>().at(0),
-                                          j.at("attenuation").get<std::vector<float>>().at(1),
-                                          j.at("attenuation").get<std::vector<float>>().at(2),
-                                          j.at("attenuation").get<std::vector<float>>().at(3));
+        lightType.attenuation = glm::vec4(j.at("attenuation").get<std::vector<float>>().at(0), j.at("attenuation").get<std::vector<float>>().at(1), j.at("attenuation").get<std::vector<float>>().at(2), j.at("attenuation").get<std::vector<float>>().at(3));
         lightType.farPlane.x = j.at("farPlane").get<float>();
         bool hasShadow = false;
         j.at("shadow").get_to(hasShadow);
@@ -560,7 +513,7 @@ void from_json(json& j, std::shared_ptr<Node> n) {
         auto mesh = std::dynamic_pointer_cast<AnimatedMesh>(n);
         // Deserialize textures
         if (j.contains("textures")) {
-            auto texturesJson = j.at("textures").get<std::vector<std::tuple<std::string, std::string,bool,bool>>>();
+            auto texturesJson = j.at("textures").get<std::vector<std::tuple<std::string, std::string, bool, bool>>>();
             auto material = std::make_shared<MaterialComponent>();
             for (const auto& t : texturesJson) {
                 std::string type = std::get<0>(t);
@@ -575,7 +528,7 @@ void from_json(json& j, std::shared_ptr<Node> n) {
                         textures.push_back(GlobalData::getInstance().defaultBlack());
                     } else {
                         texture.name(name);
-                        //texture.loadTexture({t.second, true});
+                        // texture.loadTexture({t.second, true});
                         texture.parameters({name, srgb, Define::DEFAULT_MIPS, compress});
                         textures.push_back(texture);
                     }
@@ -587,7 +540,7 @@ void from_json(json& j, std::shared_ptr<Node> n) {
                         textures.push_back(GlobalData::getInstance().defaultNormal());
                     } else {
                         texture.name(name);
-                        //texture.loadTexture({t.second});
+                        // texture.loadTexture({t.second});
                         texture.parameters({name, srgb, Define::DEFAULT_MIPS, compress});
                         textures.push_back(texture);
                     }
@@ -599,7 +552,7 @@ void from_json(json& j, std::shared_ptr<Node> n) {
                         textures.push_back(GlobalData::getInstance().defaultRoughness());
                     } else {
                         texture.name(name);
-                        //texture.loadTexture({t.second});
+                        // texture.loadTexture({t.second});
                         texture.parameters({name, srgb, Define::DEFAULT_MIPS, compress});
                         textures.push_back(texture);
                     }
@@ -611,7 +564,7 @@ void from_json(json& j, std::shared_ptr<Node> n) {
                         textures.push_back(GlobalData::getInstance().defaultWhite());
                     } else {
                         texture.name(name);
-                        //texture.loadTexture({t.second});
+                        // texture.loadTexture({t.second});
                         texture.parameters({name, srgb, Define::DEFAULT_MIPS, compress});
                         textures.push_back(texture);
                     }
@@ -623,7 +576,7 @@ void from_json(json& j, std::shared_ptr<Node> n) {
                         textures.push_back(GlobalData::getInstance().defaultWhite());
                     } else {
                         texture.name(name);
-                        //texture.loadTexture({t.second});
+                        // texture.loadTexture({t.second});
                         texture.parameters({name, srgb, Define::DEFAULT_MIPS, compress});
                         textures.push_back(texture);
                     }
@@ -675,15 +628,11 @@ void from_json(json& j, std::shared_ptr<Node> n) {
         for (size_t i = 0; i < verticesJson.size(); i = i + 7) {
             int vertexIndex = i / 7;
 
-            vertices[vertexIndex].position = glm::vec3(verticesJson[i][0], verticesJson[i][1],
-                                                       verticesJson[i][2]);
-            vertices[vertexIndex].normal = glm::vec3(verticesJson[i + 1][0], verticesJson[i + 1][1],
-                                                     verticesJson[i + 1][2]);
+            vertices[vertexIndex].position = glm::vec3(verticesJson[i][0], verticesJson[i][1], verticesJson[i][2]);
+            vertices[vertexIndex].normal = glm::vec3(verticesJson[i + 1][0], verticesJson[i + 1][1], verticesJson[i + 1][2]);
             vertices[vertexIndex].texCoords = glm::vec2(verticesJson[i + 2][0], verticesJson[i + 2][1]);
-            vertices[vertexIndex].tangent = glm::vec3(verticesJson[i + 3][0], verticesJson[i + 3][1],
-                                                      verticesJson[i + 3][2]);
-            vertices[vertexIndex].bitangent = glm::vec3(verticesJson[i + 4][0], verticesJson[i + 4][1],
-                                                        verticesJson[i + 4][2]);
+            vertices[vertexIndex].tangent = glm::vec3(verticesJson[i + 3][0], verticesJson[i + 3][1], verticesJson[i + 3][2]);
+            vertices[vertexIndex].bitangent = glm::vec3(verticesJson[i + 4][0], verticesJson[i + 4][1], verticesJson[i + 4][2]);
             vertices[vertexIndex].m_BoneIDs[0] = verticesJson[i + 5][0];
             vertices[vertexIndex].m_BoneIDs[1] = verticesJson[i + 5][1];
             vertices[vertexIndex].m_BoneIDs[2] = verticesJson[i + 5][2];
@@ -725,8 +674,7 @@ void from_json(json& j, std::shared_ptr<Node> n) {
         n->visible(visible);
     }
 
-    if (!j.contains("components") || !j["components"].is_array())
-        return;
+    if (!j.contains("components") || !j["components"].is_array()) return;
 
     for (const auto& componentData : j["components"]) {
         std::string componentName = componentData[0];
@@ -741,4 +689,4 @@ void from_json(json& j, std::shared_ptr<Node> n) {
     }
     j.at("skybox").get_to(SceneExporterLayout::skybox);
 }
-}
+}  // namespace Prisma

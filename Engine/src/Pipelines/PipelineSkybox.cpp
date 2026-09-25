@@ -1,15 +1,14 @@
 #include "Pipelines/PipelineSkybox.h"
+
 #include "GlobalData/GlobalData.h"
-#include "Pipelines/PipelineLUT.h"
+#include "Graphics/GraphicsTools/interface/MapHelper.hpp"
 #include "Helpers/PrismaRender.h"
 #include "Pipelines/PipelineDIffuseIrradiance.h"
+#include "Pipelines/PipelineLUT.h"
 #include "Pipelines/PipelinePrefilter.h"
-
-
 #include "glm/glm.hpp"
 #include "glm/gtc/matrix_transform.hpp"
 #include "glm/gtc/type_ptr.hpp"
-#include "Graphics/GraphicsTools/interface/MapHelper.hpp"
 
 Prisma::PipelineSkybox::PipelineSkybox() {
     auto& contextData = PrismaFunc::getInstance().contextData();
@@ -93,10 +92,7 @@ Prisma::PipelineSkybox::PipelineSkybox() {
     // Define variable type that will be used by default
     PSOCreateInfo.PSODesc.ResourceLayout.DefaultVariableType = Diligent::SHADER_RESOURCE_VARIABLE_TYPE_STATIC;
 
-    Diligent::ShaderResourceVariableDesc Vars[] =
-    {
-        {Diligent::SHADER_TYPE_PIXEL, "equirectangularMap", Diligent::SHADER_RESOURCE_VARIABLE_TYPE_MUTABLE}
-    };
+    Diligent::ShaderResourceVariableDesc Vars[] = {{Diligent::SHADER_TYPE_PIXEL, "equirectangularMap", Diligent::SHADER_RESOURCE_VARIABLE_TYPE_MUTABLE}};
     // clang-format on
     PSOCreateInfo.PSODesc.ResourceLayout.Variables = Vars;
     PSOCreateInfo.PSODesc.ResourceLayout.NumVariables = _countof(Vars);
@@ -133,7 +129,7 @@ Prisma::PipelineSkybox::PipelineSkybox() {
 
     Diligent::TextureDesc RTColorDesc;
     RTColorDesc.Name = "Offscreen render target";
-    RTColorDesc.Type = Diligent::RESOURCE_DIM_TEX_CUBE; // Set cubemap type
+    RTColorDesc.Type = Diligent::RESOURCE_DIM_TEX_CUBE;  // Set cubemap type
     RTColorDesc.Width = m_dimensions.x;
     RTColorDesc.Height = m_dimensions.y;
     RTColorDesc.MipLevels = 8;
@@ -155,7 +151,7 @@ Prisma::PipelineSkybox::PipelineSkybox() {
         RTVDesc.TextureDim = Diligent::RESOURCE_DIM_TEX_2D;
         RTVDesc.MostDetailedMip = 0;
         RTVDesc.NumMipLevels = 1;
-        RTVDesc.FirstArraySlice = i; // Select the specific face
+        RTVDesc.FirstArraySlice = i;  // Select the specific face
         RTVDesc.NumArraySlices = 1;
 
         m_pMSColorRTV->CreateView(RTVDesc, &m_pRTColor[i]);
@@ -164,42 +160,31 @@ Prisma::PipelineSkybox::PipelineSkybox() {
     m_skyboxRenderer = std::make_shared<PipelineSkyboxRenderer>();
 }
 
-const Prisma::Texture& Prisma::PipelineSkybox::texture() const {
-    return m_texture;
-}
+const Prisma::Texture& Prisma::PipelineSkybox::texture() const { return m_texture; }
 
-bool Prisma::PipelineSkybox::isInit() {
-    return m_init;
-}
+bool Prisma::PipelineSkybox::isInit() { return m_init; }
 
-void Prisma::PipelineSkybox::addUpdate(std::pair<std::string, std::function<void()>> update) {
-    m_update[update.first]=update.second; }
+void Prisma::PipelineSkybox::addUpdate(std::pair<std::string, std::function<void()>> update) { m_update[update.first] = update.second; }
 
 void Prisma::PipelineSkybox::removeUpdate(const std::string& update) { m_update.erase(update); }
 
-Diligent::RefCntAutoPtr<Diligent::ITexture> Prisma::PipelineSkybox::skybox() {
-    return m_pMSColorRTV;
-}
+Diligent::RefCntAutoPtr<Diligent::ITexture> Prisma::PipelineSkybox::skybox() { return m_pMSColorRTV; }
 
 void Prisma::PipelineSkybox::calculateSkybox() {
     m_srb.Release();
     m_pso->CreateShaderResourceBinding(&m_srb, true);
     auto& contextData = PrismaFunc::getInstance().contextData();
 
-    m_srb->GetVariableByName(Diligent::SHADER_TYPE_PIXEL, "equirectangularMap")->Set(
-        m_texture.texture()->GetDefaultView(Diligent::TEXTURE_VIEW_SHADER_RESOURCE));
+    m_srb->GetVariableByName(Diligent::SHADER_TYPE_PIXEL, "equirectangularMap")->Set(m_texture.texture()->GetDefaultView(Diligent::TEXTURE_VIEW_SHADER_RESOURCE));
     for (unsigned int i = 0; i < 6; ++i) {
-        Diligent::MapHelper<IBLViewProjection> viewProjection(contextData.immediateContext, m_iblData,
-                                                              Diligent::MAP_WRITE, Diligent::MAP_FLAG_DISCARD);
+        Diligent::MapHelper<IBLViewProjection> viewProjection(contextData.immediateContext, m_iblData, Diligent::MAP_WRITE, Diligent::MAP_FLAG_DISCARD);
         viewProjection->view = m_iblTransform.captureViews[i];
         viewProjection->projection = m_iblTransform.captureProjection;
         Diligent::ITextureView* ppRTVs[] = {m_pRTColor[i]};
 
-        contextData.immediateContext->SetRenderTargets(1, ppRTVs, nullptr,
-                                                       Diligent::RESOURCE_STATE_TRANSITION_MODE_TRANSITION);
+        contextData.immediateContext->SetRenderTargets(1, ppRTVs, nullptr, Diligent::RESOURCE_STATE_TRANSITION_MODE_TRANSITION);
 
-        contextData.immediateContext->ClearRenderTarget(m_pRTColor[i], value_ptr(Define::CLEAR_COLOR),
-                                                        Diligent::RESOURCE_STATE_TRANSITION_MODE_TRANSITION);
+        contextData.immediateContext->ClearRenderTarget(m_pRTColor[i], value_ptr(Define::CLEAR_COLOR), Diligent::RESOURCE_STATE_TRANSITION_MODE_TRANSITION);
 
         contextData.immediateContext->SetPipelineState(m_pso);
 
@@ -208,25 +193,20 @@ void Prisma::PipelineSkybox::calculateSkybox() {
         // Bind vertex and index buffers
         constexpr Diligent::Uint64 offset = 0;
         Diligent::IBuffer* pBuffs[] = {cubeBuffer.vBuffer};
-        contextData.immediateContext->SetVertexBuffers(0, 1, pBuffs, &offset,
-                                                       Diligent::RESOURCE_STATE_TRANSITION_MODE_TRANSITION,
-                                                       Diligent::SET_VERTEX_BUFFERS_FLAG_RESET);
-        contextData.immediateContext->SetIndexBuffer(cubeBuffer.iBuffer, 0,
-                                                     Diligent::RESOURCE_STATE_TRANSITION_MODE_TRANSITION);
+        contextData.immediateContext->SetVertexBuffers(0, 1, pBuffs, &offset, Diligent::RESOURCE_STATE_TRANSITION_MODE_TRANSITION, Diligent::SET_VERTEX_BUFFERS_FLAG_RESET);
+        contextData.immediateContext->SetIndexBuffer(cubeBuffer.iBuffer, 0, Diligent::RESOURCE_STATE_TRANSITION_MODE_TRANSITION);
 
         // Set texture SRV in the SRB
-        contextData.immediateContext->CommitShaderResources(
-            m_srb, Diligent::RESOURCE_STATE_TRANSITION_MODE_TRANSITION);
+        contextData.immediateContext->CommitShaderResources(m_srb, Diligent::RESOURCE_STATE_TRANSITION_MODE_TRANSITION);
 
-        Diligent::DrawIndexedAttribs DrawAttrs; // This is an indexed draw call
-        DrawAttrs.IndexType = Diligent::VT_UINT32; // Index type
+        Diligent::DrawIndexedAttribs DrawAttrs;     // This is an indexed draw call
+        DrawAttrs.IndexType = Diligent::VT_UINT32;  // Index type
         DrawAttrs.NumIndices = cubeBuffer.iBufferSize;
         // Verify the state of vertex and index buffers
         DrawAttrs.Flags = Diligent::DRAW_FLAG_VERIFY_ALL;
         contextData.immediateContext->DrawIndexed(DrawAttrs);
     }
-    contextData.immediateContext->GenerateMips(
-        m_pMSColorRTV->GetDefaultView(Diligent::TEXTURE_VIEW_SHADER_RESOURCE));
+    contextData.immediateContext->GenerateMips(m_pMSColorRTV->GetDefaultView(Diligent::TEXTURE_VIEW_SHADER_RESOURCE));
     m_skyboxRenderer->texture(m_pMSColorRTV);
     PrismaFunc::getInstance().bindMainRenderTarget();
 }

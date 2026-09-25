@@ -1,21 +1,19 @@
 #pragma once
+#include <Common/interface/RefCntAutoPtr.hpp>
+#include <glm/glm.hpp>
 #include <vector>
 
 #include "../GlobalData/Platform.h"
 #include "GlobalData/Platform.h"
 #include "Graphics/GraphicsEngine/interface/Buffer.h"
-#include "Graphics/GraphicsEngine/interface/Texture.h"
 #include "Graphics/GraphicsEngine/interface/PipelineState.h"
-#include <Common/interface/RefCntAutoPtr.hpp>
-
+#include "Graphics/GraphicsEngine/interface/Texture.h"
 #include "Helpers/Blit.h"
-#include <glm/glm.hpp>
-
 #include "PipelineBlitRT.h"
 
 namespace Prisma {
 class PipelineSoftwareRT {
-public:
+   public:
     struct Sizes {
         unsigned int vertexBase;
         unsigned int indexBase;
@@ -33,13 +31,13 @@ public:
 
     void loadData();
 
-private:
+   private:
     Diligent::RefCntAutoPtr<Diligent::IPipelineState> m_pso;
     Diligent::RefCntAutoPtr<Diligent::IShaderResourceBinding> m_srb;
     Diligent::RefCntAutoPtr<Diligent::IBuffer> m_rtVertices;
     Diligent::RefCntAutoPtr<Diligent::IBuffer> m_rtIndices;
-    //Diligent::RefCntAutoPtr<Diligent::IBuffer> m_rtBvhVertices;
-    //Diligent::RefCntAutoPtr<Diligent::IBuffer> m_rtBvhNodes;
+    // Diligent::RefCntAutoPtr<Diligent::IBuffer> m_rtBvhVertices;
+    // Diligent::RefCntAutoPtr<Diligent::IBuffer> m_rtBvhNodes;
     Diligent::RefCntAutoPtr<Diligent::IBuffer> m_size;
     Diligent::RefCntAutoPtr<Diligent::IBuffer> m_totalMeshes;
     Diligent::RefCntAutoPtr<Diligent::ITexture> m_texture;
@@ -48,4 +46,4 @@ private:
     unsigned int m_width;
     unsigned int m_height;
 };
-}
+}  // namespace Prisma

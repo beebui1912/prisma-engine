@@ -1,15 +1,15 @@
 #include "Helpers/ClusterCalculation.h"
-#include "Helpers/SettingsLoader.h"
-#include "GlobalData/GlobalData.h"
+
 #include <glm/gtx/string_cast.hpp>
 
-#include "Graphics/GraphicsTools/interface/ShaderMacroHelper.hpp"
+#include "GlobalData/GlobalData.h"
 #include "GlobalData/GlobalShaderNames.h"
-#include "Handlers/MeshHandler.h"
 #include "Graphics/GraphicsTools/interface/MapHelper.hpp"
+#include "Graphics/GraphicsTools/interface/ShaderMacroHelper.hpp"
+#include "Handlers/MeshHandler.h"
+#include "Helpers/SettingsLoader.h"
 
-Prisma::ClusterCalculation::ClusterCalculation(Diligent::RefCntAutoPtr<Diligent::IBuffer> omniLights,
-                                               Diligent::RefCntAutoPtr<Diligent::IBuffer> lightSizes) {
+Prisma::ClusterCalculation::ClusterCalculation(Diligent::RefCntAutoPtr<Diligent::IBuffer> omniLights, Diligent::RefCntAutoPtr<Diligent::IBuffer> lightSizes) {
     auto& contextData = PrismaFunc::getInstance().contextData();
 
     m_omniLights = omniLights;
@@ -39,8 +39,7 @@ void Prisma::ClusterCalculation::updateCamera() {
     auto currentSettings = SettingsLoader::getInstance().getSettings();
     auto& contextData = PrismaFunc::getInstance().contextData();
 
-    Diligent::MapHelper<ClusterData> clusterData(contextData.immediateContext, m_clusterData,
-                                                 Diligent::MAP_WRITE, Diligent::MAP_FLAG_DISCARD);
+    Diligent::MapHelper<ClusterData> clusterData(contextData.immediateContext, m_clusterData, Diligent::MAP_WRITE, Diligent::MAP_FLAG_DISCARD);
     clusterData->gridSize = {m_gridSizeX, m_gridSizeY, m_gridSizeZ, 0};
     clusterData->inverseProjection = inverse(GlobalData::getInstance().currentProjection());
     clusterData->screenDimensions = {currentSettings.width, currentSettings.height, 0, 0};
@@ -51,8 +50,7 @@ void Prisma::ClusterCalculation::updateCamera() {
     DispatAttribs.ThreadGroupCountY = m_gridSizeY;
     DispatAttribs.ThreadGroupCountZ = m_gridSizeZ;
     contextData.immediateContext->SetPipelineState(m_pso);
-    contextData.immediateContext->CommitShaderResources(
-        m_srb, Diligent::RESOURCE_STATE_TRANSITION_MODE_TRANSITION);
+    contextData.immediateContext->CommitShaderResources(m_srb, Diligent::RESOURCE_STATE_TRANSITION_MODE_TRANSITION);
     contextData.immediateContext->DispatchCompute(DispatAttribs);
 }
 
@@ -64,18 +62,13 @@ void Prisma::ClusterCalculation::updateLights() {
     DispatAttribs.ThreadGroupCountY = 1;
     DispatAttribs.ThreadGroupCountZ = 1;
     contextData.immediateContext->SetPipelineState(m_psoLight);
-    contextData.immediateContext->CommitShaderResources(
-        m_srbLight, Diligent::RESOURCE_STATE_TRANSITION_MODE_TRANSITION);
+    contextData.immediateContext->CommitShaderResources(m_srbLight, Diligent::RESOURCE_STATE_TRANSITION_MODE_TRANSITION);
     contextData.immediateContext->DispatchCompute(DispatAttribs);
 }
 
-Diligent::RefCntAutoPtr<Diligent::IBuffer> Prisma::ClusterCalculation::clusters() {
-    return m_cluster;
-}
+Diligent::RefCntAutoPtr<Diligent::IBuffer> Prisma::ClusterCalculation::clusters() { return m_cluster; }
 
-Diligent::RefCntAutoPtr<Diligent::IBuffer> Prisma::ClusterCalculation::clusterData() {
-    return m_clusterData;
-}
+Diligent::RefCntAutoPtr<Diligent::IBuffer> Prisma::ClusterCalculation::clusterData() { return m_clusterData; }
 
 void Prisma::ClusterCalculation::createCamera() {
     auto& contextData = PrismaFunc::getInstance().contextData();
@@ -106,7 +99,7 @@ void Prisma::ClusterCalculation::createCamera() {
     PSODesc.PipelineType = Diligent::PIPELINE_TYPE_COMPUTE;
 
     PSODesc.ResourceLayout.DefaultVariableType = Diligent::SHADER_RESOURCE_VARIABLE_TYPE_STATIC;
-	// clang-format off
+    // clang-format off
 	Diligent::ShaderResourceVariableDesc Vars[] =
 	{
 		{Diligent::SHADER_TYPE_COMPUTE, ShaderNames::CONSTANT_CLUSTERS_DATA.c_str(), Diligent::SHADER_RESOURCE_VARIABLE_TYPE_STATIC},
@@ -119,10 +112,8 @@ void Prisma::ClusterCalculation::createCamera() {
     PSODesc.Name = "Cluster";
     PSOCreateInfo.pCS = pResetParticleListsCS;
     contextData.device->CreateComputePipelineState(PSOCreateInfo, &m_pso);
-    m_pso->GetStaticVariableByName(Diligent::SHADER_TYPE_COMPUTE, ShaderNames::CONSTANT_CLUSTERS_DATA.c_str())->Set(
-        m_clusterData);
-    m_pso->GetStaticVariableByName(Diligent::SHADER_TYPE_COMPUTE, ShaderNames::CONSTANT_CLUSTERS.c_str())->Set(
-        m_cluster->GetDefaultView(Diligent::BUFFER_VIEW_UNORDERED_ACCESS));
+    m_pso->GetStaticVariableByName(Diligent::SHADER_TYPE_COMPUTE, ShaderNames::CONSTANT_CLUSTERS_DATA.c_str())->Set(m_clusterData);
+    m_pso->GetStaticVariableByName(Diligent::SHADER_TYPE_COMPUTE, ShaderNames::CONSTANT_CLUSTERS.c_str())->Set(m_cluster->GetDefaultView(Diligent::BUFFER_VIEW_UNORDERED_ACCESS));
     m_pso->CreateShaderResourceBinding(&m_srb, true);
 }
 
@@ -155,7 +146,7 @@ void Prisma::ClusterCalculation::createLight() {
     PSODesc.PipelineType = Diligent::PIPELINE_TYPE_COMPUTE;
 
     PSODesc.ResourceLayout.DefaultVariableType = Diligent::SHADER_RESOURCE_VARIABLE_TYPE_STATIC;
-	// clang-format off
+    // clang-format off
 	Diligent::ShaderResourceVariableDesc Vars[] =
 	{
 		{Diligent::SHADER_TYPE_COMPUTE, ShaderNames::CONSTANT_CLUSTERS.c_str(), Diligent::SHADER_RESOURCE_VARIABLE_TYPE_STATIC},
@@ -172,15 +163,10 @@ void Prisma::ClusterCalculation::createLight() {
     PSOCreateInfo.pCS = pResetParticleListsCS;
     contextData.device->CreateComputePipelineState(PSOCreateInfo, &m_psoLight);
 
-    m_psoLight->GetStaticVariableByName(Diligent::SHADER_TYPE_COMPUTE, ShaderNames::CONSTANT_CLUSTERS.c_str())->Set(
-        m_cluster->GetDefaultView(Diligent::BUFFER_VIEW_UNORDERED_ACCESS));
-    m_psoLight->GetStaticVariableByName(Diligent::SHADER_TYPE_COMPUTE, ShaderNames::CONSTANT_OMNI_DATA.c_str())->
-                Set(m_omniLights->GetDefaultView(Diligent::BUFFER_VIEW_SHADER_RESOURCE));
-    m_psoLight->GetStaticVariableByName(Diligent::SHADER_TYPE_COMPUTE,
-                                        ShaderNames::CONSTANT_VIEW_PROJECTION.c_str())->Set(
-        MeshHandler::getInstance().viewProjection());
-    m_psoLight->GetStaticVariableByName(Diligent::SHADER_TYPE_COMPUTE, ShaderNames::CONSTANT_LIGHT_SIZES.c_str())->
-                Set(m_lightSizes);
+    m_psoLight->GetStaticVariableByName(Diligent::SHADER_TYPE_COMPUTE, ShaderNames::CONSTANT_CLUSTERS.c_str())->Set(m_cluster->GetDefaultView(Diligent::BUFFER_VIEW_UNORDERED_ACCESS));
+    m_psoLight->GetStaticVariableByName(Diligent::SHADER_TYPE_COMPUTE, ShaderNames::CONSTANT_OMNI_DATA.c_str())->Set(m_omniLights->GetDefaultView(Diligent::BUFFER_VIEW_SHADER_RESOURCE));
+    m_psoLight->GetStaticVariableByName(Diligent::SHADER_TYPE_COMPUTE, ShaderNames::CONSTANT_VIEW_PROJECTION.c_str())->Set(MeshHandler::getInstance().viewProjection());
+    m_psoLight->GetStaticVariableByName(Diligent::SHADER_TYPE_COMPUTE, ShaderNames::CONSTANT_LIGHT_SIZES.c_str())->Set(m_lightSizes);
 
     m_psoLight->CreateShaderResourceBinding(&m_srbLight, true);
 }

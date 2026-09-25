@@ -1,11 +1,10 @@
 ﻿#pragma once
 
-
 #include <ThirdParty/imgui/imgui.h>
 
 namespace Prisma::GUI {
 class ImGuiStyles : public InstanceData<ImGuiStyles> {
-public:
+   public:
     void darkMode() {
         ImVec4* colors = ImGui::GetStyle().Colors;
         colors[ImGuiCol_Text] = ImVec4(1.00f, 1.00f, 1.00f, 1.00f);
@@ -46,8 +45,8 @@ public:
         colors[ImGuiCol_TabActive] = ImVec4(0.20f, 0.20f, 0.20f, 0.36f);
         colors[ImGuiCol_TabUnfocused] = ImVec4(0.00f, 0.00f, 0.00f, 0.52f);
         colors[ImGuiCol_TabUnfocusedActive] = ImVec4(0.14f, 0.14f, 0.14f, 1.00f);
-        //colors[ImGuiCol_DockingPreview] = ImVec4(0.33f, 0.67f, 0.86f, 1.00f);
-        //colors[ImGuiCol_DockingEmptyBg] = ImVec4(1.00f, 0.00f, 0.00f, 1.00f);
+        // colors[ImGuiCol_DockingPreview] = ImVec4(0.33f, 0.67f, 0.86f, 1.00f);
+        // colors[ImGuiCol_DockingEmptyBg] = ImVec4(1.00f, 0.00f, 0.00f, 1.00f);
         colors[ImGuiCol_PlotLines] = ImVec4(1.00f, 0.00f, 0.00f, 1.00f);
         colors[ImGuiCol_PlotLinesHovered] = ImVec4(1.00f, 0.00f, 0.00f, 1.00f);
         colors[ImGuiCol_PlotHistogram] = ImVec4(0.4f, 1.00f, 0.4f, 1.00f);
@@ -67,9 +66,9 @@ public:
         // Dark background color setup
         colors[ImGuiCol_Text] = ImVec4(1.00f, 1.00f, 1.00f, 1.00f);
         colors[ImGuiCol_WindowBg] = ImVec4(0.10f, 0.10f, 0.10f, 1.00f);
-        colors[ImGuiCol_Button] = ImVec4(0.15f, 0.15f, 0.15f, 1.00f); // Button base color
-        colors[ImGuiCol_ButtonHovered] = ImVec4(0.25f, 0.25f, 0.25f, 1.00f); // Hovered button color
-        colors[ImGuiCol_ButtonActive] = ImVec4(0.35f, 0.35f, 0.35f, 1.00f); // Active button color
+        colors[ImGuiCol_Button] = ImVec4(0.15f, 0.15f, 0.15f, 1.00f);         // Button base color
+        colors[ImGuiCol_ButtonHovered] = ImVec4(0.25f, 0.25f, 0.25f, 1.00f);  // Hovered button color
+        colors[ImGuiCol_ButtonActive] = ImVec4(0.35f, 0.35f, 0.35f, 1.00f);   // Active button color
 
         // Button border and other components
         colors[ImGuiCol_Border] = ImVec4(0.19f, 0.19f, 0.19f, 0.29f);
@@ -104,12 +103,12 @@ public:
 
         // Adjust padding to make buttons larger
         style.WindowPadding = ImVec2(8.00f, 8.00f);
-        style.FramePadding = ImVec2(10.00f, 5.00f); // Larger padding for larger buttons
-        style.ItemSpacing = ImVec2(10.00f, 10.00f); // Spacing between items
+        style.FramePadding = ImVec2(10.00f, 5.00f);  // Larger padding for larger buttons
+        style.ItemSpacing = ImVec2(10.00f, 10.00f);  // Spacing between items
         style.ItemInnerSpacing = ImVec2(5.00f, 5.00f);
         style.ScrollbarSize = 15;
-        style.WindowRounding = 10; // Rounded window edges for a modern look
-        style.FrameRounding = 12; // More rounded corners on buttons
+        style.WindowRounding = 10;  // Rounded window edges for a modern look
+        style.FrameRounding = 12;   // More rounded corners on buttons
         style.PopupRounding = 6;
         style.ScrollbarRounding = 9;
         style.GrabRounding = 5;
@@ -117,12 +116,12 @@ public:
 
         // Adjust button size via padding and rounding
         style.GrabMinSize = 10;
-        style.FrameRounding = 12; // Makes buttons' edges more round
+        style.FrameRounding = 12;  // Makes buttons' edges more round
         style.ChildRounding = 6;
 
         // Make sure buttons have large size
-        style.ButtonTextAlign = ImVec2(0.5f, 0.5f); // Center text within button
-        style.Alpha = 1.0f; // Make sure everything is fully visible
+        style.ButtonTextAlign = ImVec2(0.5f, 0.5f);  // Center text within button
+        style.Alpha = 1.0f;                          // Make sure everything is fully visible
 
         // Optional: make sure that the window doesn't overlap the buttons
         style.WindowBorderSize = 0;
@@ -130,12 +129,12 @@ public:
     }
 
     void treeStyle() {
-        ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4(0.2f, 0.2f, 0.2f, 1.0f)); // Dark background for window
+        ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4(0.2f, 0.2f, 0.2f, 1.0f));  // Dark background for window
         ImGui::PushStyleColor(ImGuiCol_Header, ImVec4(0.15f, 0.15f, 0.15f, 1.00f));
         // Dark background for header
         ImGui::PushStyleColor(ImGuiCol_HeaderHovered, ImVec4(0.25f, 0.25f, 0.25f, 1.00f));
         // Dark hover effect for header
-        ImGui::PushStyleColor(ImGuiCol_HeaderActive, ImVec4(0.35f, 0.35f, 0.35f, 1.00f)); // Dark active header
+        ImGui::PushStyleColor(ImGuiCol_HeaderActive, ImVec4(0.35f, 0.35f, 0.35f, 1.00f));  // Dark active header
         ImGui::PushStyleColor(ImGuiCol_FrameBg, ImVec4(0.10f, 0.10f, 0.10f, 1.00f));
         // Light gray background for frame
         ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(10.f, 20.f));
@@ -143,7 +142,7 @@ public:
 
     void clearTreeStyle() {
         ImGui::PopStyleVar();
-        ImGui::PopStyleColor(5); // Reset the colors
+        ImGui::PopStyleColor(5);  // Reset the colors
     }
 };
-}
+}  // namespace Prisma::GUI

@@ -1,9 +1,10 @@
 #pragma once
-#include "../SceneData/SceneLoader.h"
+#include <vector>
+
 #include "../GlobalData/Defines.h"
 #include "../GlobalData/InstanceData.h"
-#include <vector>
 #include "../Helpers/ClusterCalculation.h"
+#include "../SceneData/SceneLoader.h"
 
 namespace Prisma {
 class LightHandler : public InstanceData<LightHandler> {
@@ -29,7 +30,6 @@ class LightHandler : public InstanceData<LightHandler> {
     std::shared_ptr<SSBODataDirectional> m_dataDirectional;
     std::shared_ptr<SSBODataOmni> m_dataOmni;
     std::shared_ptr<SSBODataSpot> m_dataSpot;
-
 
     Diligent::RefCntAutoPtr<Diligent::IBuffer> m_omniLights;
 
@@ -57,9 +57,9 @@ class LightHandler : public InstanceData<LightHandler> {
 
     std::vector<Diligent::IDeviceObject*> m_omniData;
 
-    std::map<std::string,std::function<void()>> m_updates;
+    std::map<std::string, std::function<void()>> m_updates;
 
-public:
+   public:
     struct ClusterData {
         Diligent::RefCntAutoPtr<Diligent::IBuffer> clusters;
         Diligent::RefCntAutoPtr<Diligent::IBuffer> clustersData;
@@ -69,7 +69,7 @@ public:
 
     Diligent::IDeviceObject* dirShadowData();
 
-    void addLightHandler(std::pair<std::string,std::function<void()>> update);
+    void addLightHandler(std::pair<std::string, std::function<void()>> update);
     void removeLightHandler(const std::string& update);
 
     bool updateCascade();
@@ -88,4 +88,4 @@ public:
     std::shared_ptr<ClusterCalculation> m_clusterCalculation;
     LightHandler();
 };
-}
+}  // namespace Prisma

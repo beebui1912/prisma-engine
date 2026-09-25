@@ -1,8 +1,9 @@
 #include "SceneData/Animator.h"
-#include "GlobalData/GlobalData.h"
-#include "GlobalData/CacheScene.h"
+
 #include <glm/gtx/string_cast.hpp>
 
+#include "GlobalData/CacheScene.h"
+#include "GlobalData/GlobalData.h"
 
 Prisma::Animator::Animator(std::shared_ptr<Animation> animation) {
     m_CurrentTime = 0.0;
@@ -81,8 +82,7 @@ void Prisma::Animator::calculateBoneTransform(const AssimpNodeData* node, const 
         m_ssboAnimation.animations[boneInfo.id] = globalTransformation * boneInfo.offset;
     }
 
-    for (int i = 0; i < node->childrenCount; i++)
-        calculateBoneTransform(&node->children[i], globalTransformation);
+    for (int i = 0; i < node->childrenCount; i++) calculateBoneTransform(&node->children[i], globalTransformation);
 }
 
 void Prisma::Animator::frame(float frame) {
@@ -102,34 +102,23 @@ void Prisma::Animator::mesh(Node* mesh) {
     updateAnimation(0);
 }
 
-std::shared_ptr<Prisma::Animation> Prisma::Animator::animation() {
-    return m_CurrentAnimation;
-}
+std::shared_ptr<Prisma::Animation> Prisma::Animator::animation() { return m_CurrentAnimation; }
 
-float Prisma::Animator::currentTime() const {
-    return m_CurrentTime;
-}
+float Prisma::Animator::currentTime() const { return m_CurrentTime; }
 
 void Prisma::Animator::updateSSBO() {
-    //auto ssbo = AnimationHandler::getInstance().ssbo();
-    //auto uuid = findUUID();
-    //ssbo->modifyData(sizeof(Prisma::AnimationHandler::SSBOAnimation) * uuid,
-    //                 sizeof(Prisma::AnimationHandler::SSBOAnimation), &m_ssboAnimation);
+    // auto ssbo = AnimationHandler::getInstance().ssbo();
+    // auto uuid = findUUID();
+    // ssbo->modifyData(sizeof(Prisma::AnimationHandler::SSBOAnimation) * uuid,
+    //                  sizeof(Prisma::AnimationHandler::SSBOAnimation), &m_ssboAnimation);
     auto& contextData = PrismaFunc::getInstance().contextData();
     auto uuid = findUUID();
-    contextData.immediateContext->UpdateBuffer(AnimationHandler::getInstance().animation(),
-                                               sizeof(AnimationHandler::SSBOAnimation) * uuid,
-                                               sizeof(AnimationHandler::SSBOAnimation), &m_ssboAnimation,
-                                               Diligent::RESOURCE_STATE_TRANSITION_MODE_TRANSITION);
+    contextData.immediateContext->UpdateBuffer(AnimationHandler::getInstance().animation(), sizeof(AnimationHandler::SSBOAnimation) * uuid, sizeof(AnimationHandler::SSBOAnimation), &m_ssboAnimation, Diligent::RESOURCE_STATE_TRANSITION_MODE_TRANSITION);
 }
 
-void Prisma::Animator::automaticUpdate(bool automatic) {
-    m_automatic = automatic;
-}
+void Prisma::Animator::automaticUpdate(bool automatic) { m_automatic = automatic; }
 
-bool Prisma::Animator::automaticUpdate() {
-    return m_automatic;
-}
+bool Prisma::Animator::automaticUpdate() { return m_automatic; }
 
 int Prisma::Animator::findUUID() {
     auto meshes = GlobalData::getInstance().currentGlobalScene()->animateMeshes;
@@ -143,9 +132,7 @@ int Prisma::Animator::findUUID() {
 
 void Prisma::Animator::blendAnimations(float blendFactor) {
     for (int i = 0; i < Define::MAX_BONES; i++) {
-        m_ssboAnimation.animations[i] = decomposeAndInterpolateMat4(
-            m_currentTransform[i], m_previousTransform[i],
-            blendFactor);
+        m_ssboAnimation.animations[i] = decomposeAndInterpolateMat4(m_currentTransform[i], m_previousTransform[i], blendFactor);
     }
 }
 
@@ -170,8 +157,7 @@ void Prisma::Animator::calculateCurrentTransform(const AssimpNodeData* node, con
         m_previousTransform[boneInfo.id] = globalTransformation * boneInfo.offset;
     }
 
-    for (int i = 0; i < node->childrenCount; i++)
-        calculateCurrentTransform(&node->children[i], globalTransformation);
+    for (int i = 0; i < node->childrenCount; i++) calculateCurrentTransform(&node->children[i], globalTransformation);
 }
 
 glm::mat4 Prisma::Animator::decomposeAndInterpolateMat4(const glm::mat4& matA, const glm::mat4& matB, float t) {

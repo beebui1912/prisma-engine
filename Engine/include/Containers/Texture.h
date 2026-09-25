@@ -2,12 +2,10 @@
 #include <string>
 #include <vector>
 
-#include "../GlobalData/Platform.h"
 #include "../GlobalData/Defines.h"
-
+#include "../GlobalData/Platform.h"
 #include "Common/interface/RefCntAutoPtr.hpp"
 #include "Graphics/GraphicsEngine/interface/Texture.h"
-
 
 namespace Diligent {
 struct IShaderResourceBinding;
@@ -15,7 +13,7 @@ struct IShaderResourceBinding;
 
 namespace Prisma {
 class Texture {
-public:
+   public:
     struct TextureData {
         int width = 0;
         int height = 0;
@@ -48,10 +46,10 @@ public:
     Diligent::RefCntAutoPtr<Diligent::ITexture> texture();
 
     void parameters(const Parameters& parameters);
-    
+
     const Parameters parameters() const;
 
-private:
+   private:
     uint64_t m_id = 0;
     unsigned int m_rawId = 0;
     TextureData m_data;
@@ -59,4 +57,4 @@ private:
     std::string m_name;
     Diligent::RefCntAutoPtr<Diligent::ITexture> m_texture;
 };
-}
+}  // namespace Prisma

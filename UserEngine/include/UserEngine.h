@@ -1,10 +1,10 @@
+#include <memory>
+
+#include "PlayerController.h"
 #include "engine.h"
 
-#include <memory>
-#include "PlayerController.h"
-
 class UserEngine : public Prisma::UserData {
-public:
+   public:
     void start() override;
 
     void update() override;
@@ -13,7 +13,7 @@ public:
 
     std::shared_ptr<Prisma::CallbackHandler> callbacks() override;
 
-private:
+   private:
     std::shared_ptr<PlayerController> m_player;
     std::atomic_bool m_init = false;
 };

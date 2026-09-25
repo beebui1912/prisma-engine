@@ -1,4 +1,5 @@
 #include "../include/ImGuiHelper.h"
+
 #include "ThirdParty/imgui/imgui.h"
 
 void Prisma::GUI::ImGuiHelper::clipVertical(int size, std::function<void(int)> data) {

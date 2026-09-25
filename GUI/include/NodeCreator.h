@@ -1,13 +1,13 @@
 #pragma once
 
 #include <memory>
-#include "SceneObjects/Mesh.h"
-#include "GlobalData/GlobalData.h"
 
+#include "GlobalData/GlobalData.h"
+#include "SceneObjects/Mesh.h"
 
 namespace Prisma::GUI {
 class NodeCreator {
-public:
+   public:
     static std::shared_ptr<Node> createCube();
 
     static std::shared_ptr<Node> createSphere(int subDivisions);
@@ -20,10 +20,9 @@ public:
 
     static std::shared_ptr<Node> createNode();
 
-private:
-    static std::shared_ptr<Node> createMesh(std::shared_ptr<Mesh::VerticesData> verticesData,
-                                            const std::string& name);
+   private:
+    static std::shared_ptr<Node> createMesh(std::shared_ptr<Mesh::VerticesData> verticesData, const std::string& name);
 
     static std::shared_ptr<MaterialComponent> getEmptyMaterial();
 };
-}
+}  // namespace Prisma::GUI

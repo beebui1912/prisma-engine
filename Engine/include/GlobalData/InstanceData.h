@@ -3,7 +3,7 @@
 namespace Prisma {
 template <typename T>
 class InstanceData {
-public:
+   public:
     InstanceData(const InstanceData&) = delete;
     InstanceData& operator=(const InstanceData&) = delete;
 
@@ -12,8 +12,8 @@ public:
         return instance;
     }
 
-protected:
+   protected:
     InstanceData() = default;
     ~InstanceData() = default;
 };
-}
+}  // namespace Prisma

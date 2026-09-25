@@ -1,10 +1,11 @@
 ﻿#include "Containers/Texture.h"
+
 #include <iostream>
 #include <tuple>
-#include "GlobalData/GlobalData.h"
-#include "Pipelines/PipelineHandler.h"
 
+#include "GlobalData/GlobalData.h"
 #include "Helpers/Logger.h"
+#include "Pipelines/PipelineHandler.h"
 #include "TextureLoader/interface/TextureLoader.h"
 #include "TextureLoader/interface/TextureUtilities.h"
 
@@ -18,8 +19,7 @@ bool Prisma::Texture::loadTexture(const Parameters& parameters) {
         loadInfo.CompressMode = Diligent::TEXTURE_LOAD_COMPRESS_MODE_BC;
     }
     loadInfo.MipLevels = m_parameters.mips;
-    CreateTextureFromFile(m_parameters.texture.c_str(), loadInfo, PrismaFunc::getInstance().contextData().device,
-                          &m_texture);
+    CreateTextureFromFile(m_parameters.texture.c_str(), loadInfo, PrismaFunc::getInstance().contextData().device, &m_texture);
     if (m_texture) {
         m_data.width = m_texture->GetDesc().GetWidth();
         m_data.height = m_texture->GetDesc().GetHeight();
@@ -34,29 +34,17 @@ bool Prisma::Texture::loadTexture(const Parameters& parameters) {
     return m_texture;
 }
 
-uint64_t Prisma::Texture::id() const {
-    return m_id;
-}
+uint64_t Prisma::Texture::id() const { return m_id; }
 
-void Prisma::Texture::id(uint64_t id) {
-    m_id = id;
-}
+void Prisma::Texture::id(uint64_t id) { m_id = id; }
 
-unsigned int Prisma::Texture::rawId() const {
-    return m_rawId;
-}
+unsigned int Prisma::Texture::rawId() const { return m_rawId; }
 
-void Prisma::Texture::rawId(unsigned int rawId) {
-    m_rawId = rawId;
-}
+void Prisma::Texture::rawId(unsigned int rawId) { m_rawId = rawId; }
 
-std::string Prisma::Texture::name() const {
-    return m_name;
-}
+std::string Prisma::Texture::name() const { return m_name; }
 
-void Prisma::Texture::name(std::string name) {
-    m_name = name;
-}
+void Prisma::Texture::name(std::string name) { m_name = name; }
 
 bool Prisma::Texture::loadCubemap(std::vector<std::string> faces, bool srgb) {
     /*unsigned int textureID;
@@ -133,22 +121,14 @@ bool Prisma::Texture::loadEquirectangular(std::string texture) {
     return false;
 }
 
-Prisma::Texture::TextureData Prisma::Texture::data() const {
-    return m_data;
-}
+Prisma::Texture::TextureData Prisma::Texture::data() const { return m_data; }
 
-void Prisma::Texture::data(TextureData data) {
-    m_data = data;
-}
+void Prisma::Texture::data(TextureData data) { m_data = data; }
 
-void Prisma::Texture::freeData() {
-}
+void Prisma::Texture::freeData() {}
 
-Diligent::RefCntAutoPtr<Diligent::ITexture> Prisma::Texture::texture() {
-    return m_texture; }
+Diligent::RefCntAutoPtr<Diligent::ITexture> Prisma::Texture::texture() { return m_texture; }
 
 void Prisma::Texture::parameters(const Parameters& parameters) { m_parameters = parameters; }
 
-const Prisma::Texture::Parameters Prisma::Texture::parameters() const {
-    return m_parameters;
-}
+const Prisma::Texture::Parameters Prisma::Texture::parameters() const { return m_parameters; }

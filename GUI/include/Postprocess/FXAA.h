@@ -1,13 +1,13 @@
 #pragma once
-#include "GlobalData/Platform.h"
-#include "Graphics/GraphicsEngine/interface/Buffer.h"
-#include "Graphics/GraphicsEngine/interface/Texture.h"
-#include "Graphics/GraphicsEngine/interface/PipelineState.h"
 #include <Common/interface/RefCntAutoPtr.hpp>
 
+#include "GlobalData/Platform.h"
+#include "Graphics/GraphicsEngine/interface/Buffer.h"
+#include "Graphics/GraphicsEngine/interface/PipelineState.h"
+#include "Graphics/GraphicsEngine/interface/Texture.h"
 #include "Helpers/Blit.h"
-#include "Postprocess/PostprocessEffect.h"
 #include "Helpers/Settings.h"
+#include "Postprocess/PostprocessEffect.h"
 
 namespace Prisma::GUI {
 class FXAA : public PostprocessEffect {
@@ -15,7 +15,6 @@ class FXAA : public PostprocessEffect {
     FXAA();
 
     void render() override;
-
 
     void apply(bool apply);
 

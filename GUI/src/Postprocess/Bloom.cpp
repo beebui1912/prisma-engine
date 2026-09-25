@@ -1,13 +1,13 @@
 #include "../include/Postprocess/Bloom.h"
-#include "GlobalData/PrismaFunc.h"
-#include "Pipelines/PipelineHandler.h"
-#include "GlobalData/Defines.h"
-#include "Helpers/PrismaRender.h"
-#include "Graphics/GraphicsTools/interface/MapHelper.hpp"
+
 #include <glm/glm.hpp>
 
+#include "GlobalData/Defines.h"
 #include "GlobalData/EngineSettings.h"
-
+#include "GlobalData/PrismaFunc.h"
+#include "Graphics/GraphicsTools/interface/MapHelper.hpp"
+#include "Helpers/PrismaRender.h"
+#include "Pipelines/PipelineHandler.h"
 
 void Prisma::GUI::Bloom::render() {
     renderBrightness();
@@ -230,9 +230,7 @@ void Prisma::GUI::Bloom::createShaderRender() {
     // Define variable type that will be used by default
     PSOCreateInfo.PSODesc.ResourceLayout.DefaultVariableType = Diligent::SHADER_RESOURCE_VARIABLE_TYPE_STATIC;
 
-    Diligent::ShaderResourceVariableDesc Vars[] = {{Diligent::SHADER_TYPE_PIXEL, "screenTexture", Diligent::SHADER_RESOURCE_VARIABLE_TYPE_STATIC},
-                                                   {Diligent::SHADER_TYPE_PIXEL, "hdrTexture", Diligent::SHADER_RESOURCE_VARIABLE_TYPE_STATIC}
-    };
+    Diligent::ShaderResourceVariableDesc Vars[] = {{Diligent::SHADER_TYPE_PIXEL, "screenTexture", Diligent::SHADER_RESOURCE_VARIABLE_TYPE_STATIC}, {Diligent::SHADER_TYPE_PIXEL, "hdrTexture", Diligent::SHADER_RESOURCE_VARIABLE_TYPE_STATIC}};
     // clang-format on
     PSOCreateInfo.PSODesc.ResourceLayout.Variables = Vars;
     PSOCreateInfo.PSODesc.ResourceLayout.NumVariables = _countof(Vars);
@@ -282,8 +280,8 @@ void Prisma::GUI::Bloom::renderBrightness() {
     // Set texture SRV in the SRB
     contextData.immediateContext->CommitShaderResources(m_srbBrightness, Diligent::RESOURCE_STATE_TRANSITION_MODE_TRANSITION);
 
-    Diligent::DrawIndexedAttribs DrawAttrs; // This is an indexed draw call
-    DrawAttrs.IndexType = Diligent::VT_UINT32; // Index type
+    Diligent::DrawIndexedAttribs DrawAttrs;     // This is an indexed draw call
+    DrawAttrs.IndexType = Diligent::VT_UINT32;  // Index type
     DrawAttrs.NumIndices = quadBuffer.iBufferSize;
     // Verify the state of vertex and index buffers
     DrawAttrs.Flags = Diligent::DRAW_FLAG_VERIFY_ALL;
@@ -309,8 +307,8 @@ void Prisma::GUI::Bloom::renderBloom() {
     // Set texture SRV in the SRB
     contextData.immediateContext->CommitShaderResources(m_srbRender, Diligent::RESOURCE_STATE_TRANSITION_MODE_TRANSITION);
 
-    Diligent::DrawIndexedAttribs DrawAttrs; // This is an indexed draw call
-    DrawAttrs.IndexType = Diligent::VT_UINT32; // Index type
+    Diligent::DrawIndexedAttribs DrawAttrs;     // This is an indexed draw call
+    DrawAttrs.IndexType = Diligent::VT_UINT32;  // Index type
     DrawAttrs.NumIndices = quadBuffer.iBufferSize;
     // Verify the state of vertex and index buffers
     DrawAttrs.Flags = Diligent::DRAW_FLAG_VERIFY_ALL;

@@ -1,12 +1,14 @@
 #pragma once
-#include "glm/glm.hpp"
+#include <assimp/postprocess.h>
+
+#include <assimp/Importer.hpp>
 #include <iostream>
 #include <vector>
-#include <assimp/Importer.hpp>
-#include <assimp/postprocess.h>
-#include "../SceneObjects/AnimatedMesh.h"
+
 #include "../GlobalData/Defines.h"
+#include "../SceneObjects/AnimatedMesh.h"
 #include "Bone.h"
+#include "glm/glm.hpp"
 
 namespace Prisma {
 class AnimatedMesh;
@@ -23,7 +25,7 @@ struct AssimpNodeData {
 };
 
 class Animation {
-public:
+   public:
     Animation();
 
     Animation(const std::string& animationPath, std::shared_ptr<AnimatedMesh> model);
@@ -44,7 +46,7 @@ public:
 
     std::string path() const;
 
-private:
+   private:
     aiNode* m_scene;
     aiAnimation* m_animation;
     std::string m_animationPath;
@@ -59,4 +61,4 @@ private:
     unsigned int m_id;
     std::string m_path = "";
 };
-}
+}  // namespace Prisma

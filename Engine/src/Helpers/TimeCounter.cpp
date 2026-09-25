@@ -1,7 +1,6 @@
 #include "Helpers/TimeCounter.h"
 
-Prisma::TimeCounter::TimeCounter() : running(false) {
-}
+Prisma::TimeCounter::TimeCounter() : running(false) {}
 
 void Prisma::TimeCounter::start() {
     start_time = std::chrono::high_resolution_clock::now();

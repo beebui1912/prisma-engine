@@ -1,22 +1,23 @@
 #pragma once
 
-#include "../SceneObjects/Camera.h"
-#include "../SceneData/SceneLoader.h"
-#include "../Handlers/MeshHandler.h"
 #include <memory>
+
 #include "../GlobalData/InstanceData.h"
+#include "../Handlers/MeshHandler.h"
+#include "../SceneData/SceneLoader.h"
+#include "../SceneObjects/Camera.h"
 
 namespace Prisma {
 class PipelineSkyboxRenderer {
-public:
+   public:
     void render();
     void texture(Diligent::RefCntAutoPtr<Diligent::ITexture> texture);
     PipelineSkyboxRenderer();
 
-private:
+   private:
     Diligent::RefCntAutoPtr<Diligent::ITexture> m_texture;
     Diligent::RefCntAutoPtr<Diligent::IBuffer> m_mvpVS;
     Diligent::RefCntAutoPtr<Diligent::IPipelineState> m_pso;
     Diligent::RefCntAutoPtr<Diligent::IShaderResourceBinding> m_srb;
 };
-}
+}  // namespace Prisma

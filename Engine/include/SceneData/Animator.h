@@ -1,8 +1,8 @@
 #pragma once
-#include "Animation.h"
-#include "../Handlers/AnimationHandler.h"
 #include <glm/gtx/matrix_decompose.hpp>
 
+#include "../Handlers/AnimationHandler.h"
+#include "Animation.h"
 
 namespace Prisma {
 class Animation;
@@ -10,7 +10,7 @@ class Animation;
 struct AssimpNodeData;
 
 class Animator {
-public:
+   public:
     Animator(std::shared_ptr<Animation> animation);
 
     void updateAnimation(float dt);
@@ -33,7 +33,7 @@ public:
 
     bool automaticUpdate();
 
-private:
+   private:
     std::shared_ptr<Animation> m_CurrentAnimation;
 
     int findUUID();
@@ -46,7 +46,7 @@ private:
 
     float m_BlendFactor = 0.0f;
 
-    float m_BlendDuration = 0.8f; // Duration of the blend in seconds
+    float m_BlendDuration = 0.8f;  // Duration of the blend in seconds
 
     bool m_IsBlending = false;
 
@@ -64,4 +64,4 @@ private:
 
     AnimationHandler::SSBOAnimation m_ssboAnimation;
 };
-}
+}  // namespace Prisma

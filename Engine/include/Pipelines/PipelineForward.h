@@ -1,21 +1,21 @@
 #pragma once
 
-#include "../SceneObjects/Camera.h"
-#include "../SceneData/SceneLoader.h"
-#include "../Handlers/MeshHandler.h"
-#include "../SceneData/MeshIndirect.h"
-#include "PipelineFullScreen.h"
-#include "../Helpers/Settings.h"
-#include "../Helpers/Blit.h"
-
 #include <memory>
-#include "PipelinePrePass.h"
-#include "PipelineForwardTransparent.h"
+
+#include "../Handlers/MeshHandler.h"
+#include "../Helpers/Blit.h"
+#include "../Helpers/Settings.h"
+#include "../SceneData/MeshIndirect.h"
+#include "../SceneData/SceneLoader.h"
+#include "../SceneObjects/Camera.h"
 #include "PipelineDepthResolve.h"
+#include "PipelineForwardTransparent.h"
+#include "PipelineFullScreen.h"
+#include "PipelinePrePass.h"
 
 namespace Prisma {
 class PipelineForward {
-public:
+   public:
     PipelineForward(const unsigned int& width = 1920, const unsigned int& height = 1080);
     void render();
     void renderComposite();
@@ -23,7 +23,7 @@ public:
 
     ~PipelineForward();
 
-private:
+   private:
     unsigned int m_width;
     unsigned int m_height;
 
@@ -66,6 +66,5 @@ private:
     std::unique_ptr<Prisma::PipelineDepthResolve> m_depthResolve;
 
     Settings m_settings;
-
 };
-}
+}  // namespace Prisma

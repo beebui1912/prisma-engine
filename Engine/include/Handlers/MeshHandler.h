@@ -1,10 +1,10 @@
 #pragma once
 #include <memory>
-#include "glm/glm.hpp"
-#include "../Helpers/Settings.h"
 
 #include "../GlobalData/InstanceData.h"
+#include "../Helpers/Settings.h"
 #include "Common/interface/RefCntAutoPtr.hpp"
+#include "glm/glm.hpp"
 
 namespace Diligent {
 struct IBuffer;
@@ -12,7 +12,7 @@ struct IBuffer;
 
 namespace Prisma {
 class MeshHandler : public InstanceData<MeshHandler> {
-public:
+   public:
     struct ViewProjectionData {
         glm::mat4 view;
         glm::mat4 projection;
@@ -33,9 +33,9 @@ public:
     void updateCluster();
     MeshHandler();
 
-private:
+   private:
     ClusterData m_clusterData;
     Settings m_settings;
     Diligent::RefCntAutoPtr<Diligent::IBuffer> m_viewProjection;
 };
-}
+}  // namespace Prisma

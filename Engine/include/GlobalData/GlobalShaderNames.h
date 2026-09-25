@@ -30,4 +30,4 @@ const std::string CONSTANT_CLUSTERS = "clusters";
 const std::string CONSTANT_CLUSTERS_DATA = "ConstantsClusters";
 const std::string MUTABLE_STATUS = "statusData";
 const std::string MUTABLE_STATUS_ANIMATION = "statusDataAnimation";
-}
+}  // namespace Prisma::ShaderNames

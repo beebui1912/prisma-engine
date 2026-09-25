@@ -1,18 +1,17 @@
 #include "Handlers/CSMHandler.h"
 
-#include "PipelineState.h"
-#include "GlobalData/PrismaFunc.h"
 #include <GlobalData/GlobalShaderNames.h>
 
-#include "glm/gtc/type_ptr.hpp"
 #include "GlobalData/GlobalData.h"
+#include "GlobalData/PrismaFunc.h"
+#include "PipelineState.h"
 #include "SceneData/MeshIndirect.h"
+#include "glm/gtc/type_ptr.hpp"
 
 Prisma::CSMHandler::CSMHandler() {
     create();
     createAnimation();
 }
-
 
 void Prisma::CSMHandler::create() {
     // Pipeline state object encompasses configuration of all GPU stages
@@ -101,12 +100,9 @@ void Prisma::CSMHandler::create() {
     // Define variable type that will be used by default
     PSOCreateInfo.PSODesc.ResourceLayout.DefaultVariableType = Diligent::SHADER_RESOURCE_VARIABLE_TYPE_STATIC;
 
-    Diligent::ShaderResourceVariableDesc Vars[] =
-    {
-        {Diligent::SHADER_TYPE_VERTEX, ShaderNames::MUTABLE_MODELS.c_str(),
-         Diligent::SHADER_RESOURCE_VARIABLE_TYPE_MUTABLE},
-        {Diligent::SHADER_TYPE_GEOMETRY, ShaderNames::CONSTANT_DIR_DATA_SHADOW.c_str(),
-         Diligent::SHADER_RESOURCE_VARIABLE_TYPE_STATIC},
+    Diligent::ShaderResourceVariableDesc Vars[] = {
+        {Diligent::SHADER_TYPE_VERTEX, ShaderNames::MUTABLE_MODELS.c_str(), Diligent::SHADER_RESOURCE_VARIABLE_TYPE_MUTABLE},
+        {Diligent::SHADER_TYPE_GEOMETRY, ShaderNames::CONSTANT_DIR_DATA_SHADOW.c_str(), Diligent::SHADER_RESOURCE_VARIABLE_TYPE_STATIC},
     };
     // clang-format on
     PSOCreateInfo.PSODesc.ResourceLayout.Variables = Vars;
@@ -126,20 +122,17 @@ void Prisma::CSMHandler::create() {
     contextData.device->CreateBuffer(ShadowBuffer, &data, &m_shadowBuffer);
 
     contextData.device->CreateGraphicsPipelineState(PSOCreateInfo, &m_pso);
-    m_pso->GetStaticVariableByName(Diligent::SHADER_TYPE_GEOMETRY, ShaderNames::CONSTANT_DIR_DATA_SHADOW.c_str())->
-           Set(m_shadowBuffer);
+    m_pso->GetStaticVariableByName(Diligent::SHADER_TYPE_GEOMETRY, ShaderNames::CONSTANT_DIR_DATA_SHADOW.c_str())->Set(m_shadowBuffer);
 
     m_pso->CreateShaderResourceBinding(&m_srb, true);
     if (MeshIndirect::getInstance().modelBuffer()) {
-        m_srb->GetVariableByName(Diligent::SHADER_TYPE_VERTEX, ShaderNames::MUTABLE_MODELS.c_str())->Set(
-            MeshIndirect::getInstance().modelBuffer()->
-                                        GetDefaultView(Diligent::BUFFER_VIEW_SHADER_RESOURCE));
+        m_srb->GetVariableByName(Diligent::SHADER_TYPE_VERTEX, ShaderNames::MUTABLE_MODELS.c_str())->Set(MeshIndirect::getInstance().modelBuffer()->GetDefaultView(Diligent::BUFFER_VIEW_SHADER_RESOURCE));
     }
-    MeshIndirect::getInstance().addResizeHandler({"CSMMesh handler" ,[&](Diligent::RefCntAutoPtr<Diligent::IBuffer> buffers, MeshIndirect::MaterialView& materials) {
-        m_srb.Release();
-        m_pso->CreateShaderResourceBinding(&m_srb, true);
-        m_srb->GetVariableByName(Diligent::SHADER_TYPE_VERTEX, ShaderNames::MUTABLE_MODELS.c_str())->Set(buffers->GetDefaultView(Diligent::BUFFER_VIEW_SHADER_RESOURCE));
-    }});
+    MeshIndirect::getInstance().addResizeHandler({"CSMMesh handler", [&](Diligent::RefCntAutoPtr<Diligent::IBuffer> buffers, MeshIndirect::MaterialView& materials) {
+                                                      m_srb.Release();
+                                                      m_pso->CreateShaderResourceBinding(&m_srb, true);
+                                                      m_srb->GetVariableByName(Diligent::SHADER_TYPE_VERTEX, ShaderNames::MUTABLE_MODELS.c_str())->Set(buffers->GetDefaultView(Diligent::BUFFER_VIEW_SHADER_RESOURCE));
+                                                  }});
 }
 
 void Prisma::CSMHandler::createAnimation() {
@@ -234,29 +227,21 @@ void Prisma::CSMHandler::createAnimation() {
     // Define variable type that will be used by default
     PSOCreateInfo.PSODesc.ResourceLayout.DefaultVariableType = Diligent::SHADER_RESOURCE_VARIABLE_TYPE_STATIC;
 
-    Diligent::ShaderResourceVariableDesc Vars[] =
-    {
-        {Diligent::SHADER_TYPE_VERTEX, ShaderNames::MUTABLE_MODELS.c_str(),
-         Diligent::SHADER_RESOURCE_VARIABLE_TYPE_MUTABLE},
-        {Diligent::SHADER_TYPE_GEOMETRY, ShaderNames::CONSTANT_DIR_DATA_SHADOW.c_str(),
-         Diligent::SHADER_RESOURCE_VARIABLE_TYPE_STATIC},
+    Diligent::ShaderResourceVariableDesc Vars[] = {
+        {Diligent::SHADER_TYPE_VERTEX, ShaderNames::MUTABLE_MODELS.c_str(), Diligent::SHADER_RESOURCE_VARIABLE_TYPE_MUTABLE},
+        {Diligent::SHADER_TYPE_GEOMETRY, ShaderNames::CONSTANT_DIR_DATA_SHADOW.c_str(), Diligent::SHADER_RESOURCE_VARIABLE_TYPE_STATIC},
     };
     // clang-format on
     PSOCreateInfo.PSODesc.ResourceLayout.Variables = Vars;
     PSOCreateInfo.PSODesc.ResourceLayout.NumVariables = _countof(Vars);
 
     contextData.device->CreateGraphicsPipelineState(PSOCreateInfo, &m_psoAnimation);
-    m_psoAnimation->GetStaticVariableByName(Diligent::SHADER_TYPE_GEOMETRY,
-                                            ShaderNames::CONSTANT_DIR_DATA_SHADOW.c_str())->Set(m_shadowBuffer);
-    m_psoAnimation->GetStaticVariableByName(Diligent::SHADER_TYPE_VERTEX, ShaderNames::CONSTANT_ANIMATION.c_str())->
-                    Set(AnimationHandler::getInstance().animation()->GetDefaultView(
-                        Diligent::BUFFER_VIEW_SHADER_RESOURCE));
+    m_psoAnimation->GetStaticVariableByName(Diligent::SHADER_TYPE_GEOMETRY, ShaderNames::CONSTANT_DIR_DATA_SHADOW.c_str())->Set(m_shadowBuffer);
+    m_psoAnimation->GetStaticVariableByName(Diligent::SHADER_TYPE_VERTEX, ShaderNames::CONSTANT_ANIMATION.c_str())->Set(AnimationHandler::getInstance().animation()->GetDefaultView(Diligent::BUFFER_VIEW_SHADER_RESOURCE));
 
     m_psoAnimation->CreateShaderResourceBinding(&m_srbAnimation, true);
     if (MeshIndirect::getInstance().modelBufferAnimation()) {
-        m_srbAnimation->GetVariableByName(Diligent::SHADER_TYPE_VERTEX, ShaderNames::MUTABLE_MODELS.c_str())->
-                        Set(MeshIndirect::getInstance().modelBufferAnimation()->GetDefaultView(
-                            Diligent::BUFFER_VIEW_SHADER_RESOURCE));
+        m_srbAnimation->GetVariableByName(Diligent::SHADER_TYPE_VERTEX, ShaderNames::MUTABLE_MODELS.c_str())->Set(MeshIndirect::getInstance().modelBufferAnimation()->GetDefaultView(Diligent::BUFFER_VIEW_SHADER_RESOURCE));
     }
     MeshIndirect::getInstance().addResizeHandler(
         {"CSMAnimation handler", [&](Diligent::RefCntAutoPtr<Diligent::IBuffer> buffers, MeshIndirect::MaterialView& materials) {
@@ -268,16 +253,13 @@ void Prisma::CSMHandler::createAnimation() {
 
 void Prisma::CSMHandler::render(const CSMData& data) {
     auto& contextData = PrismaFunc::getInstance().contextData();
-    contextData.immediateContext->UpdateBuffer(m_shadowBuffer, 0, sizeof(CSMShadow), &data.shadows,
-                                               Diligent::RESOURCE_STATE_TRANSITION_MODE_TRANSITION);
+    contextData.immediateContext->UpdateBuffer(m_shadowBuffer, 0, sizeof(CSMShadow), &data.shadows, Diligent::RESOURCE_STATE_TRANSITION_MODE_TRANSITION);
 
     auto depth = data.depth->GetDefaultView(Diligent::TEXTURE_VIEW_DEPTH_STENCIL);
     // Clear the back buffer
-    contextData.immediateContext->SetRenderTargets(0, nullptr, depth,
-                                                   Diligent::RESOURCE_STATE_TRANSITION_MODE_TRANSITION);
+    contextData.immediateContext->SetRenderTargets(0, nullptr, depth, Diligent::RESOURCE_STATE_TRANSITION_MODE_TRANSITION);
 
-    contextData.immediateContext->ClearDepthStencil(depth, Diligent::CLEAR_DEPTH_FLAG, 1.f, 0,
-                                                    Diligent::RESOURCE_STATE_TRANSITION_MODE_TRANSITION);
+    contextData.immediateContext->ClearDepthStencil(depth, Diligent::CLEAR_DEPTH_FLAG, 1.f, 0, Diligent::RESOURCE_STATE_TRANSITION_MODE_TRANSITION);
 
     // Set the pipeline state
     contextData.immediateContext->SetPipelineState(m_pso);
@@ -287,8 +269,7 @@ void Prisma::CSMHandler::render(const CSMData& data) {
     if (!meshes.empty()) {
         MeshIndirect::getInstance().setupBuffers();
         // Set texture SRV in the SRB
-        contextData.immediateContext->CommitShaderResources(
-            m_srb, Diligent::RESOURCE_STATE_TRANSITION_MODE_TRANSITION);
+        contextData.immediateContext->CommitShaderResources(m_srb, Diligent::RESOURCE_STATE_TRANSITION_MODE_TRANSITION);
         MeshIndirect::getInstance().renderMeshes();
     }
 
@@ -297,15 +278,11 @@ void Prisma::CSMHandler::render(const CSMData& data) {
     auto& meshesAnimation = GlobalData::getInstance().currentGlobalScene()->animateMeshes;
     if (!meshesAnimation.empty()) {
         MeshIndirect::getInstance().setupBuffersAnimation();
-        contextData.immediateContext->CommitShaderResources(m_srbAnimation,
-                                                            Diligent::RESOURCE_STATE_TRANSITION_MODE_TRANSITION);
+        contextData.immediateContext->CommitShaderResources(m_srbAnimation, Diligent::RESOURCE_STATE_TRANSITION_MODE_TRANSITION);
         MeshIndirect::getInstance().renderAnimateMeshes();
     }
 
     PrismaFunc::getInstance().bindMainRenderTarget();
 }
 
-
-Diligent::RefCntAutoPtr<Diligent::IBuffer> Prisma::CSMHandler::shadowBuffer() {
-    return m_shadowBuffer;
-}
+Diligent::RefCntAutoPtr<Diligent::IBuffer> Prisma::CSMHandler::shadowBuffer() { return m_shadowBuffer; }

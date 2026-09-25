@@ -1,15 +1,16 @@
 #include "SceneObjects/Mesh.h"
-#include "SceneObjects/Mesh.h"
-#include "GlobalData/GlobalData.h"
-#include "SceneData/MeshIndirect.h"
-#include "glm/glm.hpp"
-#include "glm/gtx/string_cast.hpp"
-#include "glm/gtx/matrix_decompose.hpp"
+
 #include <string>
 
-#include "../../../DiligentEngine/DiligentFX/Shaders/Common/public/ShaderDefinitions.fxh"
+#include "../../../../DiligentEngine/DiligentFX/Shaders/Common/public/ShaderDefinitions.fxh"
 #include "GlobalData/CacheScene.h"
+#include "GlobalData/GlobalData.h"
 #include "Pipelines/PipelineHandler.h"
+#include "SceneData/MeshIndirect.h"
+#include "SceneObjects/Mesh.h"
+#include "glm/glm.hpp"
+#include "glm/gtx/matrix_decompose.hpp"
+#include "glm/gtx/string_cast.hpp"
 
 void Prisma::Mesh::loadModel(std::shared_ptr<VerticesData> vertices, bool compute) {
     m_vertices = vertices;
@@ -18,18 +19,14 @@ void Prisma::Mesh::loadModel(std::shared_ptr<VerticesData> vertices, bool comput
     }
 }
 
-Prisma::Mesh::VerticesData& Prisma::Mesh::verticesData() const {
-    return *m_vertices;
-}
+Prisma::Mesh::VerticesData& Prisma::Mesh::verticesData() const { return *m_vertices; }
 
 void Prisma::Mesh::matrix(const glm::mat4& matrix, bool update) {
     Node::matrix(matrix);
     CacheScene::getInstance().updateData(true);
 }
 
-glm::mat4 Prisma::Mesh::matrix() const {
-    return Node::matrix();
-}
+glm::mat4 Prisma::Mesh::matrix() const { return Node::matrix(); }
 
 void Prisma::Mesh::finalMatrix(const glm::mat4& matrix, bool update) {
     Node::finalMatrix(matrix);
@@ -39,9 +36,7 @@ void Prisma::Mesh::finalMatrix(const glm::mat4& matrix, bool update) {
     CacheScene::getInstance().updateData(true);
 }
 
-glm::mat4 Prisma::Mesh::finalMatrix() const {
-    return Node::finalMatrix();
-}
+glm::mat4 Prisma::Mesh::finalMatrix() const { return Node::finalMatrix(); }
 
 std::shared_ptr<Prisma::Mesh> Prisma::Mesh::instantiate(std::shared_ptr<Mesh> mesh) {
     std::shared_ptr<Mesh> newInstance = nullptr;
@@ -66,28 +61,17 @@ void Prisma::Mesh::material(std::shared_ptr<MaterialComponent> material) {
     CacheScene::getInstance().updateTextures(true);
 }
 
-std::shared_ptr<Prisma::MaterialComponent> Prisma::Mesh::material() {
-    return m_material;
-}
+std::shared_ptr<Prisma::MaterialComponent> Prisma::Mesh::material() { return m_material; }
 
-void Prisma::Mesh::vectorId(int vectorId) {
-    m_vectorId = vectorId;
-}
+void Prisma::Mesh::vectorId(int vectorId) { m_vectorId = vectorId; }
 
-int Prisma::Mesh::vectorId() {
-    return m_vectorId;
-}
+int Prisma::Mesh::vectorId() { return m_vectorId; }
 
-Diligent::RefCntAutoPtr<Diligent::IBuffer> Prisma::Mesh::vBuffer() {
-    return m_vBuffer;
-}
+Diligent::RefCntAutoPtr<Diligent::IBuffer> Prisma::Mesh::vBuffer() { return m_vBuffer; }
 
-Diligent::RefCntAutoPtr<Diligent::IBuffer> Prisma::Mesh::iBuffer() {
-    return m_iBuffer;
-}
+Diligent::RefCntAutoPtr<Diligent::IBuffer> Prisma::Mesh::iBuffer() { return m_iBuffer; }
 
-void createTLAS() {
-}
+void createTLAS() {}
 
 void Prisma::Mesh::uploadBLAS() {
     if (!m_blasGPU && m_vertices && !m_vertices->vertices.empty()) {
@@ -99,7 +83,7 @@ void Prisma::Mesh::uploadBLAS() {
             vertices.push_back(v.position);
         }
 
-        //srb->GetVariableByName(Diligent::SHADER_TYPE_RAY_CLOSEST_HIT, "g_CubeAttribsCB")->Set(m_CubeAttribsCB);
+        // srb->GetVariableByName(Diligent::SHADER_TYPE_RAY_CLOSEST_HIT, "g_CubeAttribsCB")->Set(m_CubeAttribsCB);
 
         Diligent::BufferDesc VertBuffDesc;
         VertBuffDesc.Name = "Cube vertex buffer";
@@ -187,9 +171,7 @@ void Prisma::Mesh::uploadBLAS() {
     }
 }
 
-Diligent::RefCntAutoPtr<Diligent::IBottomLevelAS> Prisma::Mesh::blas() {
-    return m_pCubeBLAS;
-}
+Diligent::RefCntAutoPtr<Diligent::IBottomLevelAS> Prisma::Mesh::blas() { return m_pCubeBLAS; }
 
 void Prisma::Mesh::computeAABB() {
     auto vertices = verticesData().vertices;
@@ -217,6 +199,4 @@ void Prisma::Mesh::computeAABB() {
     m_aabbData.extents = m_aabbData.max - m_aabbData.center;
 }
 
-Prisma::Mesh::AABBData Prisma::Mesh::aabbData() {
-    return m_aabbData;
-}
+Prisma::Mesh::AABBData Prisma::Mesh::aabbData() { return m_aabbData; }

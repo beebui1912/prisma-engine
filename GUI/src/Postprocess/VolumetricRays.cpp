@@ -1,10 +1,11 @@
+#include "PostProcess/VolumetricRays.h"
+
 #include "GlobalData/GlobalShaderNames.h"
 #include "GlobalData/PrismaFunc.h"
 #include "Graphics/GraphicsTools/interface/MapHelper.hpp"
 #include "Handlers/LightHandler.h"
 #include "Helpers/PrismaRender.h"
 #include "Pipelines/PipelineHandler.h"
-#include "PostProcess/VolumetricRays.h"
 #include "TextureLoader/interface/TextureLoader.h"
 #include "TextureLoader/interface/TextureUtilities.h"
 #include "engine.h"

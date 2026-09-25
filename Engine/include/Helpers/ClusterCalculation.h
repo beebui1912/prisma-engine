@@ -1,5 +1,6 @@
 #pragma once
 #include <memory>
+
 #include "../GlobalData/Defines.h"
 #include "Common/interface/RefCntAutoPtr.hpp"
 
@@ -7,13 +8,12 @@ namespace Diligent {
 struct IShaderResourceBinding;
 struct IPipelineState;
 struct IBuffer;
-}
+}  // namespace Diligent
 
 namespace Prisma {
 class ClusterCalculation {
-public:
-    ClusterCalculation(Diligent::RefCntAutoPtr<Diligent::IBuffer> omniLights,
-                       Diligent::RefCntAutoPtr<Diligent::IBuffer> lightSizes);
+   public:
+    ClusterCalculation(Diligent::RefCntAutoPtr<Diligent::IBuffer> omniLights, Diligent::RefCntAutoPtr<Diligent::IBuffer> lightSizes);
     void updateCamera();
     void updateLights();
 
@@ -21,7 +21,7 @@ public:
 
     Diligent::RefCntAutoPtr<Diligent::IBuffer> clusterData();
 
-private:
+   private:
     struct alignas(16) Cluster {
         glm::vec4 minPoint;
         glm::vec4 maxPoint;
@@ -55,4 +55,4 @@ private:
     Diligent::RefCntAutoPtr<Diligent::IShaderResourceBinding> m_srbLight;
     ClusterData m_data;
 };
-}
+}  // namespace Prisma

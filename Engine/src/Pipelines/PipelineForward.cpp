@@ -1,48 +1,42 @@
 #include "Pipelines/PipelineForward.h"
 
-#include "GlobalData/GlobalData.h"
-#include "Pipelines/PipelineForward.h"
-#include "Helpers/PrismaRender.h"
-#include "SceneData/MeshIndirect.h"
-#include "SceneObjects/Mesh.h"
-#include "Pipelines/PipelineSkybox.h"
-#include "Pipelines/PipelineDIffuseIrradiance.h"
-#include "Pipelines/PipelinePrefilter.h"
-#include "Pipelines/PipelineLUT.h"
-#include "glm/glm.hpp"
-#include "glm/gtc/matrix_transform.hpp"
-#include <memory>
+#include <Graphics/GraphicsTools/interface/MapHelper.hpp>
 #include <iostream>
-#include "Helpers/SettingsLoader.h"
-#include "Helpers/ClusterCalculation.h"
+#include <memory>
 #include <random>
-#include "Postprocess/Postprocess.h"
-#include "Handlers/ComponentsHandler.h"
+#include <string>
 
+#include "Common/interface/RefCntAutoPtr.hpp"
+#include "GlobalData/GlobalData.h"
+#include "GlobalData/GlobalShaderNames.h"
+#include "Graphics/GraphicsEngine/interface/DeviceContext.h"
+#include "Graphics/GraphicsEngine/interface/RenderDevice.h"
+#include "Graphics/GraphicsEngine/interface/SwapChain.h"
 #include "Graphics/GraphicsEngineD3D11/interface/EngineFactoryD3D11.h"
 #include "Graphics/GraphicsEngineD3D12/interface/EngineFactoryD3D12.h"
 #include "Graphics/GraphicsEngineOpenGL/interface/EngineFactoryOpenGL.h"
 #include "Graphics/GraphicsEngineVulkan/interface/EngineFactoryVk.h"
-
-#include "Graphics/GraphicsEngine/interface/RenderDevice.h"
-#include "Graphics/GraphicsEngine/interface/DeviceContext.h"
-#include "Graphics/GraphicsEngine/interface/SwapChain.h"
-
-#include "Common/interface/RefCntAutoPtr.hpp"
-
 #include "Graphics/GraphicsTools/interface/GraphicsUtilities.h"
-#include <Graphics/GraphicsTools/interface/MapHelper.hpp>
-
+#include "Handlers/ComponentsHandler.h"
 #include "Handlers/LightHandler.h"
+#include "Helpers/ClusterCalculation.h"
+#include "Helpers/PrismaRender.h"
+#include "Helpers/SettingsLoader.h"
+#include "Pipelines/PipelineDIffuseIrradiance.h"
+#include "Pipelines/PipelineForward.h"
 #include "Pipelines/PipelineHandler.h"
-#include "GlobalData/GlobalShaderNames.h"
-#include <string>
+#include "Pipelines/PipelineLUT.h"
+#include "Pipelines/PipelinePrefilter.h"
+#include "Pipelines/PipelineSkybox.h"
+#include "Postprocess/Postprocess.h"
+#include "SceneData/MeshIndirect.h"
+#include "SceneObjects/Mesh.h"
+#include "glm/glm.hpp"
+#include "glm/gtc/matrix_transform.hpp"
 
 using namespace Diligent;
 
-Prisma::PipelineForward::PipelineForward(const unsigned int& width, const unsigned int& height) : m_width{
-                                                                                                      width
-                                                                                                  }, m_height{height} {
+Prisma::PipelineForward::PipelineForward(const unsigned int& width, const unsigned int& height) : m_width{width}, m_height{height} {
     createMSAA();
     create();
     createCompositePipeline();
@@ -52,8 +46,6 @@ Prisma::PipelineForward::PipelineForward(const unsigned int& width, const unsign
 void Prisma::PipelineForward::render() {
     auto& contextData = PrismaFunc::getInstance().contextData();
 
-
-    
     auto pRTV = PipelineHandler::getInstance().textureData().pColorRTV->GetDefaultView(TEXTURE_VIEW_RENDER_TARGET);
     auto pDSV = PipelineHandler::getInstance().textureData().pDepthDSV->GetDefaultView(TEXTURE_VIEW_DEPTH_STENCIL);
     if (m_settings.msaa) {
@@ -66,7 +58,7 @@ void Prisma::PipelineForward::render() {
         // contextData.immediateContext->ClearRenderTarget(pRTV, value_ptr(Define::CLEAR_COLOR),RESOURCE_STATE_TRANSITION_MODE_TRANSITION);
         contextData.immediateContext->ClearRenderTarget(pRTVMSAA, value_ptr(Define::CLEAR_COLOR), RESOURCE_STATE_TRANSITION_MODE_TRANSITION);
         contextData.immediateContext->ClearDepthStencil(pDSVMSAA, CLEAR_DEPTH_FLAG, 1.f, 0, RESOURCE_STATE_TRANSITION_MODE_TRANSITION);
-    
+
     } else {
         // Clear the back buffer
         contextData.immediateContext->SetRenderTargets(1, &pRTV, pDSV, RESOURCE_STATE_TRANSITION_MODE_TRANSITION);
@@ -93,8 +85,7 @@ void Prisma::PipelineForward::render() {
     if (!meshesAnimation.empty() && PipelineSkybox::getInstance().isInit()) {
         MeshIndirect::getInstance().setupBuffersAnimation();
         // Set texture SRV in the SRB
-        contextData.immediateContext->CommitShaderResources(m_srbAnimation,
-                                                            RESOURCE_STATE_TRANSITION_MODE_TRANSITION);
+        contextData.immediateContext->CommitShaderResources(m_srbAnimation, RESOURCE_STATE_TRANSITION_MODE_TRANSITION);
         MeshIndirect::getInstance().renderAnimateMeshes();
     }
 
@@ -128,12 +119,11 @@ void Prisma::PipelineForward::render() {
     Physics::getInstance().drawDebug();
     renderComposite();
 
-    //m_blit->render(PipelineHandler::getInstance().textureData().pColorRTV);
+    // m_blit->render(PipelineHandler::getInstance().textureData().pColorRTV);
     PrismaFunc::getInstance().bindMainRenderTarget();
 }
 
-Prisma::PipelineForward::~PipelineForward() {
-}
+Prisma::PipelineForward::~PipelineForward() {}
 
 void Prisma::PipelineForward::create() {
     auto& contextData = PrismaFunc::getInstance().contextData();
@@ -168,7 +158,6 @@ void Prisma::PipelineForward::create() {
 
     // clang-format on
     ShaderCreateInfo ShaderCI;
-
 
     // Tell the system that the shader source code is in HLSL.
     // For OpenGL, the engine will convert this into GLSL under the hood.
@@ -234,60 +223,34 @@ void Prisma::PipelineForward::create() {
     std::string samplerRepeatName = "textureRepeat_sampler";
     std::string samplerAnisotropicName = "textureAnisotropic_sampler";
 
-
-    PipelineResourceDesc Resources[] =
-    {
-        {SHADER_TYPE_VERTEX, ShaderNames::MUTABLE_MODELS.c_str(), 1, SHADER_RESOURCE_TYPE_BUFFER_SRV,
-         SHADER_RESOURCE_VARIABLE_TYPE_MUTABLE},
+    PipelineResourceDesc Resources[] = {
+        {SHADER_TYPE_VERTEX, ShaderNames::MUTABLE_MODELS.c_str(), 1, SHADER_RESOURCE_TYPE_BUFFER_SRV, SHADER_RESOURCE_VARIABLE_TYPE_MUTABLE},
         {SHADER_TYPE_VERTEX, ShaderNames::MUTABLE_INDEX_OPAQUE.c_str(), 1, SHADER_RESOURCE_TYPE_BUFFER_SRV, SHADER_RESOURCE_VARIABLE_TYPE_MUTABLE},
 
-        {SHADER_TYPE_PIXEL, ShaderNames::MUTABLE_STATUS.c_str(), 1, SHADER_RESOURCE_TYPE_BUFFER_SRV,
-         SHADER_RESOURCE_VARIABLE_TYPE_MUTABLE},
-        {SHADER_TYPE_VERTEX, ShaderNames::CONSTANT_VIEW_PROJECTION.c_str(), 1,
-         SHADER_RESOURCE_TYPE_CONSTANT_BUFFER, SHADER_RESOURCE_VARIABLE_TYPE_STATIC},
-        {SHADER_TYPE_PIXEL, ShaderNames::CONSTANT_VIEW_PROJECTION.c_str(), 1,
-         SHADER_RESOURCE_TYPE_CONSTANT_BUFFER, SHADER_RESOURCE_VARIABLE_TYPE_STATIC},
-        {SHADER_TYPE_PIXEL, ShaderNames::CONSTANT_LIGHT_SIZES.c_str(), 1, SHADER_RESOURCE_TYPE_CONSTANT_BUFFER,
-         SHADER_RESOURCE_VARIABLE_TYPE_STATIC},
-        {SHADER_TYPE_PIXEL, ShaderNames::CONSTANT_OMNI_DATA.c_str(), 1, SHADER_RESOURCE_TYPE_BUFFER_SRV,
-         SHADER_RESOURCE_VARIABLE_TYPE_STATIC},
+        {SHADER_TYPE_PIXEL, ShaderNames::MUTABLE_STATUS.c_str(), 1, SHADER_RESOURCE_TYPE_BUFFER_SRV, SHADER_RESOURCE_VARIABLE_TYPE_MUTABLE},
+        {SHADER_TYPE_VERTEX, ShaderNames::CONSTANT_VIEW_PROJECTION.c_str(), 1, SHADER_RESOURCE_TYPE_CONSTANT_BUFFER, SHADER_RESOURCE_VARIABLE_TYPE_STATIC},
+        {SHADER_TYPE_PIXEL, ShaderNames::CONSTANT_VIEW_PROJECTION.c_str(), 1, SHADER_RESOURCE_TYPE_CONSTANT_BUFFER, SHADER_RESOURCE_VARIABLE_TYPE_STATIC},
+        {SHADER_TYPE_PIXEL, ShaderNames::CONSTANT_LIGHT_SIZES.c_str(), 1, SHADER_RESOURCE_TYPE_CONSTANT_BUFFER, SHADER_RESOURCE_VARIABLE_TYPE_STATIC},
+        {SHADER_TYPE_PIXEL, ShaderNames::CONSTANT_OMNI_DATA.c_str(), 1, SHADER_RESOURCE_TYPE_BUFFER_SRV, SHADER_RESOURCE_VARIABLE_TYPE_STATIC},
 
         {SHADER_TYPE_PIXEL, ShaderNames::CONSTANT_SPOT_DATA.c_str(), 1, SHADER_RESOURCE_TYPE_BUFFER_SRV, SHADER_RESOURCE_VARIABLE_TYPE_STATIC},
 
-        {SHADER_TYPE_PIXEL, ShaderNames::CONSTANT_DIR_DATA.c_str(), 1, SHADER_RESOURCE_TYPE_BUFFER_SRV,
-         SHADER_RESOURCE_VARIABLE_TYPE_STATIC},
-        {SHADER_TYPE_PIXEL, ShaderNames::CONSTANT_CLUSTERS.c_str(), 1, SHADER_RESOURCE_TYPE_BUFFER_SRV,
-         SHADER_RESOURCE_VARIABLE_TYPE_STATIC},
-        {SHADER_TYPE_PIXEL, ShaderNames::CONSTANT_CLUSTERS_DATA.c_str(), 1,
-         SHADER_RESOURCE_TYPE_CONSTANT_BUFFER, SHADER_RESOURCE_VARIABLE_TYPE_STATIC},
-        {SHADER_TYPE_PIXEL, ShaderNames::CONSTANT_DIR_DATA_SHADOW.c_str(), 1,
-         SHADER_RESOURCE_TYPE_CONSTANT_BUFFER, SHADER_RESOURCE_VARIABLE_TYPE_STATIC},
-        {SHADER_TYPE_PIXEL, ShaderNames::MUTABLE_OMNI_DATA_SHADOW.c_str(), Define::MAX_OMNI_SHADOW,
-         SHADER_RESOURCE_TYPE_TEXTURE_SRV, SHADER_RESOURCE_VARIABLE_TYPE_MUTABLE,
-         PIPELINE_RESOURCE_FLAG_RUNTIME_ARRAY},
-        {SHADER_TYPE_PIXEL, ShaderNames::MUTABLE_DIR_SHADOW.c_str(), 1, SHADER_RESOURCE_TYPE_TEXTURE_SRV,
-         SHADER_RESOURCE_VARIABLE_TYPE_MUTABLE},
-        {SHADER_TYPE_PIXEL, ShaderNames::MUTABLE_DIFFUSE_TEXTURE.c_str(), Define::MAX_MESHES,
-         SHADER_RESOURCE_TYPE_TEXTURE_SRV, SHADER_RESOURCE_VARIABLE_TYPE_MUTABLE,
-         PIPELINE_RESOURCE_FLAG_RUNTIME_ARRAY},
-        {SHADER_TYPE_PIXEL, ShaderNames::MUTABLE_NORMAL_TEXTURE.c_str(), Define::MAX_MESHES,
-         SHADER_RESOURCE_TYPE_TEXTURE_SRV, SHADER_RESOURCE_VARIABLE_TYPE_MUTABLE,
-         PIPELINE_RESOURCE_FLAG_RUNTIME_ARRAY},
-        {SHADER_TYPE_PIXEL, ShaderNames::MUTABLE_ROUGHNESS_METALNESS_TEXTURE.c_str(), Define::MAX_MESHES,
-         SHADER_RESOURCE_TYPE_TEXTURE_SRV, SHADER_RESOURCE_VARIABLE_TYPE_MUTABLE,
-         PIPELINE_RESOURCE_FLAG_RUNTIME_ARRAY},
+        {SHADER_TYPE_PIXEL, ShaderNames::CONSTANT_DIR_DATA.c_str(), 1, SHADER_RESOURCE_TYPE_BUFFER_SRV, SHADER_RESOURCE_VARIABLE_TYPE_STATIC},
+        {SHADER_TYPE_PIXEL, ShaderNames::CONSTANT_CLUSTERS.c_str(), 1, SHADER_RESOURCE_TYPE_BUFFER_SRV, SHADER_RESOURCE_VARIABLE_TYPE_STATIC},
+        {SHADER_TYPE_PIXEL, ShaderNames::CONSTANT_CLUSTERS_DATA.c_str(), 1, SHADER_RESOURCE_TYPE_CONSTANT_BUFFER, SHADER_RESOURCE_VARIABLE_TYPE_STATIC},
+        {SHADER_TYPE_PIXEL, ShaderNames::CONSTANT_DIR_DATA_SHADOW.c_str(), 1, SHADER_RESOURCE_TYPE_CONSTANT_BUFFER, SHADER_RESOURCE_VARIABLE_TYPE_STATIC},
+        {SHADER_TYPE_PIXEL, ShaderNames::MUTABLE_OMNI_DATA_SHADOW.c_str(), Define::MAX_OMNI_SHADOW, SHADER_RESOURCE_TYPE_TEXTURE_SRV, SHADER_RESOURCE_VARIABLE_TYPE_MUTABLE, PIPELINE_RESOURCE_FLAG_RUNTIME_ARRAY},
+        {SHADER_TYPE_PIXEL, ShaderNames::MUTABLE_DIR_SHADOW.c_str(), 1, SHADER_RESOURCE_TYPE_TEXTURE_SRV, SHADER_RESOURCE_VARIABLE_TYPE_MUTABLE},
+        {SHADER_TYPE_PIXEL, ShaderNames::MUTABLE_DIFFUSE_TEXTURE.c_str(), Define::MAX_MESHES, SHADER_RESOURCE_TYPE_TEXTURE_SRV, SHADER_RESOURCE_VARIABLE_TYPE_MUTABLE, PIPELINE_RESOURCE_FLAG_RUNTIME_ARRAY},
+        {SHADER_TYPE_PIXEL, ShaderNames::MUTABLE_NORMAL_TEXTURE.c_str(), Define::MAX_MESHES, SHADER_RESOURCE_TYPE_TEXTURE_SRV, SHADER_RESOURCE_VARIABLE_TYPE_MUTABLE, PIPELINE_RESOURCE_FLAG_RUNTIME_ARRAY},
+        {SHADER_TYPE_PIXEL, ShaderNames::MUTABLE_ROUGHNESS_METALNESS_TEXTURE.c_str(), Define::MAX_MESHES, SHADER_RESOURCE_TYPE_TEXTURE_SRV, SHADER_RESOURCE_VARIABLE_TYPE_MUTABLE, PIPELINE_RESOURCE_FLAG_RUNTIME_ARRAY},
 
-        {SHADER_TYPE_PIXEL, samplerClampName.c_str(), 1, SHADER_RESOURCE_TYPE_SAMPLER,
-         SHADER_RESOURCE_VARIABLE_TYPE_STATIC},
-        {SHADER_TYPE_PIXEL, samplerRepeatName.c_str(), 1, SHADER_RESOURCE_TYPE_SAMPLER,
-         SHADER_RESOURCE_VARIABLE_TYPE_STATIC},
+        {SHADER_TYPE_PIXEL, samplerClampName.c_str(), 1, SHADER_RESOURCE_TYPE_SAMPLER, SHADER_RESOURCE_VARIABLE_TYPE_STATIC},
+        {SHADER_TYPE_PIXEL, samplerRepeatName.c_str(), 1, SHADER_RESOURCE_TYPE_SAMPLER, SHADER_RESOURCE_VARIABLE_TYPE_STATIC},
         {SHADER_TYPE_PIXEL, samplerAnisotropicName.c_str(), 1, SHADER_RESOURCE_TYPE_SAMPLER, SHADER_RESOURCE_VARIABLE_TYPE_STATIC},
-        {SHADER_TYPE_PIXEL, ShaderNames::CONSTANT_LUT.c_str(), 1, SHADER_RESOURCE_TYPE_TEXTURE_SRV,
-         SHADER_RESOURCE_VARIABLE_TYPE_STATIC},
-        {SHADER_TYPE_PIXEL, ShaderNames::MUTABLE_PREFILTER.c_str(), 1, SHADER_RESOURCE_TYPE_TEXTURE_SRV,
-         SHADER_RESOURCE_VARIABLE_TYPE_MUTABLE},
-        {SHADER_TYPE_PIXEL, ShaderNames::MUTABLE_IRRADIANCE.c_str(), 1, SHADER_RESOURCE_TYPE_TEXTURE_SRV,
-         SHADER_RESOURCE_VARIABLE_TYPE_MUTABLE},
+        {SHADER_TYPE_PIXEL, ShaderNames::CONSTANT_LUT.c_str(), 1, SHADER_RESOURCE_TYPE_TEXTURE_SRV, SHADER_RESOURCE_VARIABLE_TYPE_STATIC},
+        {SHADER_TYPE_PIXEL, ShaderNames::MUTABLE_PREFILTER.c_str(), 1, SHADER_RESOURCE_TYPE_TEXTURE_SRV, SHADER_RESOURCE_VARIABLE_TYPE_MUTABLE},
+        {SHADER_TYPE_PIXEL, ShaderNames::MUTABLE_IRRADIANCE.c_str(), 1, SHADER_RESOURCE_TYPE_TEXTURE_SRV, SHADER_RESOURCE_VARIABLE_TYPE_MUTABLE},
 
     };
 
@@ -509,60 +472,34 @@ void Prisma::PipelineForward::createAnimation()
     std::string samplerRepeatName = "textureRepeat_sampler";
     std::string samplerAnisotropicName = "textureAnisotropic_sampler";
 
-    PipelineResourceDesc Resources[] =
-    {
-        {SHADER_TYPE_VERTEX, ShaderNames::MUTABLE_MODELS.c_str(), 1, SHADER_RESOURCE_TYPE_BUFFER_SRV,
-         SHADER_RESOURCE_VARIABLE_TYPE_MUTABLE},
-        {SHADER_TYPE_VERTEX, ShaderNames::CONSTANT_ANIMATION.c_str(), 1, SHADER_RESOURCE_TYPE_BUFFER_SRV,
-         SHADER_RESOURCE_VARIABLE_TYPE_STATIC},
-        {SHADER_TYPE_PIXEL, ShaderNames::MUTABLE_STATUS.c_str(), 1, SHADER_RESOURCE_TYPE_BUFFER_SRV,
-         SHADER_RESOURCE_VARIABLE_TYPE_MUTABLE},
-        {SHADER_TYPE_VERTEX, ShaderNames::CONSTANT_VIEW_PROJECTION.c_str(), 1,
-         SHADER_RESOURCE_TYPE_CONSTANT_BUFFER, SHADER_RESOURCE_VARIABLE_TYPE_STATIC},
-        {SHADER_TYPE_PIXEL, ShaderNames::CONSTANT_VIEW_PROJECTION.c_str(), 1,
-         SHADER_RESOURCE_TYPE_CONSTANT_BUFFER, SHADER_RESOURCE_VARIABLE_TYPE_STATIC},
-        {SHADER_TYPE_PIXEL, ShaderNames::CONSTANT_LIGHT_SIZES.c_str(), 1, SHADER_RESOURCE_TYPE_CONSTANT_BUFFER,
-         SHADER_RESOURCE_VARIABLE_TYPE_STATIC},
-        {SHADER_TYPE_PIXEL, ShaderNames::CONSTANT_OMNI_DATA.c_str(), 1, SHADER_RESOURCE_TYPE_BUFFER_SRV,
-         SHADER_RESOURCE_VARIABLE_TYPE_STATIC},
+    PipelineResourceDesc Resources[] = {
+        {SHADER_TYPE_VERTEX, ShaderNames::MUTABLE_MODELS.c_str(), 1, SHADER_RESOURCE_TYPE_BUFFER_SRV, SHADER_RESOURCE_VARIABLE_TYPE_MUTABLE},
+        {SHADER_TYPE_VERTEX, ShaderNames::CONSTANT_ANIMATION.c_str(), 1, SHADER_RESOURCE_TYPE_BUFFER_SRV, SHADER_RESOURCE_VARIABLE_TYPE_STATIC},
+        {SHADER_TYPE_PIXEL, ShaderNames::MUTABLE_STATUS.c_str(), 1, SHADER_RESOURCE_TYPE_BUFFER_SRV, SHADER_RESOURCE_VARIABLE_TYPE_MUTABLE},
+        {SHADER_TYPE_VERTEX, ShaderNames::CONSTANT_VIEW_PROJECTION.c_str(), 1, SHADER_RESOURCE_TYPE_CONSTANT_BUFFER, SHADER_RESOURCE_VARIABLE_TYPE_STATIC},
+        {SHADER_TYPE_PIXEL, ShaderNames::CONSTANT_VIEW_PROJECTION.c_str(), 1, SHADER_RESOURCE_TYPE_CONSTANT_BUFFER, SHADER_RESOURCE_VARIABLE_TYPE_STATIC},
+        {SHADER_TYPE_PIXEL, ShaderNames::CONSTANT_LIGHT_SIZES.c_str(), 1, SHADER_RESOURCE_TYPE_CONSTANT_BUFFER, SHADER_RESOURCE_VARIABLE_TYPE_STATIC},
+        {SHADER_TYPE_PIXEL, ShaderNames::CONSTANT_OMNI_DATA.c_str(), 1, SHADER_RESOURCE_TYPE_BUFFER_SRV, SHADER_RESOURCE_VARIABLE_TYPE_STATIC},
 
         {SHADER_TYPE_PIXEL, ShaderNames::CONSTANT_SPOT_DATA.c_str(), 1, SHADER_RESOURCE_TYPE_BUFFER_SRV, SHADER_RESOURCE_VARIABLE_TYPE_STATIC},
 
-        {SHADER_TYPE_PIXEL, ShaderNames::CONSTANT_DIR_DATA.c_str(), 1, SHADER_RESOURCE_TYPE_BUFFER_SRV,
-         SHADER_RESOURCE_VARIABLE_TYPE_STATIC},
-        {SHADER_TYPE_PIXEL, ShaderNames::CONSTANT_CLUSTERS.c_str(), 1, SHADER_RESOURCE_TYPE_BUFFER_SRV,
-         SHADER_RESOURCE_VARIABLE_TYPE_STATIC},
-        {SHADER_TYPE_PIXEL, ShaderNames::CONSTANT_CLUSTERS_DATA.c_str(), 1,
-         SHADER_RESOURCE_TYPE_CONSTANT_BUFFER, SHADER_RESOURCE_VARIABLE_TYPE_STATIC},
-        {SHADER_TYPE_PIXEL, ShaderNames::CONSTANT_DIR_DATA_SHADOW.c_str(), 1,
-         SHADER_RESOURCE_TYPE_CONSTANT_BUFFER, SHADER_RESOURCE_VARIABLE_TYPE_STATIC},
-        {SHADER_TYPE_PIXEL, ShaderNames::MUTABLE_OMNI_DATA_SHADOW.c_str(), Define::MAX_OMNI_SHADOW,
-         SHADER_RESOURCE_TYPE_TEXTURE_SRV, SHADER_RESOURCE_VARIABLE_TYPE_MUTABLE,
-         PIPELINE_RESOURCE_FLAG_RUNTIME_ARRAY},
-        {SHADER_TYPE_PIXEL, ShaderNames::MUTABLE_DIR_SHADOW.c_str(), 1, SHADER_RESOURCE_TYPE_TEXTURE_SRV,
-         SHADER_RESOURCE_VARIABLE_TYPE_MUTABLE},
-        {SHADER_TYPE_PIXEL, ShaderNames::MUTABLE_DIFFUSE_TEXTURE.c_str(), Define::MAX_MESHES,
-         SHADER_RESOURCE_TYPE_TEXTURE_SRV, SHADER_RESOURCE_VARIABLE_TYPE_MUTABLE,
-         PIPELINE_RESOURCE_FLAG_RUNTIME_ARRAY},
-        {SHADER_TYPE_PIXEL, ShaderNames::MUTABLE_NORMAL_TEXTURE.c_str(), Define::MAX_MESHES,
-         SHADER_RESOURCE_TYPE_TEXTURE_SRV, SHADER_RESOURCE_VARIABLE_TYPE_MUTABLE,
-         PIPELINE_RESOURCE_FLAG_RUNTIME_ARRAY},
-        {SHADER_TYPE_PIXEL, ShaderNames::MUTABLE_ROUGHNESS_METALNESS_TEXTURE.c_str(), Define::MAX_MESHES,
-         SHADER_RESOURCE_TYPE_TEXTURE_SRV, SHADER_RESOURCE_VARIABLE_TYPE_MUTABLE,
-         PIPELINE_RESOURCE_FLAG_RUNTIME_ARRAY},
+        {SHADER_TYPE_PIXEL, ShaderNames::CONSTANT_DIR_DATA.c_str(), 1, SHADER_RESOURCE_TYPE_BUFFER_SRV, SHADER_RESOURCE_VARIABLE_TYPE_STATIC},
+        {SHADER_TYPE_PIXEL, ShaderNames::CONSTANT_CLUSTERS.c_str(), 1, SHADER_RESOURCE_TYPE_BUFFER_SRV, SHADER_RESOURCE_VARIABLE_TYPE_STATIC},
+        {SHADER_TYPE_PIXEL, ShaderNames::CONSTANT_CLUSTERS_DATA.c_str(), 1, SHADER_RESOURCE_TYPE_CONSTANT_BUFFER, SHADER_RESOURCE_VARIABLE_TYPE_STATIC},
+        {SHADER_TYPE_PIXEL, ShaderNames::CONSTANT_DIR_DATA_SHADOW.c_str(), 1, SHADER_RESOURCE_TYPE_CONSTANT_BUFFER, SHADER_RESOURCE_VARIABLE_TYPE_STATIC},
+        {SHADER_TYPE_PIXEL, ShaderNames::MUTABLE_OMNI_DATA_SHADOW.c_str(), Define::MAX_OMNI_SHADOW, SHADER_RESOURCE_TYPE_TEXTURE_SRV, SHADER_RESOURCE_VARIABLE_TYPE_MUTABLE, PIPELINE_RESOURCE_FLAG_RUNTIME_ARRAY},
+        {SHADER_TYPE_PIXEL, ShaderNames::MUTABLE_DIR_SHADOW.c_str(), 1, SHADER_RESOURCE_TYPE_TEXTURE_SRV, SHADER_RESOURCE_VARIABLE_TYPE_MUTABLE},
+        {SHADER_TYPE_PIXEL, ShaderNames::MUTABLE_DIFFUSE_TEXTURE.c_str(), Define::MAX_MESHES, SHADER_RESOURCE_TYPE_TEXTURE_SRV, SHADER_RESOURCE_VARIABLE_TYPE_MUTABLE, PIPELINE_RESOURCE_FLAG_RUNTIME_ARRAY},
+        {SHADER_TYPE_PIXEL, ShaderNames::MUTABLE_NORMAL_TEXTURE.c_str(), Define::MAX_MESHES, SHADER_RESOURCE_TYPE_TEXTURE_SRV, SHADER_RESOURCE_VARIABLE_TYPE_MUTABLE, PIPELINE_RESOURCE_FLAG_RUNTIME_ARRAY},
+        {SHADER_TYPE_PIXEL, ShaderNames::MUTABLE_ROUGHNESS_METALNESS_TEXTURE.c_str(), Define::MAX_MESHES, SHADER_RESOURCE_TYPE_TEXTURE_SRV, SHADER_RESOURCE_VARIABLE_TYPE_MUTABLE, PIPELINE_RESOURCE_FLAG_RUNTIME_ARRAY},
 
-        {SHADER_TYPE_PIXEL, samplerClampName.c_str(), 1, SHADER_RESOURCE_TYPE_SAMPLER,
-         SHADER_RESOURCE_VARIABLE_TYPE_STATIC},
-        {SHADER_TYPE_PIXEL, samplerRepeatName.c_str(), 1, SHADER_RESOURCE_TYPE_SAMPLER,
-         SHADER_RESOURCE_VARIABLE_TYPE_STATIC},
+        {SHADER_TYPE_PIXEL, samplerClampName.c_str(), 1, SHADER_RESOURCE_TYPE_SAMPLER, SHADER_RESOURCE_VARIABLE_TYPE_STATIC},
+        {SHADER_TYPE_PIXEL, samplerRepeatName.c_str(), 1, SHADER_RESOURCE_TYPE_SAMPLER, SHADER_RESOURCE_VARIABLE_TYPE_STATIC},
         {SHADER_TYPE_PIXEL, samplerAnisotropicName.c_str(), 1, SHADER_RESOURCE_TYPE_SAMPLER, SHADER_RESOURCE_VARIABLE_TYPE_STATIC},
 
-        {SHADER_TYPE_PIXEL, ShaderNames::CONSTANT_LUT.c_str(), 1, SHADER_RESOURCE_TYPE_TEXTURE_SRV,
-         SHADER_RESOURCE_VARIABLE_TYPE_STATIC},
-        {SHADER_TYPE_PIXEL, ShaderNames::MUTABLE_PREFILTER.c_str(), 1, SHADER_RESOURCE_TYPE_TEXTURE_SRV,
-         SHADER_RESOURCE_VARIABLE_TYPE_MUTABLE},
-        {SHADER_TYPE_PIXEL, ShaderNames::MUTABLE_IRRADIANCE.c_str(), 1, SHADER_RESOURCE_TYPE_TEXTURE_SRV,
-         SHADER_RESOURCE_VARIABLE_TYPE_MUTABLE},
+        {SHADER_TYPE_PIXEL, ShaderNames::CONSTANT_LUT.c_str(), 1, SHADER_RESOURCE_TYPE_TEXTURE_SRV, SHADER_RESOURCE_VARIABLE_TYPE_STATIC},
+        {SHADER_TYPE_PIXEL, ShaderNames::MUTABLE_PREFILTER.c_str(), 1, SHADER_RESOURCE_TYPE_TEXTURE_SRV, SHADER_RESOURCE_VARIABLE_TYPE_MUTABLE},
+        {SHADER_TYPE_PIXEL, ShaderNames::MUTABLE_IRRADIANCE.c_str(), 1, SHADER_RESOURCE_TYPE_TEXTURE_SRV, SHADER_RESOURCE_VARIABLE_TYPE_MUTABLE},
 
     };
 
@@ -823,9 +760,7 @@ Diligent::LayoutElement LayoutElems[] =
     m_psoComposite->GetStaticVariableByName(Diligent::SHADER_TYPE_PIXEL, "accum")->Set(m_forwardTransparent->accum()->GetDefaultView(Diligent::TEXTURE_VIEW_SHADER_RESOURCE));
     m_psoComposite->GetStaticVariableByName(Diligent::SHADER_TYPE_PIXEL, "reveal")->Set(m_forwardTransparent->reveal()->GetDefaultView(Diligent::TEXTURE_VIEW_SHADER_RESOURCE));
 
-
     m_psoComposite->CreateShaderResourceBinding(&m_srbComposite, true);
-
 }
 
 void Prisma::PipelineForward::createMSAA() {
@@ -877,7 +812,6 @@ void Prisma::PipelineForward::createMSAA() {
         contextData.device->CreateTexture(DepthDesc, nullptr, &m_msaaDepth);
 
         m_depthResolve = std::make_unique<PipelineDepthResolve>(m_msaaDepth, m_sampleCount);
-    
     }
 }
 

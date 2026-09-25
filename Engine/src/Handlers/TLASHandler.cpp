@@ -4,22 +4,20 @@
 #include "GlobalData/EngineSettings.h"
 #include "GlobalData/GlobalData.h"
 #include "GlobalData/PrismaFunc.h"
+#include "Helpers/Logger.h"
 #include "Pipelines/PipelineHandler.h"
 #include "engine.h"
-#include "Helpers/Logger.h"
 
 // Instance mask.
-#define OPAQUE_GEOM_MASK      0x01
+#define OPAQUE_GEOM_MASK 0x01
 #define TRANSPARENT_GEOM_MASK 0x02
 
 // Ray types
-#define HIT_GROUP_STRIDE  2
+#define HIT_GROUP_STRIDE 2
 #define PRIMARY_RAY_INDEX 0
-#define SHADOW_RAY_INDEX  1
+#define SHADOW_RAY_INDEX 1
 
-Prisma::TLASHandler::TLASHandler() {
-    resizeTLAS();
-}
+Prisma::TLASHandler::TLASHandler() { resizeTLAS(); }
 
 void Prisma::TLASHandler::update() {
     // Create or update top-level acceleration structure
@@ -71,13 +69,11 @@ void Prisma::TLASHandler::resizeTLAS() {
 
                 locationBlas.push_back(currentLocation);
                 for (auto v : verticesData) {
-                    verticesBlas.push_back({glm::vec4(v.normal, 0), glm::vec4(v.texCoords, 0, 0),
-                                            glm::vec4(v.tangent, 0), glm::vec4(v.bitangent, 0)});
+                    verticesBlas.push_back({glm::vec4(v.normal, 0), glm::vec4(v.texCoords, 0, 0), glm::vec4(v.tangent, 0), glm::vec4(v.bitangent, 0)});
                 }
 
                 for (int i = 0; i < indicesData.size(); i += 3) {
-                    primitivesBlas.push_back({indicesData[i], indicesData[i + 1],
-                                              indicesData[i + 2], 0});
+                    primitivesBlas.push_back({indicesData[i], indicesData[i + 1], indicesData[i + 2], 0});
                 }
 
                 sizeVertices += verticesData.size();
@@ -132,27 +128,15 @@ void Prisma::TLASHandler::resizeTLAS() {
     }
 }
 
-Diligent::RefCntAutoPtr<Diligent::IShaderBindingTable> Prisma::TLASHandler::SBT() {
-    return m_pSBT;
-}
+Diligent::RefCntAutoPtr<Diligent::IShaderBindingTable> Prisma::TLASHandler::SBT() { return m_pSBT; }
 
-Diligent::RefCntAutoPtr<Diligent::IBuffer> Prisma::TLASHandler::vertexData() {
-    return m_vertexData;
-}
+Diligent::RefCntAutoPtr<Diligent::IBuffer> Prisma::TLASHandler::vertexData() { return m_vertexData; }
 
-Diligent::RefCntAutoPtr<Diligent::IBuffer> Prisma::TLASHandler::primitiveData() {
-    return m_primitiveData;
-}
+Diligent::RefCntAutoPtr<Diligent::IBuffer> Prisma::TLASHandler::primitiveData() { return m_primitiveData; }
 
-Diligent::RefCntAutoPtr<Diligent::IBuffer> Prisma::TLASHandler::vertexLocation() {
-    return m_vertexLocation;
-}
+Diligent::RefCntAutoPtr<Diligent::IBuffer> Prisma::TLASHandler::vertexLocation() { return m_vertexLocation; }
 
-void Prisma::TLASHandler::addUpdates(
-    std::function<void(Diligent::RefCntAutoPtr<Diligent::IBuffer>, Diligent::RefCntAutoPtr<Diligent::IBuffer>,
-                       Diligent::RefCntAutoPtr<Diligent::IBuffer>)> update) {
-    m_updates.push_back(update);
-}
+void Prisma::TLASHandler::addUpdates(std::function<void(Diligent::RefCntAutoPtr<Diligent::IBuffer>, Diligent::RefCntAutoPtr<Diligent::IBuffer>, Diligent::RefCntAutoPtr<Diligent::IBuffer>)> update) { m_updates.push_back(update); }
 
 void Prisma::TLASHandler::updateSizeTLAS() {
     resizeTLAS();
@@ -291,6 +275,4 @@ void Prisma::TLASHandler::updateTLAS(bool update) {
     }
 }
 
-Diligent::RefCntAutoPtr<Diligent::ITopLevelAS> Prisma::TLASHandler::TLAS() {
-    return m_pTLAS;
-}
+Diligent::RefCntAutoPtr<Diligent::ITopLevelAS> Prisma::TLASHandler::TLAS() { return m_pTLAS; }

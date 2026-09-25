@@ -1,16 +1,17 @@
 #pragma once
+#include <map>
+#include <memory>
 #include <string>
 #include <vector>
-#include <memory>
-#include "glm/glm.hpp"
-#include <map>
+
 #include "../Components/Component.h"
+#include "glm/glm.hpp"
 
 namespace Prisma {
 class Component;
 
 class Node : public std::enable_shared_from_this<Node> {
-public:
+   public:
     Node();
     void name(const std::string& name);
     std::string name() const;
@@ -27,7 +28,6 @@ public:
     uint64_t uuid();
     void visible(bool visible);
     bool visible();
-
 
     void addComponent(std::shared_ptr<Component> component);
     void removeComponent(const std::string& name);
@@ -47,7 +47,7 @@ public:
 
     ~Node();
 
-private:
+   private:
     void updateCaches(std::shared_ptr<Node> child);
     void updateParent(std::shared_ptr<Node> parent);
     void dispatch(std::shared_ptr<Node> child);
@@ -66,4 +66,4 @@ private:
     const char* m_strUUID;
     std::string m_strrUUID;
 };
-}
+}  // namespace Prisma

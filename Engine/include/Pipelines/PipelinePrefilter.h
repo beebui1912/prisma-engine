@@ -1,25 +1,25 @@
 #pragma once
 
-#include "../SceneObjects/Camera.h"
-#include "../SceneData/SceneLoader.h"
-#include "../Handlers/MeshHandler.h"
-#include "../SceneData/MeshIndirect.h"
-#include "PipelineFullScreen.h"
 #include <memory>
 
-#include "PipelineSkybox.h"
 #include "../GlobalData/InstanceData.h"
+#include "../Handlers/MeshHandler.h"
+#include "../SceneData/MeshIndirect.h"
+#include "../SceneData/SceneLoader.h"
+#include "../SceneObjects/Camera.h"
+#include "PipelineFullScreen.h"
+#include "PipelineSkybox.h"
 
 namespace Prisma {
 class PipelinePrefilter : public InstanceData<PipelinePrefilter> {
-public:
+   public:
     void texture(Diligent::RefCntAutoPtr<Diligent::ITexture> texture);
 
     Diligent::RefCntAutoPtr<Diligent::ITexture> prefilterTexture();
 
     PipelinePrefilter();
 
-private:
+   private:
     struct RoughnessResolution {
         float roughness;
         int resolution;
@@ -44,4 +44,4 @@ private:
 
     const PipelineSkybox::IBLData m_iblTransform;
 };
-}
+}  // namespace Prisma

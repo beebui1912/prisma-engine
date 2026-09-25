@@ -1,7 +1,8 @@
 #pragma once
 
-#include "ThirdParty/imgui/imgui.h"
 #include <GLFW/glfw3.h>
+
+#include "ThirdParty/imgui/imgui.h"
 
 namespace Prisma::GUI {
 static ImGuiKey convertImGuiGlfwKey(int keycode, int scancode) {
@@ -221,4 +222,4 @@ static ImGuiKey convertImGuiGlfwKey(int keycode, int scancode) {
             return ImGuiKey_None;
     }
 }
-}
+}  // namespace Prisma::GUI

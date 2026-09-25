@@ -1,8 +1,8 @@
 #pragma once
 
-#include "GlobalData/Platform.h"
 #include <Common/interface/RefCntAutoPtr.hpp>
 
+#include "GlobalData/Platform.h"
 #include "Graphics/GraphicsEngine/interface/Buffer.h"
 #include "Graphics/GraphicsEngine/interface/PipelineState.h"
 #include "Graphics/GraphicsEngine/interface/Texture.h"
@@ -11,7 +11,7 @@
 
 namespace Prisma::GUI {
 class VolumetricLight {
-public:
+   public:
     struct VolumetricData {
         glm::vec4 fogColor = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
 
@@ -34,7 +34,7 @@ public:
     void volumetricSettings(VolumetricData VolumetricData);
     VolumetricData volumetricSettings() const;
 
-private:
+   private:
     void createShaderVolumetric();
     void createShaderBlit();
 
@@ -52,4 +52,4 @@ private:
     std::unique_ptr<Blit> m_blit;
     VolumetricData m_volumetricData;
 };
-} // namespace Prisma::GUI
+}  // namespace Prisma::GUI

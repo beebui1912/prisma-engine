@@ -1,7 +1,8 @@
 #include "Handlers/LoadingHandler.h"
-#include "SceneData/MeshIndirect.h"
+
 #include "Helpers/StringHelper.h"
 #include "Pipelines/PipelineSkybox.h"
+#include "SceneData/MeshIndirect.h"
 
 void Prisma::LoadingHandler::load(std::string scene, SceneLoader::SceneParameters sceneParameters) {
     if (StringHelper::getInstance().endsWith(scene, "prisma")) {
@@ -24,8 +25,7 @@ void Prisma::LoadingHandler::load(std::string scene, SceneLoader::SceneParameter
     }
 }
 
-void Prisma::LoadingHandler::update(std::shared_ptr<Camera> camera,
-                                    std::function<void(std::pair<std::string, int>)> loading,bool isDebug) {
+void Prisma::LoadingHandler::update(std::shared_ptr<Camera> camera, std::function<void(std::pair<std::string, int>)> loading, bool isDebug) {
     auto hasFinish = m_loader.hasFinish();
 
     if (!hasFinish && m_hasLoad) {

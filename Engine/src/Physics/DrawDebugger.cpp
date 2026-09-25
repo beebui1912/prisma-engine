@@ -1,13 +1,14 @@
 #ifdef JPH_DEBUG_RENDERER
 
 #include "Physics/DrawDebugger.h"
-#include "Helpers/PrismaMath.h"
+
 #include <glm/gtx/string_cast.hpp>
 
 #include "GlobalData/GlobalShaderNames.h"
 #include "GlobalData/PrismaFunc.h"
 #include "Graphics/GraphicsTools/interface/MapHelper.hpp"
 #include "Handlers/MeshHandler.h"
+#include "Helpers/PrismaMath.h"
 #include "Helpers/PrismaRender.h"
 #include "Pipelines/PipelineHandler.h"
 #include "SceneObjects/Mesh.h"
@@ -80,12 +81,9 @@ void Prisma::DrawDebugger::DrawLine(JPH::RVec3Arg inFrom, JPH::RVec3Arg inTo, JP
     contextData.immediateContext->Draw(DrawAttrs);*/
 }
 
-void Prisma::DrawDebugger::DrawText3D(JPH::RVec3Arg inPosition, const std::string_view& inString, JPH::ColorArg inColor,
-                                      float inHeight) {
-}
+void Prisma::DrawDebugger::DrawText3D(JPH::RVec3Arg inPosition, const std::string_view& inString, JPH::ColorArg inColor, float inHeight) {}
 
-void Prisma::DrawDebugger::DrawVertices(JPH::RVec3Arg inV1, JPH::RVec3Arg inV2, JPH::RVec3Arg inV3,
-                                        JPH::ColorArg inColor, ECastShadow inCastShadow) {
+void Prisma::DrawDebugger::DrawVertices(JPH::RVec3Arg inV1, JPH::RVec3Arg inV2, JPH::RVec3Arg inV3, JPH::ColorArg inColor, ECastShadow inCastShadow) {
     if (m_init) {
         /*glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
         m_shader->use();
@@ -122,7 +120,7 @@ void Prisma::DrawDebugger::DrawVertices(JPH::RVec3Arg inV1, JPH::RVec3Arg inV2, 
         // Set texture SRV in the SRB
         contextData.immediateContext->CommitShaderResources(m_srb, Diligent::RESOURCE_STATE_TRANSITION_MODE_TRANSITION);
 
-        Diligent::DrawAttribs DrawAttrs; // This is an indexed draw call
+        Diligent::DrawAttribs DrawAttrs;  // This is an indexed draw call
         // Verify the state of vertex and index buffers
         DrawAttrs.Flags = Diligent::DRAW_FLAG_VERIFY_ALL;
         DrawAttrs.NumVertices = v.size();
@@ -137,18 +135,15 @@ void Prisma::DrawDebugger::DrawVertices(JPH::RVec3Arg inV1, JPH::RVec3Arg inV2, 
 
 JPH::DebugRenderer::Batch Prisma::DrawDebugger::CreateTriangleBatch(const Triangle* inTriangles, int inTriangleCount) {
     auto batch = new BatchImpl;
-    if (inTriangles == nullptr || inTriangleCount == 0)
-        return batch;
+    if (inTriangles == nullptr || inTriangleCount == 0) return batch;
 
     batch->mTriangles.assign(inTriangles, inTriangles + inTriangleCount);
     return batch;
 }
 
-JPH::DebugRenderer::Batch Prisma::DrawDebugger::CreateTriangleBatch(const Vertex* inVertices, int inVertexCount,
-                                                                    const JPH::uint32* inIndices, int inIndexCount) {
+JPH::DebugRenderer::Batch Prisma::DrawDebugger::CreateTriangleBatch(const Vertex* inVertices, int inVertexCount, const JPH::uint32* inIndices, int inIndexCount) {
     auto batch = new BatchImpl;
-    if (inVertices == nullptr || inVertexCount == 0 || inIndices == nullptr || inIndexCount == 0)
-        return batch;
+    if (inVertices == nullptr || inVertexCount == 0 || inIndices == nullptr || inIndexCount == 0) return batch;
 
     // Convert indexed triangle list to triangle list
     batch->mTriangles.resize(inIndexCount / 3);
@@ -162,9 +157,8 @@ JPH::DebugRenderer::Batch Prisma::DrawDebugger::CreateTriangleBatch(const Vertex
     return batch;
 }
 
-void Prisma::DrawDebugger::DrawGeometry(JPH::RMat44Arg inModelMatrix, const JPH::AABox& inWorldSpaceBounds,
-                                        float inLODScaleSq, JPH::ColorArg inModelColor, const GeometryRef& inGeometry,
-                                        ECullMode inCullMode, ECastShadow inCastShadow, EDrawMode inDrawMode) {
+void Prisma::DrawDebugger::DrawGeometry(JPH::RMat44Arg inModelMatrix, const JPH::AABox& inWorldSpaceBounds, float inLODScaleSq, JPH::ColorArg inModelColor, const GeometryRef& inGeometry, ECullMode inCullMode, ECastShadow inCastShadow,
+                                        EDrawMode inDrawMode) {
     if (m_init) {
         switch (inDrawMode) {
             case EDrawMode::Solid: {
@@ -210,7 +204,7 @@ void Prisma::DrawDebugger::DrawGeometry(JPH::RMat44Arg inModelMatrix, const JPH:
                 // Set texture SRV in the SRB
                 contextData.immediateContext->CommitShaderResources(m_srb, Diligent::RESOURCE_STATE_TRANSITION_MODE_TRANSITION);
 
-                Diligent::DrawAttribs DrawAttrs; // This is an indexed draw call
+                Diligent::DrawAttribs DrawAttrs;  // This is an indexed draw call
                 // Verify the state of vertex and index buffers
                 DrawAttrs.Flags = Diligent::DRAW_FLAG_VERIFY_ALL;
                 DrawAttrs.NumVertices = vertices.size();
@@ -231,9 +225,7 @@ void Prisma::DrawDebugger::DrawGeometry(JPH::RMat44Arg inModelMatrix, const JPH:
     }
 }
 
-void Prisma::DrawDebugger::DrawTriangle(JPH::RVec3Arg inV1, JPH::RVec3Arg inV2, JPH::RVec3Arg inV3,
-                                        JPH::ColorArg inColor, ECastShadow inCastShadow) {
-}
+void Prisma::DrawDebugger::DrawTriangle(JPH::RVec3Arg inV1, JPH::RVec3Arg inV2, JPH::RVec3Arg inV3, JPH::ColorArg inColor, ECastShadow inCastShadow) {}
 
 void Prisma::DrawDebugger::init() {
     if (!m_init) {
@@ -249,7 +241,7 @@ void Prisma::DrawDebugger::init() {
 
         // This is a graphics pipeline
         PSOCreateInfo.PSODesc.PipelineType = Diligent::PIPELINE_TYPE_GRAPHICS;
-        PSOCreateInfo.GraphicsPipeline.RasterizerDesc.FillMode = Diligent::FILL_MODE_WIREFRAME; // <--- Enable wireframe rendering
+        PSOCreateInfo.GraphicsPipeline.RasterizerDesc.FillMode = Diligent::FILL_MODE_WIREFRAME;  // <--- Enable wireframe rendering
 
         // clang-format off
         PSOCreateInfo.GraphicsPipeline.NumRenderTargets = 1;
@@ -322,7 +314,5 @@ void Prisma::DrawDebugger::init() {
     }
 }
 
-Prisma::DrawDebugger::DrawDebugger() {
-    Initialize();
-}
+Prisma::DrawDebugger::DrawDebugger() { Initialize(); }
 #endif

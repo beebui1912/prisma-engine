@@ -1,11 +1,10 @@
 #pragma once
-#include "GlobalData/Platform.h"
-
-#include "GlobalData/InstanceData.h"
-
+#include <Common/interface/RefCntAutoPtr.hpp>
 #include <glm/glm.hpp>
 #include <vector>
-#include <Common/interface/RefCntAutoPtr.hpp>
+
+#include "GlobalData/InstanceData.h"
+#include "GlobalData/Platform.h"
 
 namespace Diligent {
 struct IPipelineState;
@@ -13,7 +12,7 @@ struct ITexture;
 struct IBuffer;
 struct ITextureView;
 struct IShaderResourceBinding;
-}
+}  // namespace Diligent
 
 namespace Prisma {
 class OmniShadowHandler : public InstanceData<OmniShadowHandler> {
@@ -29,7 +28,6 @@ class OmniShadowHandler : public InstanceData<OmniShadowHandler> {
     OmniShadow m_shadows;
 
     LightPlane m_lightPlane;
-
 
     glm::mat4 m_shadowProj;
     std::vector<glm::mat4> m_shadowTransforms;
@@ -50,7 +48,7 @@ class OmniShadowHandler : public InstanceData<OmniShadowHandler> {
 
     void createAnimation();
 
-public:
+   public:
     OmniShadowHandler();
 
     struct OmniShadowData {
@@ -64,4 +62,4 @@ public:
 
     void render(OmniShadowData data);
 };
-}
+}  // namespace Prisma

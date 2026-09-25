@@ -38,13 +38,13 @@ void Prisma::ComponentsHandler::updatePostRender(Diligent::RefCntAutoPtr<Diligen
 void Prisma::ComponentsHandler::updateTransparentRender(Diligent::RefCntAutoPtr<Diligent::ITexture> accum, Diligent::RefCntAutoPtr<Diligent::ITexture> reveal, Diligent::RefCntAutoPtr<Diligent::ITexture> depth) {
     for (const auto& component : m_renderComponents) {
         if (component && component->isStart()) {
-            component->updateTransparentRender(accum,reveal, depth);
+            component->updateTransparentRender(accum, reveal, depth);
         }
     }
 }
 
 //
-//void Prisma::ComponentsHandler::updateRender(std::shared_ptr<FBO> fbo)
+// void Prisma::ComponentsHandler::updateRender(std::shared_ptr<FBO> fbo)
 //{
 //	for (const auto& component : m_components)
 //	{
@@ -55,7 +55,7 @@ void Prisma::ComponentsHandler::updateTransparentRender(Diligent::RefCntAutoPtr<
 //	}
 //}
 //
-//void Prisma::ComponentsHandler::updatePreRender(std::shared_ptr<FBO> fbo)
+// void Prisma::ComponentsHandler::updatePreRender(std::shared_ptr<FBO> fbo)
 //{
 //	for (const auto& component : m_components)
 //	{
@@ -66,7 +66,7 @@ void Prisma::ComponentsHandler::updateTransparentRender(Diligent::RefCntAutoPtr<
 //	}
 //}
 //
-//void Prisma::ComponentsHandler::updatePostRender(std::shared_ptr<FBO> fbo)
+// void Prisma::ComponentsHandler::updatePostRender(std::shared_ptr<FBO> fbo)
 //{
 //	for (const auto& component : m_components)
 //	{
@@ -118,6 +118,4 @@ void Prisma::ComponentsHandler::removeComponent(std::shared_ptr<Component> compo
     }
 }
 
-Prisma::ComponentsHandler::ComponentsHandler() {
-    m_registerData.init();
-}
+Prisma::ComponentsHandler::ComponentsHandler() { m_registerData.init(); }

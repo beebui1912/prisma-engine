@@ -2,12 +2,14 @@
 
 /* Container for bone data */
 
-#include <vector>
 #include <assimp/scene.h>
-#include <list>
+
 #include <glm/glm.hpp>
+#include <list>
+#include <vector>
 #define GLM_ENABLE_EXPERIMENTAL
 #include <glm/gtx/quaternion.hpp>
+
 #include "../Helpers/PrismaMath.h"
 
 namespace Prisma {
@@ -27,7 +29,7 @@ struct KeyScale {
 };
 
 class Bone {
-public:
+   public:
     Bone(const std::string& name, int ID, const aiNodeAnim* channel);
 
     void Update(float animationTime);
@@ -35,14 +37,13 @@ public:
     std::string GetBoneName() const;
     int GetBoneID();
 
-
     int GetPositionIndex(float animationTime) const;
 
     int GetRotationIndex(float animationTime) const;
 
     int GetScaleIndex(float animationTime) const;
 
-private:
+   private:
     float GetScaleFactor(float lastTimeStamp, float nextTimeStamp, float animationTime) const;
 
     glm::mat4 InterpolatePosition(float animationTime) const;
@@ -62,4 +63,4 @@ private:
     std::string m_Name;
     int m_ID;
 };
-}
+}  // namespace Prisma

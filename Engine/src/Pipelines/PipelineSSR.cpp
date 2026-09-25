@@ -16,7 +16,6 @@
 
 using namespace Diligent;
 
-
 Prisma::PipelineSSR::PipelineSSR(Diligent::RefCntAutoPtr<Diligent::ITexture> albedo, Diligent::RefCntAutoPtr<Diligent::ITexture> normal, Diligent::RefCntAutoPtr<Diligent::ITexture> position) {
     auto& contextData = PrismaFunc::getInstance().contextData();
 
@@ -99,12 +98,10 @@ Prisma::PipelineSSR::PipelineSSR(Diligent::RefCntAutoPtr<Diligent::ITexture> alb
     // Define variable type that will be used by default
     PSOCreateInfo.PSODesc.ResourceLayout.DefaultVariableType = Diligent::SHADER_RESOURCE_VARIABLE_TYPE_STATIC;
 
-    Diligent::ShaderResourceVariableDesc Vars[] = {
-        {Diligent::SHADER_TYPE_PIXEL, "screenTexture", Diligent::SHADER_RESOURCE_VARIABLE_TYPE_STATIC},
-        {Diligent::SHADER_TYPE_PIXEL, "normalTexture", Diligent::SHADER_RESOURCE_VARIABLE_TYPE_STATIC},
-        {Diligent::SHADER_TYPE_PIXEL, "positionTexture", Diligent::SHADER_RESOURCE_VARIABLE_TYPE_STATIC},
-        {Diligent::SHADER_TYPE_PIXEL, ShaderNames::CONSTANT_VIEW_PROJECTION.c_str(), Diligent::SHADER_RESOURCE_VARIABLE_TYPE_STATIC}
-    };
+    Diligent::ShaderResourceVariableDesc Vars[] = {{Diligent::SHADER_TYPE_PIXEL, "screenTexture", Diligent::SHADER_RESOURCE_VARIABLE_TYPE_STATIC},
+                                                   {Diligent::SHADER_TYPE_PIXEL, "normalTexture", Diligent::SHADER_RESOURCE_VARIABLE_TYPE_STATIC},
+                                                   {Diligent::SHADER_TYPE_PIXEL, "positionTexture", Diligent::SHADER_RESOURCE_VARIABLE_TYPE_STATIC},
+                                                   {Diligent::SHADER_TYPE_PIXEL, ShaderNames::CONSTANT_VIEW_PROJECTION.c_str(), Diligent::SHADER_RESOURCE_VARIABLE_TYPE_STATIC}};
     // clang-format on
     PSOCreateInfo.PSODesc.ResourceLayout.Variables = Vars;
     PSOCreateInfo.PSODesc.ResourceLayout.NumVariables = _countof(Vars);
@@ -182,7 +179,7 @@ void Prisma::PipelineSSR::update() {
     contextData.immediateContext->DrawIndexed(DrawAttrs);
 
     m_blit->render(PipelineHandler::getInstance().textureData().pColorRTV);
-    
+
     auto mainTexture = Prisma::PipelineHandler::getInstance().textureData().pColorRTV->GetDefaultView(TEXTURE_VIEW_RENDER_TARGET);
 
     contextData.immediateContext->SetRenderTargets(1, &mainTexture, pDSV, RESOURCE_STATE_TRANSITION_MODE_TRANSITION);

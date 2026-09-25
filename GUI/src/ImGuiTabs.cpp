@@ -1,16 +1,15 @@
 #include "../include/ImGuiTabs.h"
-#include <iostream> // For std::cout
 
-#include "Helpers/NodeHelper.h"
-#include "SceneObjects/Mesh.h"
-#include "GlobalData/CacheScene.h"
+#include <iostream>  // For std::cout
+
 #include "../include/ImGuiHelper.h"
+#include "GlobalData/CacheScene.h"
+#include "GlobalData/GlobalData.h"
+#include "Helpers/NodeHelper.h"
+#include "Helpers/StringHelper.h"
+#include "SceneObjects/Mesh.h"
 #include "ThirdParty/imgui/imgui.h"
 #include "ThirdParty/imgui/imgui_internal.h"
-
-
-#include "GlobalData/GlobalData.h"
-#include "Helpers/StringHelper.h"
 
 static char textSearch[128] = "";
 
@@ -35,27 +34,18 @@ void Prisma::GUI::ImGuiTabs::updateTabs(std::shared_ptr<Node> root, int depth) {
         m_update = false;
     }
 
-    if (CacheScene::getInstance().updateSizes() || CacheScene::getInstance().updateLights() ||
-        CacheScene::getInstance().updateData()) {
+    if (CacheScene::getInstance().updateSizes() || CacheScene::getInstance().updateLights() || CacheScene::getInstance().updateData()) {
         m_update = true;
     }
 }
 
 void Prisma::GUI::ImGuiTabs::dispatch(std::shared_ptr<Node> node, glm::vec2 size) {
     if (std::dynamic_pointer_cast<Mesh>(node)) {
-        ImGui::Image(
-            m_meshTexture->texture()->GetDefaultView(
-                Diligent::TEXTURE_VIEW_TYPE::TEXTURE_VIEW_SHADER_RESOURCE), ImVec2(size.x, size.y));
-    } else if (std::dynamic_pointer_cast<Light<LightType::LightOmni>>(node) || std::dynamic_pointer_cast<Light<
-                   LightType::LightDir>>(node) || std::dynamic_pointer_cast<Light<
-                   LightType::LightSpot>>(node)) {
-        ImGui::Image(
-            m_lightTexture->texture()->GetDefaultView(
-                Diligent::TEXTURE_VIEW_TYPE::TEXTURE_VIEW_SHADER_RESOURCE), ImVec2(size.x, size.y));
+        ImGui::Image(m_meshTexture->texture()->GetDefaultView(Diligent::TEXTURE_VIEW_TYPE::TEXTURE_VIEW_SHADER_RESOURCE), ImVec2(size.x, size.y));
+    } else if (std::dynamic_pointer_cast<Light<LightType::LightOmni>>(node) || std::dynamic_pointer_cast<Light<LightType::LightDir>>(node) || std::dynamic_pointer_cast<Light<LightType::LightSpot>>(node)) {
+        ImGui::Image(m_lightTexture->texture()->GetDefaultView(Diligent::TEXTURE_VIEW_TYPE::TEXTURE_VIEW_SHADER_RESOURCE), ImVec2(size.x, size.y));
     } else {
-        ImGui::Image(
-            m_nodeTexture->texture()->GetDefaultView(
-                Diligent::TEXTURE_VIEW_TYPE::TEXTURE_VIEW_SHADER_RESOURCE), ImVec2(size.x, size.y));
+        ImGui::Image(m_nodeTexture->texture()->GetDefaultView(Diligent::TEXTURE_VIEW_TYPE::TEXTURE_VIEW_SHADER_RESOURCE), ImVec2(size.x, size.y));
     }
 }
 
@@ -64,14 +54,11 @@ void Prisma::GUI::ImGuiTabs::showCurrentNodes(ImGuiCamera& camera) {
     if (!currentText.empty() && GlobalData::getInstance().currentGlobalScene()->root) {
         std::vector<std::shared_ptr<Node>> findings;
         NodeHelper nodeHelper;
-        nodeHelper.nodeIterator(GlobalData::getInstance().currentGlobalScene()->root,
-                                [&](auto node, auto parent) {
-                                    if (StringHelper::getInstance().toLower(node->name()).find(
-                                            StringHelper::getInstance().toLower(currentText)) !=
-                                        std::string::npos) {
-                                        findings.push_back(node);
-                                    }
-                                });
+        nodeHelper.nodeIterator(GlobalData::getInstance().currentGlobalScene()->root, [&](auto node, auto parent) {
+            if (StringHelper::getInstance().toLower(node->name()).find(StringHelper::getInstance().toLower(currentText)) != std::string::npos) {
+                findings.push_back(node);
+            }
+        });
 
         for (int i = 0; i < findings.size(); i++) {
             // Create a button without a label
@@ -96,8 +83,7 @@ void Prisma::GUI::ImGuiTabs::showCurrentNodes(ImGuiCamera& camera) {
                 target_flags |= ImGuiDragDropFlags_AcceptBeforeDelivery;
                 target_flags |= ImGuiDragDropFlags_AcceptNoDrawDefaultRect;
                 // Don't display the yellow rectangle
-                if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload(
-                    "DATA_NAME", target_flags)) {
+                if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("DATA_NAME", target_flags)) {
                     m_current = *static_cast<int64_t*>(payload->Data);
                     m_parent = findings[i];
                 }
@@ -109,7 +95,7 @@ void Prisma::GUI::ImGuiTabs::showCurrentNodes(ImGuiCamera& camera) {
             auto child = m_nodes[i].first;
             int depth = m_nodes[i].second + 1;
             // Add spacing based on depth
-            ImGui::Indent(depth * 20.0f); // Indent by 20 pixels per depth level
+            ImGui::Indent(depth * 20.0f);  // Indent by 20 pixels per depth level
             // Create a button without a label
             std::string finalText = child->name() + "##" + std::to_string(i);
             dispatch(child, glm::vec2(16, 16));
@@ -133,8 +119,7 @@ void Prisma::GUI::ImGuiTabs::showCurrentNodes(ImGuiCamera& camera) {
                 target_flags |= ImGuiDragDropFlags_AcceptBeforeDelivery;
                 target_flags |= ImGuiDragDropFlags_AcceptNoDrawDefaultRect;
                 // Don't display the yellow rectangle
-                if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload(
-                    "DATA_NAME", target_flags)) {
+                if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("DATA_NAME", target_flags)) {
                     m_current = *static_cast<int64_t*>(payload->Data);
                     m_parent = child;
                 }
@@ -166,11 +151,11 @@ void Prisma::GUI::ImGuiTabs::showNodes(std::shared_ptr<Node> root, ImGuiCamera& 
     m_current = -1;
     m_parent = nullptr;
 
-    ImGui::InputText("Search", textSearch, IM_ARRAYSIZE(textSearch), // Size of the array (automatically computed)
-                     ImGuiInputTextFlags_None, // No special flags
-                     nullptr, // No callback
-                     nullptr // No user data);
-        );
+    ImGui::InputText("Search", textSearch, IM_ARRAYSIZE(textSearch),  // Size of the array (automatically computed)
+                     ImGuiInputTextFlags_None,                        // No special flags
+                     nullptr,                                         // No callback
+                     nullptr                                          // No user data);
+    );
     showCurrentNodes(camera);
 
     if (m_current && m_parent && m_current == m_parent->uuid()) {
@@ -191,7 +176,6 @@ void Prisma::GUI::ImGuiTabs::showNodes(std::shared_ptr<Node> root, ImGuiCamera& 
                 isChild = true;
             }
         });
-
 
         if (current && ImGui::IsMouseReleased(ImGuiMouseButton_Left) && !isMesh && !isChild) {
             current->parent()->removeChild(m_current, false);

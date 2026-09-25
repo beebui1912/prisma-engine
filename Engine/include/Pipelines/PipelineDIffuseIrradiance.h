@@ -1,20 +1,20 @@
 #pragma once
 
-#include "../SceneObjects/Camera.h"
-#include "../SceneData/SceneLoader.h"
 #include "../GlobalData/InstanceData.h"
+#include "../SceneData/SceneLoader.h"
+#include "../SceneObjects/Camera.h"
 #include "PipelineSkybox.h"
 
 namespace Prisma {
 class PipelineDiffuseIrradiance : public InstanceData<PipelineDiffuseIrradiance> {
-public:
+   public:
     void texture(Diligent::RefCntAutoPtr<Diligent::ITexture> texture);
 
     Diligent::RefCntAutoPtr<Diligent::ITexture> irradianceTexture();
 
     PipelineDiffuseIrradiance();
 
-private:
+   private:
     Diligent::RefCntAutoPtr<Diligent::IBuffer> m_iblData;
     Diligent::RefCntAutoPtr<Diligent::ITextureView> m_pRTColor[6];
 
@@ -30,4 +30,4 @@ private:
 
     const PipelineSkybox::IBLData m_iblTransform;
 };
-}
+}  // namespace Prisma

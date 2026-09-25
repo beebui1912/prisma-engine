@@ -1,5 +1,6 @@
 #pragma once
 #include <string>
+
 #include "glm/glm.hpp"
 #define DIR_DEFAULT_BLACK "../../../Resources/res/black.png"
 #define DIR_DEFAULT_ROUGHNESS "../../../Resources/res/max_roughness.png"
@@ -10,7 +11,6 @@
 #define DIR_DEFAULT_LTC1 "../../../Resources/res/ltc1.txt"
 #define DIR_DEFAULT_LTC2 "../../../Resources/res/ltc2.txt"
 #define DIR_DEFAULT_SKYBOX "../../../Resources/Skybox/cloudy.hdr"
-
 
 namespace Prisma::Define {
 constexpr int MAX_DIR_LIGHTS = 1024;
@@ -30,4 +30,4 @@ constexpr int MAX_RAYTRACING_MESHES = 4096;
 constexpr int DEFAULT_MIPS = 8;
 
 constexpr auto CLEAR_COLOR = glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);
-}
+}  // namespace Prisma::Define

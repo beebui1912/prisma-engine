@@ -1,23 +1,24 @@
 #pragma once
 
-#include "../SceneObjects/Camera.h"
-#include "../SceneData/SceneLoader.h"
+#include <memory>
+
+#include "../GlobalData/InstanceData.h"
 #include "../Handlers/MeshHandler.h"
 #include "../SceneData/MeshIndirect.h"
+#include "../SceneData/SceneLoader.h"
+#include "../SceneObjects/Camera.h"
 #include "PipelineFullScreen.h"
-#include <memory>
-#include "../GlobalData/InstanceData.h"
 
 namespace Prisma {
 class PipelineLUT : public InstanceData<PipelineLUT> {
-public:
+   public:
     void texture();
 
     Diligent::RefCntAutoPtr<Diligent::ITexture> lutTexture();
 
     PipelineLUT();
 
-private:
+   private:
     Diligent::RefCntAutoPtr<Diligent::IPipelineState> m_pso;
     Diligent::RefCntAutoPtr<Diligent::IShaderResourceBinding> m_srb;
 
@@ -28,4 +29,4 @@ private:
     const glm::vec2 m_dimensions = glm::vec2(512, 512);
     bool m_init = false;
 };
-}
+}  // namespace Prisma

@@ -1,9 +1,8 @@
 #pragma once
 
 namespace Prisma {
-	class PipelineCulling {
-	public:
-		PipelineCulling();
-
-	};
-}
+class PipelineCulling {
+   public:
+    PipelineCulling();
+};
+}  // namespace Prisma

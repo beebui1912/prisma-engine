@@ -1,9 +1,10 @@
 #include "Helpers/WindowsHelper.h"
-#include <filesystem>
+
 #include <Windows.h>
 
-Prisma::WindowsHelper::WindowsHelper() {
-}
+#include <filesystem>
+
+Prisma::WindowsHelper::WindowsHelper() {}
 
 std::string Prisma::WindowsHelper::relativePath(const std::string& path) const {
     try {

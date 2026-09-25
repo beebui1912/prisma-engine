@@ -1,3 +1,5 @@
+#include "Pipelines/PipelineForwardTransparent.h"
+
 #include <Graphics/GraphicsTools/interface/MapHelper.hpp>
 #include <iostream>
 #include <memory>
@@ -21,7 +23,6 @@
 #include "Helpers/PrismaRender.h"
 #include "Helpers/SettingsLoader.h"
 #include "Pipelines/PipelineDIffuseIrradiance.h"
-#include "Pipelines/PipelineForwardTransparent.h"
 #include "Pipelines/PipelineHandler.h"
 #include "Pipelines/PipelineLUT.h"
 #include "Pipelines/PipelinePrefilter.h"
@@ -34,9 +35,7 @@
 
 using namespace Diligent;
 
-Prisma::PipelineForwardTransparent::PipelineForwardTransparent(const unsigned int& width, const unsigned int& height) : m_width{width}, m_height{height} {
-    create();
-}
+Prisma::PipelineForwardTransparent::PipelineForwardTransparent(const unsigned int& width, const unsigned int& height) : m_width{width}, m_height{height} { create(); }
 
 void Prisma::PipelineForwardTransparent::render() {
     auto& contextData = PrismaFunc::getInstance().contextData();
@@ -64,7 +63,6 @@ void Prisma::PipelineForwardTransparent::render() {
         MeshIndirect::getInstance().renderMeshesTransparent();
     }
 
-    
     auto pRTV = PipelineHandler::getInstance().textureData().pColorRTV->GetDefaultView(TEXTURE_VIEW_RENDER_TARGET);
     // Clear the back buffer
     contextData.immediateContext->SetRenderTargets(1, &pRTV, pDSV, RESOURCE_STATE_TRANSITION_MODE_TRANSITION);

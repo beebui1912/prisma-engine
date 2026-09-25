@@ -1,11 +1,11 @@
+#include <codecvt>
 #include <filesystem>
 #include <iostream>
-#include <string>
 #include <locale>
-#include <codecvt>
+#include <string>
 
-#include "ImGuiLog.h"
 #include "Containers/Texture.h"
+#include "ImGuiLog.h"
 #include "glm/vec2.hpp"
 
 namespace Prisma::GUI {
@@ -30,9 +30,9 @@ class FileBrowser {
 
     void addEntries();
 
-public:
+   public:
     FileBrowser();
 
     void show(unsigned int width, unsigned int height, float offset, float scale, float translation);
 };
-}
+}  // namespace Prisma::GUI

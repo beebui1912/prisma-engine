@@ -38,25 +38,16 @@ Prisma::GUI::QueryGPU::QueryGPU() {
 void Prisma::GUI::QueryGPU::start() {
     auto immediateContext = PrismaFunc::getInstance().contextData().immediateContext;
     // Begin supported queries
-    if (m_pPipelineStatsQuery)
-        m_pPipelineStatsQuery->Begin(immediateContext);
-    if (m_pOcclusionQuery)
-        m_pOcclusionQuery->Begin(immediateContext);
-    if (m_pDurationQuery)
-        m_pDurationQuery->Begin(immediateContext);
+    if (m_pPipelineStatsQuery) m_pPipelineStatsQuery->Begin(immediateContext);
+    if (m_pOcclusionQuery) m_pOcclusionQuery->Begin(immediateContext);
+    if (m_pDurationQuery) m_pDurationQuery->Begin(immediateContext);
 }
 
 void Prisma::GUI::QueryGPU::end() {
     auto immediateContext = PrismaFunc::getInstance().contextData().immediateContext;
-    if (m_pPipelineStatsQuery)
-        m_pPipelineStatsQuery->End(immediateContext, &m_QueryData.PipelineStats,
-                                   sizeof(m_QueryData.PipelineStats));
-    if (m_pOcclusionQuery)
-        m_pOcclusionQuery->End(immediateContext, &m_QueryData.Occlusion, sizeof(m_QueryData.Occlusion));
-    if (m_pDurationQuery)
-        m_pDurationQuery->End(immediateContext, &m_QueryData.Duration, sizeof(m_QueryData.Duration));
+    if (m_pPipelineStatsQuery) m_pPipelineStatsQuery->End(immediateContext, &m_QueryData.PipelineStats, sizeof(m_QueryData.PipelineStats));
+    if (m_pOcclusionQuery) m_pOcclusionQuery->End(immediateContext, &m_QueryData.Occlusion, sizeof(m_QueryData.Occlusion));
+    if (m_pDurationQuery) m_pDurationQuery->End(immediateContext, &m_QueryData.Duration, sizeof(m_QueryData.Duration));
 }
 
-Prisma::GUI::QueryGPU::QueryData& Prisma::GUI::QueryGPU::queryData() {
-    return m_QueryData;
-}
+Prisma::GUI::QueryGPU::QueryData& Prisma::GUI::QueryGPU::queryData() { return m_QueryData; }

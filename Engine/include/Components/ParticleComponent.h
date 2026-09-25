@@ -26,9 +26,9 @@ class ParticleComponent : public Component {
     std::function<void()> m_updateUI;
     std::function<void()> m_loadTexture;
     std::function<void()> m_apply;
-    unsigned int m_width=1;
-    unsigned int m_height=1;
-    unsigned int m_speed=1;
+    unsigned int m_width = 1;
+    unsigned int m_height = 1;
+    unsigned int m_speed = 1;
     glm::vec2 m_size = glm::vec2(0.1, 0.1);
 };
 }  // namespace Prisma

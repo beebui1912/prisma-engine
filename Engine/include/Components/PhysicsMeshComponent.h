@@ -1,18 +1,19 @@
 #pragma once
 
-#include "Component.h"
-#include "../Physics/Physics.h"
-#include "glm/detail/type_quat.hpp"
-#include "../SceneObjects/Mesh.h"
-#include "glm/gtx/matrix_decompose.hpp"
-#include "../GlobalData/GlobalData.h"
-#include <functional>
-
 #include <Jolt/Jolt.h>
 
+#include <functional>
+
+#include "../GlobalData/GlobalData.h"
+#include "../Physics/Physics.h"
+#include "../SceneObjects/Mesh.h"
+#include "Component.h"
+#include "glm/detail/type_quat.hpp"
+#include "glm/gtx/matrix_decompose.hpp"
+
 // Jolt includes
-#include <Jolt/Physics/PhysicsSystem.h>
 #include <Jolt/Physics/Body/BodyCreationSettings.h>
+#include <Jolt/Physics/PhysicsSystem.h>
 
 #include "Jolt/Physics/SoftBody/SoftBodySharedSettings.h"
 // All Jolt symbols are in the JPH namespace
@@ -23,7 +24,7 @@ using namespace JPH::literals;
 
 namespace Prisma {
 class PhysicsMeshComponent : public Component {
-public:
+   public:
     PhysicsMeshComponent();
 
     void ui() override;
@@ -72,7 +73,7 @@ public:
 
     glm::vec3 scale() const;
 
-private:
+   private:
     ComponentList m_status;
     std::function<void()> m_apply;
     std::function<void()> m_applySoft;
@@ -85,7 +86,6 @@ private:
     Body* m_physicsSoftId = nullptr;
 
     nlohmann::json m_jsonComponent;
-
 
     Physics::LandscapeData m_landscapeData;
 
@@ -101,4 +101,4 @@ private:
     Physics::SoftBodySettings m_settingsSoft;
     glm::vec3 m_scale = glm::vec3(1, 1, 1);
 };
-}
+}  // namespace Prisma

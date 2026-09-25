@@ -3,7 +3,7 @@
 
 namespace Prisma {
 class RegisterData {
-public:
+   public:
     void init();
 };
-}
+}  // namespace Prisma

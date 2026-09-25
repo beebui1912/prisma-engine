@@ -1,34 +1,32 @@
 #include "../include/engine.h"
-#include "../include/GlobalData/PrismaFunc.h"
-
-#include <iostream>
-#include <chrono>
-
-
-#include "../include/SceneData/SceneLoader.h"
-#include "../include/GlobalData/Defines.h"
-#include "../include/Handlers/LightHandler.h"
-#include "../include/Handlers/MeshHandler.h"
-#include "../include/Handlers/AnimationHandler.h"
-#include "../include/SceneData/MeshIndirect.h"
-#include "../include/GlobalData/GlobalData.h"
-#include "../include/Pipelines/PipelineHandler.h"
-#include "../include/Helpers/SettingsLoader.h"
-#include "../include/Pipelines/PipelineDIffuseIrradiance.h"
-#include "../include/Pipelines/PipelinePrefilter.h"
-#include "../include/Helpers/PrismaRender.h"
-#include "../include/Physics/Physics.h"
-#include "../include/Handlers/ComponentsHandler.h"
-#include "../include/Postprocess/Postprocess.h"
-#include <glm/gtx/string_cast.hpp>
 
 #include <Windows.h>
+
+#include <chrono>
+#include <glm/gtx/string_cast.hpp>
+#include <iostream>
+
+#include "../include/GlobalData/Defines.h"
+#include "../include/GlobalData/GlobalData.h"
+#include "../include/GlobalData/PrismaFunc.h"
+#include "../include/Handlers/AnimationHandler.h"
+#include "../include/Handlers/ComponentsHandler.h"
+#include "../include/Handlers/LightHandler.h"
 #include "../include/Handlers/LoadingHandler.h"
+#include "../include/Handlers/MeshHandler.h"
+#include "../include/Helpers/PrismaRender.h"
+#include "../include/Helpers/SettingsLoader.h"
+#include "../include/Physics/Physics.h"
+#include "../include/Pipelines/PipelineDIffuseIrradiance.h"
+#include "../include/Pipelines/PipelineHandler.h"
+#include "../include/Pipelines/PipelinePrefilter.h"
+#include "../include/Postprocess/Postprocess.h"
+#include "../include/SceneData/MeshIndirect.h"
+#include "../include/SceneData/SceneLoader.h"
 #include "Graphics/GraphicsTools/interface/MapHelper.hpp"
 #include "Handlers/TLASHandler.h"
-#include "Helpers/ScenePipeline.h"
-
 #include "Helpers/FPSCounter.h"
+#include "Helpers/ScenePipeline.h"
 
 struct PrivateData {
     Prisma::Settings settings;
@@ -79,7 +77,7 @@ bool Prisma::Engine::run() {
     while (!PrismaFunc::getInstance().shouldClose()) {
         if (GlobalData::getInstance().currentGlobalScene() && Prisma::GlobalData::getInstance().currentGlobalScene()->camera) {
             PrismaFunc::getInstance().bindMainRenderTarget();
-            PrismaFunc::getInstance().clear();            
+            PrismaFunc::getInstance().clear();
 
             if (!data->debug) {
                 ComponentsHandler::getInstance().updateStart();
@@ -119,27 +117,18 @@ bool Prisma::Engine::run() {
     return true;
 }
 
-void Prisma::Engine::setUserEngine(std::shared_ptr<UserData> userData) {
-    data->userData = userData;
-}
+void Prisma::Engine::setUserEngine(std::shared_ptr<UserData> userData) { data->userData = userData; }
 
 void Prisma::Engine::initScene() {
-       
     data->userData->start();
     PipelineHandler::getInstance().initScene(static_cast<bool>(data->sceneHandler));
 }
 
-void Prisma::Engine::setGuiData(std::shared_ptr<SceneHandler> guiData) {
-    data->sceneHandler = guiData;
-}
+void Prisma::Engine::setGuiData(std::shared_ptr<SceneHandler> guiData) { data->sceneHandler = guiData; }
 
-void Prisma::Engine::engineSettings(const EngineSettings::Settings& engineSettings) {
-    data->engineSettings = engineSettings;
-}
+void Prisma::Engine::engineSettings(const EngineSettings::Settings& engineSettings) { data->engineSettings = engineSettings; }
 
-Prisma::EngineSettings::Settings Prisma::Engine::engineSettings() const {
-    return data->engineSettings;
-}
+Prisma::EngineSettings::Settings Prisma::Engine::engineSettings() const { return data->engineSettings; }
 
 void Prisma::Engine::setCallback(std::shared_ptr<CallbackHandler> callbackHandler) {
     auto& contextData = PrismaFunc::getInstance().contextData();
@@ -147,27 +136,14 @@ void Prisma::Engine::setCallback(std::shared_ptr<CallbackHandler> callbackHandle
     PrismaFunc::getInstance().setCallback(callbackHandler);
 }
 
-float Prisma::Engine::fps() const {
-    return data->fpsCounter.getFPS();
-}
+float Prisma::Engine::fps() const { return data->fpsCounter.getFPS(); }
 
-void Prisma::Engine::mainCamera(const std::shared_ptr<Camera>& camera) {
-    Prisma::GlobalData::getInstance().currentGlobalScene()->camera = camera;
-}
+void Prisma::Engine::mainCamera(const std::shared_ptr<Camera>& camera) { Prisma::GlobalData::getInstance().currentGlobalScene()->camera = camera; }
 
-void Prisma::Engine::debug(bool debug) {
-    data->debug = debug;
-}
+void Prisma::Engine::debug(bool debug) { data->debug = debug; }
 
-void Prisma::Engine::windowsData(WindowsHelper::WindowsData windowsData) {
-    data->windowsData = windowsData;
-}
+void Prisma::Engine::windowsData(WindowsHelper::WindowsData windowsData) { data->windowsData = windowsData; }
 
-std::shared_ptr<Prisma::UserData> Prisma::Engine::getUserEngine() {
-    return data->userData;
-}
+std::shared_ptr<Prisma::UserData> Prisma::Engine::getUserEngine() { return data->userData; }
 
-void Prisma::Engine::getScene(const std::string& scene,
-                              SceneLoader::SceneParameters sceneParameters) {
-    LoadingHandler::getInstance().load(scene, sceneParameters);
-}
+void Prisma::Engine::getScene(const std::string& scene, SceneLoader::SceneParameters sceneParameters) { LoadingHandler::getInstance().load(scene, sceneParameters); }

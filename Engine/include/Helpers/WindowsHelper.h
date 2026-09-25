@@ -1,11 +1,11 @@
 #pragma once
 #include <string>
-#include "../GlobalData/InstanceData.h"
 
+#include "../GlobalData/InstanceData.h"
 
 namespace Prisma {
 class WindowsHelper : public InstanceData<WindowsHelper> {
-public:
+   public:
     struct WindowsData {
         void* hInstance;
         int nShowCmd;
@@ -15,4 +15,4 @@ public:
     std::string openFolder(const std::string& stringFilter) const;
     std::string relativePath(const std::string& path) const;
 };
-}
+}  // namespace Prisma

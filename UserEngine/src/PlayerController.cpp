@@ -1,27 +1,24 @@
 #include "../include/PlayerController.h"
-#include "Components/PhysicsMeshComponent.h"
-#include "Components/InstancingComponent.h"
-#include <glm/gtx/string_cast.hpp>
 
-#include "engine.h"
-#include "../Components/include/InstancingGrassComponent.h"
 #include <Components/CloudComponent.h>
 #include <Components/WaterComponent.h>
+
+#include <glm/gtx/string_cast.hpp>
+
+#include "../Components/include/InstancingGrassComponent.h"
+#include "Components/InstancingComponent.h"
+#include "Components/PhysicsMeshComponent.h"
+#include "engine.h"
 
 PlayerController::PlayerController(std::shared_ptr<Prisma::Scene> scene) : m_scene{scene} {
     Prisma::NodeHelper nodeHelper;
 
-    m_animatedMesh = std::dynamic_pointer_cast<Prisma::AnimatedMesh>(
-        nodeHelper.find(m_scene->root, "MutantMesh")->children()[0]);
+    m_animatedMesh = std::dynamic_pointer_cast<Prisma::AnimatedMesh>(nodeHelper.find(m_scene->root, "MutantMesh")->children()[0]);
 
     if (m_animatedMesh) {
-        m_walkAnimation = std::make_shared<Prisma::Animation>(
-            "../../../Resources/DefaultScene/animations/animation.gltf", m_animatedMesh);
-        m_jumpAnimation = std::make_shared<Prisma::Animation>(
-            "../../../Resources/DefaultScene/animations/jump.gltf",
-            m_animatedMesh);
+        m_walkAnimation = std::make_shared<Prisma::Animation>("../../../Resources/DefaultScene/animations/animation.gltf", m_animatedMesh);
+        m_jumpAnimation = std::make_shared<Prisma::Animation>("../../../Resources/DefaultScene/animations/jump.gltf", m_animatedMesh);
         m_idleAnimation = m_animatedMesh->animator()->animation();
-            
     }
 
     m_bboxMesh = std::dynamic_pointer_cast<Prisma::Mesh>(nodeHelper.find(m_scene->root, "BBoxMesh"));
@@ -41,19 +38,14 @@ PlayerController::PlayerController(std::shared_ptr<Prisma::Scene> scene) : m_sce
     m_previousAnimations = IDLE;
     auto id = m_physics->physicsId();
     Prisma::Physics::getInstance().bodyInterface().SetFriction(id, 10);
-    auto contact = [&](const Body& body) {
-        m_isColliding = true;
-    };
+    auto contact = [&](const Body& body) { m_isColliding = true; };
 
-    auto noContact = [&](const BodyID& body) {
-        m_isColliding = false;
-    };
+    auto noContact = [&](const BodyID& body) { m_isColliding = false; };
 
     m_physics->onCollisionStay(contact);
     m_physics->onCollisionExit(noContact);
 
-    glm::mat4 rotation = rotate(glm::mat4(1.0), glm::radians(90.0f), glm::vec3(1, 0, 0)) * translate(
-                             glm::mat4(1.0), glm::vec3(0, 0, -1));
+    glm::mat4 rotation = rotate(glm::mat4(1.0), glm::radians(90.0f), glm::vec3(1, 0, 0)) * translate(glm::mat4(1.0), glm::vec3(0, 0, -1));
 
     std::vector<Prisma::Interpolator::Timeframe> timeframes;
     float amplitude = 1.0f;
@@ -95,14 +87,14 @@ PlayerController::PlayerController(std::shared_ptr<Prisma::Scene> scene) : m_sce
             }
         });*/
     }
-    //createParticles();
+    // createParticles();
     createCamera();
     createKeyboard();
 }
 
 void PlayerController::updateCamera() {
     m_velocity = m_baseVelocity;
-    //m_velocity = m_baseVelocity * 1.0f / (float)Prisma::Engine::getInstance().fps();
+    // m_velocity = m_baseVelocity * 1.0f / (float)Prisma::Engine::getInstance().fps();
 
     // Calculate the new position based on yaw, pitch, and distance from target
     glm::vec3 offset;
@@ -118,7 +110,6 @@ void PlayerController::updateCamera() {
     m_scene->camera->up(m_up);
 }
 
-
 void PlayerController::updateKeyboard() {
     updateAnimations();
     auto playerData = m_animatedMesh->parent()->parent()->matrix();
@@ -126,10 +117,7 @@ void PlayerController::updateKeyboard() {
     glm::vec3 frontClamp = m_front;
     frontClamp.y = 0;
     glm::mat4 offsetRotation;
-    auto isJumping = m_animatedMesh->animator()->animation()->id() == m_jumpAnimation->id() && m_animatedMesh->
-                                                                                               animator()->currentTime() + m_jumpAnimation->ticksPerSecond() * 1.0f /
-                     Prisma::Engine::getInstance().fps() >=
-                     m_jumpAnimation->duration();
+    auto isJumping = m_animatedMesh->animator()->animation()->id() == m_jumpAnimation->id() && m_animatedMesh->animator()->currentTime() + m_jumpAnimation->ticksPerSecond() * 1.0f / Prisma::Engine::getInstance().fps() >= m_jumpAnimation->duration();
     auto velocity = Prisma::Physics::getInstance().bodyInterface().GetLinearVelocity(id);
     if (isJumping && m_previousAnimations == JUMP) {
         m_previousAnimations = IDLE;
@@ -141,8 +129,7 @@ void PlayerController::updateKeyboard() {
             m_currentDirection = currentDirection;
             Prisma::Physics::getInstance().bodyInterface().SetLinearVelocity(id, currentDirection);
             offsetRotation = rotate(glm::mat4(1.0f), glm::radians(90.0f), glm::vec3(0, 0, 1));
-            playerData = m_baseData * rotate(glm::mat4(offsetRotation), glm::radians(m_yaw),
-                                             glm::vec3(0, 0, 1));
+            playerData = m_baseData * rotate(glm::mat4(offsetRotation), glm::radians(m_yaw), glm::vec3(0, 0, 1));
             m_animatedMesh->parent()->parent()->matrix(playerData);
             m_previousClick = Prisma::KEY_W;
             m_previousAnimations = WALK;
@@ -163,8 +150,7 @@ void PlayerController::updateKeyboard() {
             m_currentDirection = currentDirection;
             Prisma::Physics::getInstance().bodyInterface().SetLinearVelocity(id, currentDirection);
             offsetRotation = rotate(glm::mat4(1.0f), glm::radians(270.0f), glm::vec3(0, 0, 1));
-            playerData = m_baseData * rotate(glm::mat4(offsetRotation), glm::radians(m_yaw),
-                                             glm::vec3(0, 0, 1));
+            playerData = m_baseData * rotate(glm::mat4(offsetRotation), glm::radians(m_yaw), glm::vec3(0, 0, 1));
             m_animatedMesh->parent()->parent()->matrix(playerData);
             m_previousClick = Prisma::KEY_S;
             m_previousAnimations = WALK;
@@ -175,8 +161,7 @@ void PlayerController::updateKeyboard() {
             m_currentDirection = currentDirection;
             Prisma::Physics::getInstance().bodyInterface().SetLinearVelocity(id, currentDirection);
             offsetRotation = rotate(glm::mat4(1.0f), glm::radians(180.0f), glm::vec3(0, 0, 1));
-            playerData = m_baseData * rotate(glm::mat4(offsetRotation), glm::radians(m_yaw),
-                                             glm::vec3(0, 0, 1));
+            playerData = m_baseData * rotate(glm::mat4(offsetRotation), glm::radians(m_yaw), glm::vec3(0, 0, 1));
             m_animatedMesh->parent()->parent()->matrix(playerData);
             m_previousClick = Prisma::KEY_D;
             m_previousAnimations = WALK;
@@ -189,9 +174,7 @@ void PlayerController::updateKeyboard() {
     m_animatedMesh->animator()->updateAnimation(1.0f / Prisma::Engine::getInstance().fps());
 }
 
-void PlayerController::scene(std::shared_ptr<Prisma::Scene> scene) {
-    m_scene = scene;
-}
+void PlayerController::scene(std::shared_ptr<Prisma::Scene> scene) { m_scene = scene; }
 
 void PlayerController::update() {
     target(m_animatedMesh->parent()->finalMatrix()[3]);
@@ -199,13 +182,9 @@ void PlayerController::update() {
     updateKeyboard();
 }
 
-std::shared_ptr<Prisma::CallbackHandler> PlayerController::callback() {
-    return m_handler;
-}
+std::shared_ptr<Prisma::CallbackHandler> PlayerController::callback() { return m_handler; }
 
-void PlayerController::target(glm::vec3 target) {
-    m_target = target;
-}
+void PlayerController::target(glm::vec3 target) { m_target = target; }
 
 void PlayerController::createCamera() {
     m_window = Prisma::PrismaFunc::getInstance().window();
@@ -222,11 +201,11 @@ void PlayerController::createCamera() {
         }
 
         float xoffset = xpos - m_lastX;
-        float yoffset = m_lastY - ypos; // reversed since y-coordinates go from bottom to top
+        float yoffset = m_lastY - ypos;  // reversed since y-coordinates go from bottom to top
         m_lastX = xpos;
         m_lastY = ypos;
 
-        float sensitivity = 0.1f; // change this value to your liking
+        float sensitivity = 0.1f;  // change this value to your liking
         xoffset *= sensitivity;
         yoffset *= sensitivity;
 
@@ -234,10 +213,8 @@ void PlayerController::createCamera() {
         m_pitch += yoffset;
 
         // make sure that when pitch is out of bounds, screen doesn't get flipped
-        if (m_pitch > 89.0f)
-            m_pitch = 89.0f;
-        if (m_pitch < -89.0f)
-            m_pitch = -89.0f;
+        if (m_pitch > 89.0f) m_pitch = 89.0f;
+        if (m_pitch < -89.0f) m_pitch = -89.0f;
 
         glm::vec3 front;
         front.x = cos(glm::radians(m_yaw)) * cos(glm::radians(m_pitch));
@@ -250,8 +227,7 @@ void PlayerController::createCamera() {
             std::shared_ptr<Prisma::Mesh> ball = m_balls[m_ballIndex].lock();
 
             auto physicsComponent = std::dynamic_pointer_cast<Prisma::PhysicsMeshComponent>(ball->components()["Physics"]);
-            auto position = m_gunPosition->finalMatrix()[3] + glm::vec4(
-                                Prisma::JfromVec3(m_currentDirection), 0.0f);
+            auto position = m_gunPosition->finalMatrix()[3] + glm::vec4(Prisma::JfromVec3(m_currentDirection), 0.0f);
 
             m_basePosition[3] = position;
 
@@ -263,9 +239,8 @@ void PlayerController::createCamera() {
                     this->m_balls.push_back(ballShared);
                 }
             });*/
-            Prisma::Physics::getInstance().bodyInterface().AddImpulse(physicsComponent->physicsId(),
-                                                                      m_currentDirection * 5);
-            m_ballIndex=(m_ballIndex+1)%m_maxBalls;
+            Prisma::Physics::getInstance().bodyInterface().AddImpulse(physicsComponent->physicsId(), m_currentDirection * 5);
+            m_ballIndex = (m_ballIndex + 1) % m_maxBalls;
         }
     };
 }

@@ -1,12 +1,13 @@
 #include "Components/PhysicsMeshComponent.h"
-#include "Physics/PhysicsData.h"
+
 #include <glm/gtx/string_cast.hpp>
 
 #include "Jolt/Physics/Collision/Shape/ConvexHullShape.h"
+#include "Jolt/Physics/Collision/Shape/HeightFieldShape.h"
 #include "Jolt/Physics/SoftBody/SoftBodyCreationSettings.h"
+#include "Physics/PhysicsData.h"
 #include "SceneData/ComponentTypeLayout.h"
 #include "SceneData/MeshIndirect.h"
-#include "Jolt/Physics/Collision/Shape/HeightFieldShape.h"
 
 void Prisma::PhysicsMeshComponent::ui() {
     Component::ui();
@@ -70,8 +71,7 @@ void Prisma::PhysicsMeshComponent::ui() {
     updateCollisionData();
 }
 
-void Prisma::PhysicsMeshComponent::update() {
-}
+void Prisma::PhysicsMeshComponent::update() {}
 
 void Prisma::PhysicsMeshComponent::destroy() {
     if (m_physicsId) {
@@ -97,9 +97,7 @@ void Prisma::PhysicsMeshComponent::collisionData(Physics::CollisionData collisio
     updateCollisionData();
 }
 
-void Prisma::PhysicsMeshComponent::updateCollisionData() {
-    colliderDispatcher();
-}
+void Prisma::PhysicsMeshComponent::updateCollisionData() { colliderDispatcher(); }
 
 void Prisma::PhysicsMeshComponent::colliderDispatcher() {
     auto mesh = std::dynamic_pointer_cast<Mesh>(parent());
@@ -108,17 +106,11 @@ void Prisma::PhysicsMeshComponent::colliderDispatcher() {
             auto bodySettings = getBodySettings();
             if (!m_physicsId) {
                 m_physicsId = std::make_shared<BodyID>();
-                *m_physicsId = Physics::getInstance().bodyInterface().CreateAndAddBody(
-                    bodySettings,
-                    m_collisionData.dynamic ? EActivation::Activate : EActivation::DontActivate);
+                *m_physicsId = Physics::getInstance().bodyInterface().CreateAndAddBody(bodySettings, m_collisionData.dynamic ? EActivation::Activate : EActivation::DontActivate);
             } else {
-                Physics::getInstance().physicsSystem().GetBodyInterfaceNoLock().
-                                       RemoveBody(*m_physicsId);
-                Physics::getInstance().physicsSystem().GetBodyInterfaceNoLock().DestroyBody(
-                    *m_physicsId);
-                *m_physicsId = Physics::getInstance().bodyInterface().CreateAndAddBody(
-                    bodySettings,
-                    m_collisionData.dynamic ? EActivation::Activate : EActivation::DontActivate);
+                Physics::getInstance().physicsSystem().GetBodyInterfaceNoLock().RemoveBody(*m_physicsId);
+                Physics::getInstance().physicsSystem().GetBodyInterfaceNoLock().DestroyBody(*m_physicsId);
+                *m_physicsId = Physics::getInstance().bodyInterface().CreateAndAddBody(bodySettings, m_collisionData.dynamic ? EActivation::Activate : EActivation::DontActivate);
             }
         } else {
             addSoftBody();
@@ -126,9 +118,7 @@ void Prisma::PhysicsMeshComponent::colliderDispatcher() {
     }
 }
 
-Prisma::Physics::CollisionData Prisma::PhysicsMeshComponent::collisionData() {
-    return m_collisionData;
-}
+Prisma::Physics::CollisionData Prisma::PhysicsMeshComponent::collisionData() { return m_collisionData; }
 
 void Prisma::PhysicsMeshComponent::start() {
     Component::start();
@@ -137,78 +127,45 @@ void Prisma::PhysicsMeshComponent::start() {
     }
 }
 
-BodyID& Prisma::PhysicsMeshComponent::physicsId() {
-    return *m_physicsId;
-}
+BodyID& Prisma::PhysicsMeshComponent::physicsId() { return *m_physicsId; }
 
-bool Prisma::PhysicsMeshComponent::initPhysics() {
-    return static_cast<bool>(m_physicsId) || static_cast<bool>(m_physicsSoftId);
-}
+bool Prisma::PhysicsMeshComponent::initPhysics() { return static_cast<bool>(m_physicsId) || static_cast<bool>(m_physicsSoftId); }
 
-void Prisma::PhysicsMeshComponent::onCollisionEnter(std::function<void(const Body&)> add) {
-    m_add = add;
-}
+void Prisma::PhysicsMeshComponent::onCollisionEnter(std::function<void(const Body&)> add) { m_add = add; }
 
-void Prisma::PhysicsMeshComponent::onCollisionStay(std::function<void(const Body&)> stay) {
-    m_stay = stay;
-}
+void Prisma::PhysicsMeshComponent::onCollisionStay(std::function<void(const Body&)> stay) { m_stay = stay; }
 
-void Prisma::PhysicsMeshComponent::onCollisionExit(std::function<void(const BodyID&)> remove) {
-    m_remove = remove;
-}
+void Prisma::PhysicsMeshComponent::onCollisionExit(std::function<void(const BodyID&)> remove) { m_remove = remove; }
 
-std::function<void(const Body&)> Prisma::PhysicsMeshComponent::onCollisionEnter() {
-    return m_add;
-}
+std::function<void(const Body&)> Prisma::PhysicsMeshComponent::onCollisionEnter() { return m_add; }
 
-std::function<void(const Body&)> Prisma::PhysicsMeshComponent::onCollisionStay() {
-    return m_stay;
-}
+std::function<void(const Body&)> Prisma::PhysicsMeshComponent::onCollisionStay() { return m_stay; }
 
-std::function<void(const BodyID&)> Prisma::PhysicsMeshComponent::onCollisionExit() {
-    return m_remove;
-}
+std::function<void(const BodyID&)> Prisma::PhysicsMeshComponent::onCollisionExit() { return m_remove; }
 
-void Prisma::PhysicsMeshComponent::landscapeData(const Physics::LandscapeData& landscapeData) {
-    m_landscapeData = landscapeData;
-}
+void Prisma::PhysicsMeshComponent::landscapeData(const Physics::LandscapeData& landscapeData) { m_landscapeData = landscapeData; }
 
-void Prisma::PhysicsMeshComponent::settingsSoftBody(Physics::SoftBodySettings settingsSoft) {
-    m_settingsSoft = settingsSoft;
-}
+void Prisma::PhysicsMeshComponent::settingsSoftBody(Physics::SoftBodySettings settingsSoft) { m_settingsSoft = settingsSoft; }
 
-Prisma::Physics::SoftBodySettings Prisma::PhysicsMeshComponent::settingsSoftBody() {
-    return m_settingsSoft;
-}
+Prisma::Physics::SoftBodySettings Prisma::PhysicsMeshComponent::settingsSoftBody() { return m_settingsSoft; }
 
-Body* Prisma::PhysicsMeshComponent::softId() {
-    return m_physicsSoftId;
-}
+Body* Prisma::PhysicsMeshComponent::softId() { return m_physicsSoftId; }
 
 nlohmann::json Prisma::PhysicsMeshComponent::serialize() {
-    m_jsonComponent = {
-        {"CollisionData", m_collisionData},
-        {"LandscapeData", m_landscapeData},
-        {"SoftBodySettings", m_settingsSoft}
-    };
+    m_jsonComponent = {{"CollisionData", m_collisionData}, {"LandscapeData", m_landscapeData}, {"SoftBodySettings", m_settingsSoft}};
     return m_jsonComponent;
 }
 
 void Prisma::PhysicsMeshComponent::deserialize(nlohmann::json& data) {
     // Validate input JSON and populate member variables
-    if (data.contains("CollisionData") && data["CollisionData"].is_object())
-        data.at("CollisionData").get_to(m_collisionData);
+    if (data.contains("CollisionData") && data["CollisionData"].is_object()) data.at("CollisionData").get_to(m_collisionData);
 
-    if (data.contains("LandscapeData") && data["LandscapeData"].is_object())
-        data.at("LandscapeData").get_to(m_landscapeData);
+    if (data.contains("LandscapeData") && data["LandscapeData"].is_object()) data.at("LandscapeData").get_to(m_landscapeData);
 
-    if (data.contains("SoftBodySettings") && data["SoftBodySettings"].is_object())
-        data.at("SoftBodySettings").get_to(m_settingsSoft);
+    if (data.contains("SoftBodySettings") && data["SoftBodySettings"].is_object()) data.at("SoftBodySettings").get_to(m_settingsSoft);
 }
 
-glm::vec3 Prisma::PhysicsMeshComponent::scale() const {
-    return m_scale;
-}
+glm::vec3 Prisma::PhysicsMeshComponent::scale() const { return m_scale; }
 
 BodyCreationSettings Prisma::PhysicsMeshComponent::getBodySettings() {
     auto mesh = std::dynamic_pointer_cast<Mesh>(parent());
@@ -244,13 +201,7 @@ BodyCreationSettings Prisma::PhysicsMeshComponent::getBodySettings() {
             auto boxShape = new BoxShape(JtoVec3(length));
             auto result = boxShape->ScaleShape(JtoVec3(scale));
             shape = result.Get();
-            aabbSettings = BodyCreationSettings(shape, JtoVec3(translation), JtoQuat(rotation),
-                                                m_collisionData.dynamic
-                                                    ? EMotionType::Dynamic
-                                                    : EMotionType::Static,
-                                                m_collisionData.dynamic
-                                                    ? Layers::MOVING
-                                                    : Layers::NON_MOVING);
+            aabbSettings = BodyCreationSettings(shape, JtoVec3(translation), JtoQuat(rotation), m_collisionData.dynamic ? EMotionType::Dynamic : EMotionType::Static, m_collisionData.dynamic ? Layers::MOVING : Layers::NON_MOVING);
 
             break;
         }
@@ -258,21 +209,13 @@ BodyCreationSettings Prisma::PhysicsMeshComponent::getBodySettings() {
             auto sphereShape = new SphereShape(1.0);
             auto result = sphereShape->ScaleShape(JtoVec3(scale));
             shape = result.Get();
-            aabbSettings = BodyCreationSettings(shape, JtoVec3(translation), JtoQuat(rotation),
-                                                m_collisionData.dynamic
-                                                    ? EMotionType::Dynamic
-                                                    : EMotionType::Static,
-                                                m_collisionData.dynamic
-                                                    ? Layers::MOVING
-                                                    : Layers::NON_MOVING);
+            aabbSettings = BodyCreationSettings(shape, JtoVec3(translation), JtoQuat(rotation), m_collisionData.dynamic ? EMotionType::Dynamic : EMotionType::Static, m_collisionData.dynamic ? Layers::MOVING : Layers::NON_MOVING);
             break;
         }
         case Physics::Collider::LANDSCAPE_COLLIDER: {
-            HeightFieldShapeSettings settings(m_landscapeData.landscape.data(), m_landscapeData.offset,
-                                              m_landscapeData.scale, m_landscapeData.width);
+            HeightFieldShapeSettings settings(m_landscapeData.landscape.data(), m_landscapeData.offset, m_landscapeData.scale, m_landscapeData.width);
             shape = StaticCast<HeightFieldShape>(settings.Create().Get());
-            aabbSettings = BodyCreationSettings(shape, JtoVec3(translation), JtoQuat(rotation),
-                                                EMotionType::Static, Layers::NON_MOVING);
+            aabbSettings = BodyCreationSettings(shape, JtoVec3(translation), JtoQuat(rotation), EMotionType::Static, Layers::NON_MOVING);
             break;
         }
         case Physics::Collider::CONVEX_COLLIDER: {
@@ -286,13 +229,7 @@ BodyCreationSettings Prisma::PhysicsMeshComponent::getBodySettings() {
             auto convexShape = new ConvexHullShape(settings, result);
             auto resultShape = convexShape->ScaleShape(JtoVec3(scale));
             shape = resultShape.Get();
-            aabbSettings = BodyCreationSettings(shape, JtoVec3(translation), JtoQuat(rotation),
-                                                m_collisionData.dynamic
-                                                    ? EMotionType::Dynamic
-                                                    : EMotionType::Static,
-                                                m_collisionData.dynamic
-                                                    ? Layers::MOVING
-                                                    : Layers::NON_MOVING);
+            aabbSettings = BodyCreationSettings(shape, JtoVec3(translation), JtoQuat(rotation), m_collisionData.dynamic ? EMotionType::Dynamic : EMotionType::Static, m_collisionData.dynamic ? Layers::MOVING : Layers::NON_MOVING);
         }
     }
     if (m_collisionData.mass > 0 && m_collisionData.collider != Physics::LANDSCAPE_COLLIDER) {
@@ -328,8 +265,7 @@ void Prisma::PhysicsMeshComponent::addSoftBody() {
             for (auto& vertex : mesh->verticesData().vertices) {
                 SoftBodySharedSettings::Vertex v;
 
-                vertex.position = mesh->parent()->finalMatrix() *
-                                  glm::vec4(m_settingsSoft.customVertices[i].first, 1.0);
+                vertex.position = mesh->parent()->finalMatrix() * glm::vec4(m_settingsSoft.customVertices[i].first, 1.0);
                 vertex.normal = normalize(normalMatrix * glm::vec4(vertex.normal, 1.0));
                 v.mPosition = Float3(vertex.position.x, vertex.position.y, vertex.position.z);
                 v.mInvMass = m_settingsSoft.customVertices[i].second;
@@ -350,19 +286,14 @@ void Prisma::PhysicsMeshComponent::addSoftBody() {
         }
 
         for (int i = 0; i < mesh->verticesData().indices.size(); i = i + 3) {
-            m_softBodySharedSettings->AddFace(SoftBodySharedSettings::Face(mesh->verticesData().indices[i],
-                                                                           mesh->verticesData().indices[i + 1],
-                                                                           mesh->verticesData().indices[i + 2]));
+            m_softBodySharedSettings->AddFace(SoftBodySharedSettings::Face(mesh->verticesData().indices[i], mesh->verticesData().indices[i + 1], mesh->verticesData().indices[i + 2]));
         }
 
         m_softBodySharedSettings->CreateConstraints(&m_settingsSoft.vertexAttributes, 1);
 
         m_softBodySharedSettings->Optimize();
 
-        SoftBodyCreationSettings sb_settings(m_softBodySharedSettings, Vec3::sZero(), Quat::sIdentity(),
-                                             m_collisionData.dynamic
-                                                 ? Layers::MOVING
-                                                 : Layers::NON_MOVING);
+        SoftBodyCreationSettings sb_settings(m_softBodySharedSettings, Vec3::sZero(), Quat::sIdentity(), m_collisionData.dynamic ? Layers::MOVING : Layers::NON_MOVING);
         sb_settings.mAllowSleeping = m_settingsSoft.sleep;
         sb_settings.mUpdatePosition = m_settingsSoft.updatePosition;
         sb_settings.mNumIterations = m_settingsSoft.numIteration;
@@ -372,16 +303,11 @@ void Prisma::PhysicsMeshComponent::addSoftBody() {
         sb_settings.mPressure = m_collisionData.pressure;
 
         m_physicsSoftId = Physics::getInstance().bodyInterface().CreateSoftBody(sb_settings);
-        Physics::getInstance().bodyInterface().AddBody(m_physicsSoftId->GetID(),
-                                                       m_collisionData.dynamic
-                                                           ? EActivation::Activate
-                                                           : EActivation::DontActivate);
+        Physics::getInstance().bodyInterface().AddBody(m_physicsSoftId->GetID(), m_collisionData.dynamic ? EActivation::Activate : EActivation::DontActivate);
         mesh->parent()->matrix(glm::mat4(1.0));
         MeshIndirect::getInstance().remove(0);
         CacheScene::getInstance().updateSizes(true);
     }
 }
 
-Prisma::PhysicsMeshComponent::PhysicsMeshComponent() : Component{} {
-    name("Physics");
-}
+Prisma::PhysicsMeshComponent::PhysicsMeshComponent() : Component{} { name("Physics"); }

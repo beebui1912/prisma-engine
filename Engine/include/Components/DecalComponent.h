@@ -3,10 +3,10 @@
 
 namespace Prisma {
 class DecalComponent : public Component {
-public:
+   public:
     DecalComponent();
 
     void start() override;
-    //std::shared_ptr<Prisma::Shader> m_shader;
+    // std::shared_ptr<Prisma::Shader> m_shader;
 };
-}
+}  // namespace Prisma

@@ -1,11 +1,11 @@
 #pragma once
 #include <memory>
-#include "glm/glm.hpp"
-#include "../GlobalData/Defines.h"
-#include "../GlobalData/InstanceData.h"
 #include <vector>
 
+#include "../GlobalData/Defines.h"
+#include "../GlobalData/InstanceData.h"
 #include "Common/interface/RefCntAutoPtr.hpp"
+#include "glm/glm.hpp"
 
 namespace Diligent {
 struct IBuffer;
@@ -13,7 +13,7 @@ struct IBuffer;
 
 namespace Prisma {
 class AnimationHandler : public InstanceData<AnimationHandler> {
-public:
+   public:
     struct SSBOAnimation {
         glm::mat4 animations[Define::MAX_BONES];
     };
@@ -24,7 +24,7 @@ public:
 
     AnimationHandler();
 
-private:
+   private:
     Diligent::RefCntAutoPtr<Diligent::IBuffer> m_animation;
 };
-}
+}  // namespace Prisma

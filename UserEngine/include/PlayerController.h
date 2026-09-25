@@ -1,23 +1,18 @@
 #pragma once
 
-#include "SceneObjects/Node.h"
-#include "SceneObjects/Camera.h"
+#include "Components/PhysicsMeshComponent.h"
+#include "GlobalData/GlobalData.h"
+#include "GlobalData/Keys.h"
+#include "Helpers/Interpolator.h"
 #include "Helpers/NodeHelper.h"
 #include "Helpers/ScenePrinter.h"
-#include "GlobalData/Keys.h"
-#include "GlobalData/GlobalData.h"
-#include "Components/PhysicsMeshComponent.h"
 #include "ParticleController.h"
-#include "Helpers/Interpolator.h"
+#include "SceneObjects/Camera.h"
+#include "SceneObjects/Node.h"
 
 class PlayerController {
-public:
-    enum ANIMATIONS {
-        IDLE,
-        WALK,
-        JUMP,
-        DEFAULT
-    };
+   public:
+    enum ANIMATIONS { IDLE, WALK, JUMP, DEFAULT };
 
     PlayerController(std::shared_ptr<Prisma::Scene> scene);
 
@@ -33,7 +28,7 @@ public:
 
     void target(glm::vec3 target);
 
-private:
+   private:
     void createCamera();
 
     void createKeyboard();

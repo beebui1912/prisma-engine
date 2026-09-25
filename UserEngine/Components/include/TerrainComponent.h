@@ -1,20 +1,21 @@
 #pragma once
 
-#include <memory>
 #include <chrono>
 #include <functional>
+#include <memory>
+
 #include "Containers/Texture.h"
-#include "SceneObjects/Mesh.h"
 #include "GrassRenderer.h"
+#include "SceneObjects/Mesh.h"
 
 namespace Prisma {
 class TerrainComponent : public Component {
-public:
+   public:
     TerrainComponent();
 
     void ui() override;
 
-    //void updateRender(std::shared_ptr<FBO> fbo = nullptr) override;
+    // void updateRender(std::shared_ptr<FBO> fbo = nullptr) override;
 
     void generateCpu();
 
@@ -22,7 +23,7 @@ public:
 
     void heightMap(Texture heightMap);
 
-private:
+   private:
     Texture m_heightMap;
     std::shared_ptr<Texture> m_grass = nullptr;
     std::shared_ptr<Texture> m_stone = nullptr;
@@ -35,9 +36,9 @@ private:
     std::shared_ptr<Texture> m_snowRoughness = nullptr;
 
     std::shared_ptr<Mesh> m_mesh;
-    //VAO m_vao;
-    //std::shared_ptr<Shader> m_shader;
-    //std::shared_ptr<Shader> m_csmShader;
+    // VAO m_vao;
+    // std::shared_ptr<Shader> m_shader;
+    // std::shared_ptr<Shader> m_csmShader;
 
     unsigned int m_modelPos;
     unsigned int m_heightPos;
@@ -73,4 +74,4 @@ private:
 
     std::shared_ptr<Mesh::VerticesData> m_vertices;
 };
-}
+}  // namespace Prisma

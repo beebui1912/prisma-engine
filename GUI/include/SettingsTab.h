@@ -1,14 +1,13 @@
 #pragma once
 #include <memory>
 
-#include "Postprocess/Effects.h"
 #include "Postprocess/Bloom.h"
+#include "Postprocess/Effects.h"
 #include "Postprocess/FXAA.h"
-
 
 namespace Prisma::GUI {
 class SettingsTab {
-public:
+   public:
     struct SettingsData {
         bool msaa = true;
         int numSamples = 4;
@@ -18,7 +17,7 @@ public:
     void drawSettings();
     void updateStatus();
 
-private:
+   private:
     SettingsData m_settings;
     bool m_position = false;
     std::shared_ptr<Effects> m_effects;
@@ -27,4 +26,4 @@ private:
 
     std::shared_ptr<Prisma::GUI::FXAA> m_fxaa;
 };
-}
+}  // namespace Prisma::GUI

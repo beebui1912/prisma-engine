@@ -7,7 +7,7 @@ class TimeCounter {
     std::chrono::high_resolution_clock::time_point end_time;
     bool running;
 
-public:
+   public:
     TimeCounter();
 
     void start();
@@ -16,4 +16,4 @@ public:
 
     double duration_seconds() const;
 };
-}
+}  // namespace Prisma

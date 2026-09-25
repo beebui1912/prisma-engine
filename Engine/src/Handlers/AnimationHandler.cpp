@@ -1,9 +1,9 @@
 #include "Handlers/AnimationHandler.h"
-#include "GlobalData/GlobalData.h"
+
 #include "GlobalData/Defines.h"
+#include "GlobalData/GlobalData.h"
 #include "Helpers/TimeCounter.h"
 #include "SceneData/MeshIndirect.h"
-
 
 void Prisma::AnimationHandler::fill() {
     for (auto mesh : GlobalData::getInstance().currentGlobalScene()->animateMeshes) {
@@ -13,9 +13,7 @@ void Prisma::AnimationHandler::fill() {
     }
 }
 
-Diligent::RefCntAutoPtr<Diligent::IBuffer> Prisma::AnimationHandler::animation() {
-    return m_animation;
-}
+Diligent::RefCntAutoPtr<Diligent::IBuffer> Prisma::AnimationHandler::animation() { return m_animation; }
 
 Prisma::AnimationHandler::AnimationHandler() {
     auto& contextData = PrismaFunc::getInstance().contextData();
@@ -26,6 +24,6 @@ Prisma::AnimationHandler::AnimationHandler() {
     MatBufferDesc.Mode = Diligent::BUFFER_MODE_STRUCTURED;
     MatBufferDesc.ElementByteStride = sizeof(SSBOAnimation);
     auto size = sizeof(SSBOAnimation) * Define::MAX_ANIMATION_MESHES;
-    MatBufferDesc.Size = size; // Ensure enough space
+    MatBufferDesc.Size = size;  // Ensure enough space
     contextData.device->CreateBuffer(MatBufferDesc, nullptr, &m_animation);
 }

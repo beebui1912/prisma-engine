@@ -1,11 +1,11 @@
 #include "Components/MaterialComponent.h"
-#include "GlobalData/GlobalData.h"
+
 #include "GlobalData/CacheScene.h"
+#include "GlobalData/GlobalData.h"
 #include "GlobalData/GlobalShaderNames.h"
 #include "Helpers/WindowsHelper.h"
 #include "Pipelines/PipelineHandler.h"
 #include "ThirdParty/imgui/imgui.h"
-
 
 static unsigned int materialId = 0;
 
@@ -19,10 +19,7 @@ void Prisma::MaterialComponent::normal(std::vector<Texture> normal) {
     CacheScene::getInstance().updateTextures(true);
 }
 
-std::vector<Prisma::Texture>& Prisma::MaterialComponent::diffuse() {
-    return m_diffuse;
-}
-
+std::vector<Prisma::Texture>& Prisma::MaterialComponent::diffuse() { return m_diffuse; }
 
 void Prisma::MaterialComponent::ui() {
     Component::ui();
@@ -59,7 +56,7 @@ void Prisma::MaterialComponent::ui() {
             data->texture = m_normal[0];
         }
     };
-     m_metalnessRoughnessImage.handler = [&]() {
+    m_metalnessRoughnessImage.handler = [&]() {
         std::vector<Texture> metalnessRoughnessTextures;
         Texture texture;
         auto openFolder = WindowsHelper::getInstance().openFolder("All Files");
@@ -85,7 +82,7 @@ void Prisma::MaterialComponent::ui() {
             data->texture = m_specular[0];
         }
     };
-     m_ambientOcclusionImage.handler = [&]() {
+    m_ambientOcclusionImage.handler = [&]() {
         std::vector<Texture> ambientOcclusionTextures;
         Texture texture;
         auto openFolder = WindowsHelper::getInstance().openFolder("All Files");
@@ -99,45 +96,42 @@ void Prisma::MaterialComponent::ui() {
         }
     };
 
-     
     auto hover = [&](const std::string& type) {
-         return [=]() {
-             std::vector<Prisma::Texture> textures;
-             if (type == "diffuse") {
-                 textures = diffuse();
-             }
-             if (type == "normal") {
-                 textures = normal();
-             }
-             if (type == "metalness roughness") {
-                 textures = roughnessMetalness();
-             }
-             if (type == "specular") {
-                 textures = specular();
-             }
-             if (type == "ambient occlusion") {
-                 textures = ambientOcclusion();
-             }
+        return [=]() {
+            std::vector<Prisma::Texture> textures;
+            if (type == "diffuse") {
+                textures = diffuse();
+            }
+            if (type == "normal") {
+                textures = normal();
+            }
+            if (type == "metalness roughness") {
+                textures = roughnessMetalness();
+            }
+            if (type == "specular") {
+                textures = specular();
+            }
+            if (type == "ambient occlusion") {
+                textures = ambientOcclusion();
+            }
 
+            std::string typeText = type;
+            ImGui::BeginTooltip();
+            ImGui::Text(("Type: " + typeText).c_str());
+            ImGui::Text(("Name: " + textures[0].name()).c_str());
+            ImGui::Text(("Size: " + std::to_string(textures[0].data().width) + "x" + std::to_string(textures[0].data().height)).c_str());
+            ImGui::Text("Srgb: %s", textures[0].parameters().srgb ? "Yes" : "No");
+            ImGui::Text("Compress: %s", textures[0].parameters().compress ? "Yes" : "No");
 
-             std::string typeText = type;
-             ImGui::BeginTooltip();
-             ImGui::Text(("Type: " + typeText).c_str());
-             ImGui::Text(("Name: " + textures[0].name()).c_str());
-             ImGui::Text(("Size: " + std::to_string(textures[0].data().width) + "x" + std::to_string(textures[0].data().height)).c_str());
-             ImGui::Text("Srgb: %s", textures[0].parameters().srgb ? "Yes" : "No");
-             ImGui::Text("Compress: %s", textures[0].parameters().compress ? "Yes" : "No");
-
-             ImGui::EndTooltip();
-         };
-     };
+            ImGui::EndTooltip();
+        };
+    };
 
     m_diffuseImage.hover = hover("diffuse");
     m_normalImage.hover = hover("normal");
     m_metalnessRoughnessImage.hover = hover("metalness roughness");
     m_specularImage.hover = hover("specular");
     m_ambientOcclusionImage.hover = hover("ambient occlusion");
-
 
     if (m_diffuse.size() > 0) {
         m_diffuseName = std::make_shared<std::string>(getLast(m_diffuse[0].name()));
@@ -159,9 +153,7 @@ void Prisma::MaterialComponent::ui() {
     if (m_roughnessMetalness.size() > 0) {
         m_metalness_roughnessName = std::make_shared<std::string>(getLast(m_roughnessMetalness[0].name()));
 
-        m_componentTypeMetalnessRoughness = std::make_tuple(TYPES::TEXTURE_BUTTON,
-                                                            std::to_string(m_roughnessMetalness[0].rawId()),
-                                                            &m_metalnessRoughnessImage);
+        m_componentTypeMetalnessRoughness = std::make_tuple(TYPES::TEXTURE_BUTTON, std::to_string(m_roughnessMetalness[0].rawId()), &m_metalnessRoughnessImage);
 
         m_metalnessRoughnessImage.texture = m_roughnessMetalness[0];
 
@@ -170,17 +162,14 @@ void Prisma::MaterialComponent::ui() {
 
     if (m_specular.size() > 0) {
         m_specularName = std::make_shared<std::string>(getLast(m_specular[0].name()));
-        m_componentTypeSpecular = std::make_tuple(TYPES::TEXTURE_BUTTON, std::to_string(m_specular[0].rawId()),
-                                                  &m_specularImage);
+        m_componentTypeSpecular = std::make_tuple(TYPES::TEXTURE_BUTTON, std::to_string(m_specular[0].rawId()), &m_specularImage);
         m_specularImage.texture = m_specular[0];
         addGlobal({m_componentTypeSpecular, false, m_size});
     }
 
     if (m_ambientOcclusion.size() > 0) {
         m_ambientOcclusionName = std::make_shared<std::string>(getLast(m_ambientOcclusion[0].name()));
-        m_componentTypeAmbientOcclusion = std::make_tuple(TYPES::TEXTURE_BUTTON,
-                                                          std::to_string(m_ambientOcclusion[0].rawId()),
-                                                          &m_ambientOcclusionImage);
+        m_componentTypeAmbientOcclusion = std::make_tuple(TYPES::TEXTURE_BUTTON, std::to_string(m_ambientOcclusion[0].rawId()), &m_ambientOcclusionImage);
         m_ambientOcclusionImage.texture = m_ambientOcclusion[0];
         addGlobal({m_componentTypeAmbientOcclusion, false, m_size});
     }
@@ -198,13 +187,12 @@ void Prisma::MaterialComponent::ui() {
     auto GlassReflectionColorMask = glm::vec3(0.22f, 0.83f, 0.93f);
     float GlassAbsorption = 0.5;
     auto GlassMaterialColor = glm::vec4(1);
-    auto GlassIndexOfRefraction = glm::vec2(1.5f, 1.02f); // min and max IOR
+    auto GlassIndexOfRefraction = glm::vec2(1.5f, 1.02f);  // min and max IOR
     int GlassEnableDispersion = 0;
-    unsigned int DispersionSampleCount = 4; // 1..16
+    unsigned int DispersionSampleCount = 4;  // 1..16
 
     ComponentType componentGlassReflectionColorMask;
-    componentGlassReflectionColorMask = std::make_tuple(TYPES::VEC3, "GlassReflectionColorMask",
-                                                        &m_rtMaterial.GlassReflectionColorMask);
+    componentGlassReflectionColorMask = std::make_tuple(TYPES::VEC3, "GlassReflectionColorMask", &m_rtMaterial.GlassReflectionColorMask);
 
     ComponentType componentSrgb;
     componentSrgb = std::make_tuple(TYPES::BOOL, "Srgb", &m_loadSrgb);
@@ -216,20 +204,16 @@ void Prisma::MaterialComponent::ui() {
     componentGlassAbsorption = std::make_tuple(TYPES::FLOAT, "GlassAbsorption", &m_rtMaterial.GlassAbsorption);
 
     ComponentType componentGlassMaterialColor;
-    componentGlassMaterialColor = std::make_tuple(TYPES::VEC3, "GlassMaterialColor",
-                                                  &m_rtMaterial.GlassMaterialColor);
+    componentGlassMaterialColor = std::make_tuple(TYPES::VEC3, "GlassMaterialColor", &m_rtMaterial.GlassMaterialColor);
 
     ComponentType componentGlassIndexOfRefraction;
-    componentGlassIndexOfRefraction = std::make_tuple(TYPES::VEC2, "GlassIndexOfRefraction",
-                                                      &m_rtMaterial.GlassIndexOfRefraction);
+    componentGlassIndexOfRefraction = std::make_tuple(TYPES::VEC2, "GlassIndexOfRefraction", &m_rtMaterial.GlassIndexOfRefraction);
 
     ComponentType componentGlassEnableDispersion;
-    componentGlassEnableDispersion = std::make_tuple(TYPES::BOOL, "GlassEnableDispersion",
-                                                     &m_rtMaterial.GlassEnableDispersion);
+    componentGlassEnableDispersion = std::make_tuple(TYPES::BOOL, "GlassEnableDispersion", &m_rtMaterial.GlassEnableDispersion);
 
     ComponentType componentDispersionSampleCount;
-    componentDispersionSampleCount = std::make_tuple(TYPES::INT, "DispersionSampleCount",
-                                                     &m_rtMaterial.DispersionSampleCount);
+    componentDispersionSampleCount = std::make_tuple(TYPES::INT, "DispersionSampleCount", &m_rtMaterial.DispersionSampleCount);
 
     ComponentType componentMetalness;
     componentMetalness = std::make_tuple(TYPES::FLOAT, "MetalnessData", &m_metalness);
@@ -268,12 +252,9 @@ void Prisma::MaterialComponent::ui() {
     uiRemovable(false);
 }
 
-void Prisma::MaterialComponent::update() {
-}
+void Prisma::MaterialComponent::update() {}
 
-std::vector<Prisma::Texture>& Prisma::MaterialComponent::normal() {
-    return m_normal;
-}
+std::vector<Prisma::Texture>& Prisma::MaterialComponent::normal() { return m_normal; }
 
 void Prisma::MaterialComponent::roughnessMetalness(std::vector<Texture> roughnessMetalness) {
     m_roughnessMetalness = roughnessMetalness;
@@ -285,30 +266,20 @@ void Prisma::MaterialComponent::specular(std::vector<Texture> specular) {
     CacheScene::getInstance().updateTextures(true);
 }
 
-std::vector<Prisma::Texture>& Prisma::MaterialComponent::specular() {
-    return m_specular;
-}
+std::vector<Prisma::Texture>& Prisma::MaterialComponent::specular() { return m_specular; }
 
-std::vector<Prisma::Texture>& Prisma::MaterialComponent::roughnessMetalness() {
-    return m_roughnessMetalness;
-}
+std::vector<Prisma::Texture>& Prisma::MaterialComponent::roughnessMetalness() { return m_roughnessMetalness; }
 
 void Prisma::MaterialComponent::ambientOcclusion(std::vector<Texture> ambientOcclusion) {
     m_ambientOcclusion = ambientOcclusion;
     CacheScene::getInstance().updateTextures(true);
 }
 
-std::vector<Prisma::Texture>& Prisma::MaterialComponent::ambientOcclusion() {
-    return m_ambientOcclusion;
-}
+std::vector<Prisma::Texture>& Prisma::MaterialComponent::ambientOcclusion() { return m_ambientOcclusion; }
 
-unsigned int Prisma::MaterialComponent::material_id() {
-    return m_id;
-}
+unsigned int Prisma::MaterialComponent::material_id() { return m_id; }
 
-void Prisma::MaterialComponent::material_name(std::string name) {
-    m_materialName = name;
-}
+void Prisma::MaterialComponent::material_name(std::string name) { m_materialName = name; }
 
 Prisma::MaterialComponent::MaterialComponent() {
     name("Material Component");
@@ -316,74 +287,59 @@ Prisma::MaterialComponent::MaterialComponent() {
     materialId++;
 }
 
-std::string Prisma::MaterialComponent::material_name() {
-    return m_materialName;
-}
+std::string Prisma::MaterialComponent::material_name() { return m_materialName; }
 
 void Prisma::MaterialComponent::transparent(bool transparent) {
     m_transparent = transparent;
     CacheScene::getInstance().updateStatus(true);
 }
 
-bool Prisma::MaterialComponent::transparent() const {
-    return m_transparent;
-}
+bool Prisma::MaterialComponent::transparent() const { return m_transparent; }
 
 void Prisma::MaterialComponent::color(glm::vec4 color) {
     m_color = color;
     CacheScene::getInstance().updateTextures(true);
 }
 
-glm::vec4 Prisma::MaterialComponent::color() const {
-    return m_color;
-}
+glm::vec4 Prisma::MaterialComponent::color() const { return m_color; }
 
 void Prisma::MaterialComponent::plain(bool plain) {
     m_plain = plain;
     CacheScene::getInstance().updateStatus(true);
 }
 
-bool Prisma::MaterialComponent::plain() {
-    return m_plain;
-}
+bool Prisma::MaterialComponent::plain() { return m_plain; }
 
 void Prisma::MaterialComponent::rtMaterial(RayTracingMaterial rtMaterial) {
     m_rtMaterial = rtMaterial;
     CacheScene::getInstance().updateStatus(true);
 }
 
-Prisma::MaterialComponent::RayTracingMaterial Prisma::MaterialComponent::rtMaterial() {
-    return m_rtMaterial;
-}
+Prisma::MaterialComponent::RayTracingMaterial Prisma::MaterialComponent::rtMaterial() { return m_rtMaterial; }
 
 void Prisma::MaterialComponent::isSpecular(bool specular) {
     m_isSpecular = specular;
     CacheScene::getInstance().updateStatus(true);
 }
 
-bool Prisma::MaterialComponent::isSpecular() {
-    return m_isSpecular;
-}
+bool Prisma::MaterialComponent::isSpecular() { return m_isSpecular; }
 
 void Prisma::MaterialComponent::roughness(float roughness) {
     m_roughness = roughness;
     CacheScene::getInstance().updateStatus(true);
 }
 
-float Prisma::MaterialComponent::roughness() const {
-    return m_roughness;
-}
+float Prisma::MaterialComponent::roughness() const { return m_roughness; }
 
 void Prisma::MaterialComponent::metalness(float metalness) {
     m_metalness = metalness;
     CacheScene::getInstance().updateStatus(true);
 }
 
-float Prisma::MaterialComponent::metalness() const {
-    return m_metalness; }
+float Prisma::MaterialComponent::metalness() const { return m_metalness; }
 
-void Prisma::MaterialComponent::emission(float emission) { 
-    m_emission = emission; 
+void Prisma::MaterialComponent::emission(float emission) {
+    m_emission = emission;
     CacheScene::getInstance().updateStatus(true);
 }
 

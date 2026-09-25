@@ -1,14 +1,14 @@
 #include "SceneData/SceneExporter.h"
-#include "GlobalData/GlobalData.h"
+
 #include <assimp/Exporter.hpp>
+#include <future>
+
+#include "GlobalData/GlobalData.h"
 #include "Helpers/NodeHelper.h"
 #include "Pipelines/PipelineHandler.h"
 #include "SceneData/SceneExporterLayout.h"
-#include <future>
 
-
-Prisma::Exporter::Exporter() {
-}
+Prisma::Exporter::Exporter() {}
 
 std::string Prisma::Exporter::getFileName(const std::string& filePath) {
     size_t pos = filePath.find_last_of("/\\");
@@ -21,9 +21,7 @@ std::string Prisma::Exporter::getFileName(const std::string& filePath) {
 namespace Prisma {
 std::mutex textureMutex;
 
-void processMeshChunk(std::vector<std::shared_ptr<Mesh>>::iterator start,
-                      std::vector<std::shared_ptr<Mesh>>::iterator end,
-                      std::unordered_map<std::string, Texture>& texturesLoaded) {
+void processMeshChunk(std::vector<std::shared_ptr<Mesh>>::iterator start, std::vector<std::shared_ptr<Mesh>>::iterator end, std::unordered_map<std::string, Texture>& texturesLoaded) {
     auto processTexture = [&](std::vector<Texture>& textureList, Texture defaultTexture) {
         if (!textureList.empty() && !textureList[0].name().empty()) {
             std::string textureName = textureList[0].name();
@@ -60,11 +58,9 @@ void processMeshChunk(std::vector<std::shared_ptr<Mesh>>::iterator start,
         processTexture(mat->ambientOcclusion(), GlobalData::getInstance().defaultWhite());
     }
 }
-}
+}  // namespace Prisma
 
-void Prisma::Exporter::loadTexturesMultithreaded(std::vector<std::shared_ptr<Mesh>>& meshes,
-                                                 std::unordered_map<std::string, Texture>& texturesLoaded,
-                                                 int numThreads) {
+void Prisma::Exporter::loadTexturesMultithreaded(std::vector<std::shared_ptr<Mesh>>& meshes, std::unordered_map<std::string, Texture>& texturesLoaded, int numThreads) {
     std::vector<std::future<void>> futures;
     size_t chunkSize = meshes.size() / numThreads;
     auto it = meshes.begin();
@@ -74,8 +70,7 @@ void Prisma::Exporter::loadTexturesMultithreaded(std::vector<std::shared_ptr<Mes
         auto remaining = std::distance(it, meshes.end());
         auto safeChunkSize = std::min<size_t>(chunkSize, static_cast<size_t>(remaining));
         auto end = (i == numThreads - 1) ? meshes.end() : std::next(it, safeChunkSize);
-        futures.push_back(
-            std::async(std::launch::async, processMeshChunk, start, end, std::ref(texturesLoaded)));
+        futures.push_back(std::async(std::launch::async, processMeshChunk, start, end, std::ref(texturesLoaded)));
         it = end;
     }
 
@@ -91,8 +86,7 @@ void Prisma::Exporter::loadTexturesMultithreaded(std::vector<std::shared_ptr<Mes
     }
     for (auto mesh : meshes) {
         auto material = mesh->material();
-        if (material->roughnessMetalness()[0].name() == DIR_DEFAULT_BLACK && material->specular()[0].name() !=
-            DIR_DEFAULT_WHITE) {
+        if (material->roughnessMetalness()[0].name() == DIR_DEFAULT_BLACK && material->specular()[0].name() != DIR_DEFAULT_WHITE) {
             material->roughnessMetalness(material->specular());
             mesh->material()->isSpecular(true);
             mesh->material(material);
@@ -151,8 +145,7 @@ void Prisma::Exporter::countNodes(std::shared_ptr<Node> next, int& counter) {
 }
 
 void Prisma::Exporter::exportScene(const std::string& sceneName) {
-    if (!GlobalData::getInstance().currentGlobalScene() || !GlobalData::getInstance().
-                                                            currentGlobalScene()->root) {
+    if (!GlobalData::getInstance().currentGlobalScene() || !GlobalData::getInstance().currentGlobalScene()->root) {
         std::cerr << "Error: No scene data available to export." << std::endl;
         return;
     }
@@ -163,7 +156,7 @@ void Prisma::Exporter::exportScene(const std::string& sceneName) {
     json j = GlobalData::getInstance().currentGlobalScene()->root;
     j["Counter"] = counter;
     // Serialize JSON to MessagePack format and write to binary file
-    std::ofstream outFile(sceneName, std::ios::binary); // Open in binary mode
+    std::ofstream outFile(sceneName, std::ios::binary);  // Open in binary mode
     std::vector<std::uint8_t> msgpackData = json::to_msgpack(j);
     outFile.write(reinterpret_cast<const char*>(msgpackData.data()), msgpackData.size());
     outFile.close();
@@ -176,7 +169,7 @@ void Prisma::Exporter::importSceneAsync(const std::string& sceneName) {
         SceneExporterLayout::status = std::make_pair("", 0);
         SceneExporterLayout::mutex.unlock();
         // Read binary MessagePack data from file
-        std::ifstream inFile(name, std::ios::binary); // Open in binary mode
+        std::ifstream inFile(name, std::ios::binary);  // Open in binary mode
         std::vector<std::uint8_t> msgpackData((std::istreambuf_iterator<char>(inFile)), {});
         // Deserialize MessagePack data to JSON
         json jIn = json::from_msgpack(msgpackData);
@@ -186,7 +179,7 @@ void Prisma::Exporter::importSceneAsync(const std::string& sceneName) {
         SceneExporterLayout::mutex.unlock();
         m_newRootNode = std::make_shared<Node>();
         // Convert JSON to Node (assuming `from_json` function exists for Node type)
-        from_json(jIn, m_newRootNode); // Make sure this function is implemented for Node type
+        from_json(jIn, m_newRootNode);  // Make sure this function is implemented for Node type
         m_finish = true;
     };
     auto threadData = std::thread(loadData, sceneName);
@@ -195,7 +188,7 @@ void Prisma::Exporter::importSceneAsync(const std::string& sceneName) {
 
 std::shared_ptr<Prisma::Node> Prisma::Exporter::importScene(const std::string& sceneName) {
     // Read binary MessagePack data from file
-    std::ifstream inFile(sceneName, std::ios::binary); // Open in binary mode
+    std::ifstream inFile(sceneName, std::ios::binary);  // Open in binary mode
     std::vector<std::uint8_t> msgpackData((std::istreambuf_iterator<char>(inFile)), {});
     // Deserialize MessagePack data to JSON
     json jIn = json::from_msgpack(msgpackData);
@@ -203,7 +196,7 @@ std::shared_ptr<Prisma::Node> Prisma::Exporter::importScene(const std::string& s
     auto newRootNode = std::make_shared<Node>();
 
     // Convert JSON to Node (assuming `from_json` function exists for Node type)
-    from_json(jIn, newRootNode); // Make sure this function is implemented for Node type
+    from_json(jIn, newRootNode);  // Make sure this function is implemented for Node type
 
     postLoad(newRootNode);
 
@@ -220,14 +213,8 @@ bool Prisma::Exporter::hasFinish() {
     return false;
 }
 
-std::shared_ptr<Prisma::Node> Prisma::Exporter::newRootNode() {
-    return m_newRootNode;
-}
+std::shared_ptr<Prisma::Node> Prisma::Exporter::newRootNode() { return m_newRootNode; }
 
-std::mutex& Prisma::Exporter::mutexData() {
-    return SceneExporterLayout::mutex;
-}
+std::mutex& Prisma::Exporter::mutexData() { return SceneExporterLayout::mutex; }
 
-std::pair<std::string, int> Prisma::Exporter::status() {
-    return SceneExporterLayout::status;
-}
+std::pair<std::string, int> Prisma::Exporter::status() { return SceneExporterLayout::status; }

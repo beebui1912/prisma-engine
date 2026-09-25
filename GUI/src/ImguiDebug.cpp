@@ -1,24 +1,25 @@
-#include "GlobalData/GlobalData.h"
-#include "Helpers/SettingsLoader.h"
 #include "ImGuiDebug.h"
-#include "ImGuiStyle.h"
-#include "ImGuiKey.h"
-#include "ThirdParty/imgui/imgui.h"
-#include "SceneObjects/Camera.h"
+
+#include <Helpers/Logger.h>
 #include <Windows.h>
 
-#include "engine.h"
-#include "Handlers/LoadingHandler.h"
-#include "Helpers/StringHelper.h"
-#include "Pipelines/PipelineSkybox.h"
-#include "SceneData/MeshIndirect.h"
-#include "ImGuiTabs.h"
-#include "NodeViewer.h"
-#include "Imgui/interface/ImGuiImplWin32.hpp"
 #include "../imguizmo/imguizmo.h"
-#include "PixelCapture.h"
+#include "GlobalData/GlobalData.h"
+#include "Handlers/LoadingHandler.h"
 #include "Helpers/ScenePipeline.h"
-#include <Helpers/Logger.h>
+#include "Helpers/SettingsLoader.h"
+#include "Helpers/StringHelper.h"
+#include "ImGuiKey.h"
+#include "ImGuiStyle.h"
+#include "ImGuiTabs.h"
+#include "Imgui/interface/ImGuiImplWin32.hpp"
+#include "NodeViewer.h"
+#include "Pipelines/PipelineSkybox.h"
+#include "PixelCapture.h"
+#include "SceneData/MeshIndirect.h"
+#include "SceneObjects/Camera.h"
+#include "ThirdParty/imgui/imgui.h"
+#include "engine.h"
 
 struct PrivateIO {
     ImGuiIO io;
@@ -29,9 +30,7 @@ std::shared_ptr<PrivateIO> data;
 Prisma::GUI::ImguiDebug::ImguiDebug() : m_lastFrameTime{glfwGetTime()}, m_fps{60.0f} {
     auto& contextData = PrismaFunc::getInstance().contextData();
     Prisma::Logger::getInstance().log(Prisma::LogLevel::INFO, "Scene Initialized Correctly");
-    m_imguiDiligent = Diligent::ImGuiImplWin32::Create(
-        Diligent::ImGuiDiligentCreateInfo{contextData.device, contextData.swapChain->GetDesc()},
-        static_cast<HWND>(PrismaFunc::getInstance().windowNative()));
+    m_imguiDiligent = Diligent::ImGuiImplWin32::Create(Diligent::ImGuiDiligentCreateInfo{contextData.device, contextData.swapChain->GetDesc()}, static_cast<HWND>(PrismaFunc::getInstance().windowNative()));
 
     data = std::make_shared<PrivateIO>();
     m_camera = std::make_shared<Camera>();
@@ -62,24 +61,20 @@ Prisma::GUI::ImguiDebug::ImguiDebug() : m_lastFrameTime{glfwGetTime()}, m_fps{60
     m_globalSize.x = settings.width / 1920.0f;
     m_globalSize.y = settings.height / 1080.0f;
 
-    //ImPlot::CreateContext();
+    // ImPlot::CreateContext();
     data->io = ImGui::GetIO();
     data->io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
     data->io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;
-    //ImGui::StyleColorsDark();
+    // ImGui::StyleColorsDark();
     ImGuiStyles::getInstance().darkMode();
     m_height = settings.height;
     m_width = settings.width;
     m_scale = 0.72f;
     m_translate = 1.0f - m_scale;
-    m_projection = glm::perspective(
-        glm::radians(GlobalData::getInstance().currentGlobalScene()->camera->angle()),
-        static_cast<float>(settings.width) / static_cast<float>(settings.height),
-        GlobalData::getInstance().currentGlobalScene()->camera->nearPlane(),
-        GlobalData::getInstance().currentGlobalScene()->camera->farPlane());
+    m_projection = glm::perspective(glm::radians(GlobalData::getInstance().currentGlobalScene()->camera->angle()), static_cast<float>(settings.width) / static_cast<float>(settings.height),
+                                    GlobalData::getInstance().currentGlobalScene()->camera->nearPlane(), GlobalData::getInstance().currentGlobalScene()->camera->farPlane());
 
-    m_model = translate(glm::mat4(1.0f), glm::vec3(0.0f, m_translate, 0.0f)) * glm::scale(
-                  glm::mat4(1.0f), glm::vec3(m_scale));
+    m_model = translate(glm::mat4(1.0f), glm::vec3(0.0f, m_translate, 0.0f)) * glm::scale(glm::mat4(1.0f), glm::vec3(m_scale));
 
     m_fileBrowser = std::make_shared<FileBrowser>();
 
@@ -110,8 +105,7 @@ void Prisma::GUI::ImguiDebug::drawGui() {
             if (ImGui::MenuItem("New")) {
                 auto children = GlobalData::getInstance().currentGlobalScene()->root->children();
                 for (const auto& child : children) {
-                    GlobalData::getInstance().currentGlobalScene()->root->
-                                              removeChild(child->uuid());
+                    GlobalData::getInstance().currentGlobalScene()->root->removeChild(child->uuid());
                 }
                 m_imguiCamera.currentSelect(nullptr);
             }
@@ -126,18 +120,15 @@ void Prisma::GUI::ImguiDebug::drawGui() {
                 if (model != "" && (StringHelper::getInstance().endsWith(model, ".prisma") || StringHelper::getInstance().endsWith(model, ".gltf"))) {
                     if (StringHelper::getInstance().endsWith(model, ".prisma")) {
                         if (GlobalData::getInstance().currentGlobalScene()->root) {
-                            LoadingHandler::getInstance().
-                                load(model, {true, nullptr, true});
+                            LoadingHandler::getInstance().load(model, {true, nullptr, true});
                         } else {
-                            LoadingHandler::getInstance().load(
-                                model, {true, nullptr, false});
+                            LoadingHandler::getInstance().load(model, {true, nullptr, false});
                         }
                     } else {
                         SceneLoader loader;
                         auto scene = loader.loadScene(model, {true});
                         if (GlobalData::getInstance().currentGlobalScene()->root) {
-                            GlobalData::getInstance().currentGlobalScene()->root->addChild(
-                                scene->root);
+                            GlobalData::getInstance().currentGlobalScene()->root->addChild(scene->root);
                         } else {
                             GlobalData::getInstance().currentGlobalScene(scene);
                         }
@@ -179,9 +170,7 @@ void Prisma::GUI::ImguiDebug::drawGui() {
         ImGui::SetNextWindowPos(ImVec2(0, m_initOffset));
         ImGui::SetNextWindowSize(ImVec2(m_width, 0));
     }
-    ImGui::Begin("Dummy Top", &isOpen,
-                 ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize |
-                 ImGuiWindowFlags_NoCollapse);
+    ImGui::Begin("Dummy Top", &isOpen, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse);
 
     auto positionRun = m_run ? m_width / 2 : m_width * m_scale / 2;
 
@@ -192,7 +181,7 @@ void Prisma::GUI::ImguiDebug::drawGui() {
     }
     ImGui::SameLine();
     if (ImGui::IsItemHovered()) {
-        ImGui::BeginTooltip(); // Start tooltip when hovering
+        ImGui::BeginTooltip();  // Start tooltip when hovering
 
         if (ImGui::BeginTable("StatsTable", 2, ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg)) {
             ImGui::TableSetupColumn("Metric", ImGuiTableColumnFlags_WidthStretch);
@@ -223,15 +212,13 @@ void Prisma::GUI::ImguiDebug::drawGui() {
             ImGui::EndTable();
         }
 
-        ImGui::EndTooltip(); // End tooltip
+        ImGui::EndTooltip();  // End tooltip
     }
 
     ImGui::SetCursorPosX(positionRun);
 
     auto currentButton = m_run ? m_pauseButton : m_runButton;
-    if (ImGui::ImageButton(
-        currentButton->texture()->GetDefaultView(Diligent::TEXTURE_VIEW_TYPE::TEXTURE_VIEW_SHADER_RESOURCE),
-        ImVec2(24, 24))) {
+    if (ImGui::ImageButton(currentButton->texture()->GetDefaultView(Diligent::TEXTURE_VIEW_TYPE::TEXTURE_VIEW_SHADER_RESOURCE), ImVec2(24, 24))) {
         m_run = !m_run;
         Engine::getInstance().debug(!m_run);
         if (m_run) {
@@ -244,36 +231,27 @@ void Prisma::GUI::ImguiDebug::drawGui() {
     m_buttonSize = ImGui::GetWindowSize().y;
 
     ImGui::End();
-    m_model = translate(glm::mat4(1.0f),
-                        glm::vec3(
-                            0.0f, m_translate - 2 * (m_buttonSize + m_initOffset) / static_cast<float>(
-                                      m_height), 0.0f)) * glm::scale(glm::mat4(1.0f), glm::vec3(m_scale));
+    m_model = translate(glm::mat4(1.0f), glm::vec3(0.0f, m_translate - 2 * (m_buttonSize + m_initOffset) / static_cast<float>(m_height), 0.0f)) * glm::scale(glm::mat4(1.0f), glm::vec3(m_scale));
 
     if (!m_run) {
         ImGui::SetNextWindowPos(ImVec2(0, m_initOffset));
         ImGui::SetNextWindowSize(ImVec2(windowWidth, 0));
 
-        ImGui::Begin("Dummy Left", &isOpen,
-                     ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize |
-                     ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoMouseInputs);
+        ImGui::Begin("Dummy Left", &isOpen, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoMouseInputs);
         ImGui::Dummy(ImVec2(0.0f, m_height * m_scale + m_buttonSize));
         ImGui::End();
 
         ImGui::SetNextWindowPos(ImVec2(m_width * m_scale + windowWidth, m_initOffset));
         ImGui::SetNextWindowSize(ImVec2(windowWidth, 0));
 
-        ImGui::Begin("Dummy Right", &isOpen,
-                     ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize |
-                     ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoMouseInputs);
+        ImGui::Begin("Dummy Right", &isOpen, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoMouseInputs);
         ImGui::Dummy(ImVec2(0, m_height * m_scale + m_buttonSize));
         ImGui::End();
 
         ImGui::SetNextWindowPos(ImVec2(0, m_initOffset));
         ImGui::SetNextWindowSize(ImVec2(windowWidth, m_height * m_scale + m_buttonSize));
-        ImGui::Begin("Scene", nullptr,
-                     ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse |
-                     ImGuiWindowFlags_HorizontalScrollbar);
-        //m_plot.showFPS(m_fps);
+        ImGui::Begin("Scene", nullptr, ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_HorizontalScrollbar);
+        // m_plot.showFPS(m_fps);
 
         if (openSettings) {
             ImGui::OpenPopup("SettingsTab");
@@ -286,10 +264,8 @@ void Prisma::GUI::ImguiDebug::drawGui() {
         m_fileBrowser->show(m_width, m_height, m_initOffset + m_buttonSize, m_scale, m_translate);
         if (m_imguiCamera.currentSelect()) {
             auto currentSelectMesh = std::dynamic_pointer_cast<Mesh>(m_imguiCamera.currentSelect());
-            auto currentSelectLightDir = std::dynamic_pointer_cast<Light<LightType::LightDir>>(
-                m_imguiCamera.currentSelect());
-            auto currentSelectLightOmni = std::dynamic_pointer_cast<Light<LightType::LightOmni>>(
-                m_imguiCamera.currentSelect());
+            auto currentSelectLightDir = std::dynamic_pointer_cast<Light<LightType::LightDir>>(m_imguiCamera.currentSelect());
+            auto currentSelectLightOmni = std::dynamic_pointer_cast<Light<LightType::LightOmni>>(m_imguiCamera.currentSelect());
             auto currentSelectLightSpot = std::dynamic_pointer_cast<Light<LightType::LightSpot>>(m_imguiCamera.currentSelect());
             NodeViewer::NodeData nodeData;
             nodeData.camera = m_camera;
@@ -305,8 +281,7 @@ void Prisma::GUI::ImguiDebug::drawGui() {
                 meshInfo.showSelected(nodeData);
             } else if (currentSelectLightDir) {
                 lightInfo.showSelectedDir(currentSelectLightDir, nodeData);
-            } 
-            else if (currentSelectLightOmni) {
+            } else if (currentSelectLightOmni) {
                 lightInfo.showSelectedOmni(currentSelectLightOmni, nodeData);
             } else if (currentSelectLightSpot) {
                 lightInfo.showSelectedSpot(currentSelectLightSpot, nodeData);
@@ -318,16 +293,14 @@ void Prisma::GUI::ImguiDebug::drawGui() {
         m_settingsTab.updateStatus();
     }
     drawScene();
-    //glEnable(GL_DEPTH_TEST);
+    // glEnable(GL_DEPTH_TEST);
 }
 
-float Prisma::GUI::ImguiDebug::fps() {
-    return m_fps;
-}
+float Prisma::GUI::ImguiDebug::fps() { return m_fps; }
 
 void Prisma::GUI::ImguiDebug::start() {
-    //ImGui_ImplOpenGL3_NewFrame();
-    //ImGui_ImplGlfw_NewFrame();
+    // ImGui_ImplOpenGL3_NewFrame();
+    // ImGui_ImplGlfw_NewFrame();
     //
     auto contextDesc = PrismaFunc::getInstance().contextData().swapChain->GetDesc();
     m_imguiDiligent->NewFrame(m_width, m_height, contextDesc.PreTransform);
@@ -335,11 +308,7 @@ void Prisma::GUI::ImguiDebug::start() {
 }
 
 void Prisma::GUI::ImguiDebug::close() {
-    m_imguiCamera.constraints({
-        m_translate * m_width / 2, m_initOffset + 50, m_translate * m_width / 2 + m_scale * m_width,
-        m_height * m_scale,
-        false, m_scale, m_model
-    });
+    m_imguiCamera.constraints({m_translate * m_width / 2, m_initOffset + 50, m_translate * m_width / 2 + m_scale * m_width, m_height * m_scale, false, m_scale, m_model});
 
     if (!m_run) {
         double currentFrameTime = glfwGetTime();
@@ -355,12 +324,10 @@ void Prisma::GUI::ImguiDebug::close() {
         ImGuiTabs::getInstance().updateTabs(GlobalData::getInstance().currentGlobalScene()->root, 0);
     }
     m_imguiDiligent->Render(PrismaFunc::getInstance().contextData().immediateContext);
-    //ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+    // ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 }
 
-void Prisma::GUI::ImguiDebug::imguiData(std::shared_ptr<ImGuiData> data) {
-    m_data = data;
-}
+void Prisma::GUI::ImguiDebug::imguiData(std::shared_ptr<ImGuiData> data) { m_data = data; }
 
 std::shared_ptr<Prisma::SceneHandler> Prisma::GUI::ImguiDebug::handlers() {
     m_handlers = std::make_shared<SceneHandler>();
@@ -369,9 +336,7 @@ std::shared_ptr<Prisma::SceneHandler> Prisma::GUI::ImguiDebug::handlers() {
         getInstance().start();
         QueryGPU::getInstance().start();
     };
-    m_handlers->onLoading = [&](auto data) {
-        getInstance().onLoading(data);
-    };
+    m_handlers->onLoading = [&](auto data) { getInstance().onLoading(data); };
     m_handlers->onEndRender = [&]() {
         QueryGPU::getInstance().end();
         getInstance().drawGui();
@@ -385,20 +350,14 @@ std::shared_ptr<Prisma::SceneHandler> Prisma::GUI::ImguiDebug::handlers() {
     return m_handlers;
 }
 
-Prisma::GUI::ImguiDebug::GlobalSize Prisma::GUI::ImguiDebug::globalSize() {
-    return m_globalSize;
-}
+Prisma::GUI::ImguiDebug::GlobalSize Prisma::GUI::ImguiDebug::globalSize() { return m_globalSize; }
 
-void Prisma::GUI::ImguiDebug::scale(float scale) {
-    m_scale = scale;
-}
+void Prisma::GUI::ImguiDebug::scale(float scale) { m_scale = scale; }
 
-float Prisma::GUI::ImguiDebug::scale() {
-    return m_scale;
-}
+float Prisma::GUI::ImguiDebug::scale() { return m_scale; }
 
 //
-//std::shared_ptr<Prisma::FBO> Prisma::ImguiDebug::fbo()
+// std::shared_ptr<Prisma::FBO> Prisma::ImguiDebug::fbo()
 //{
 //	return m_fbo;
 //}
@@ -415,9 +374,7 @@ void Prisma::GUI::ImguiDebug::drawScene() {
     Prisma::ScenePipeline::getInstance().render(model, pRTV, pDSV);
 }
 
-void Prisma::GUI::ImguiDebug::initStatus() {
-    m_settingsTab.init();
-}
+void Prisma::GUI::ImguiDebug::initStatus() { m_settingsTab.init(); }
 
 std::string Prisma::GUI::ImguiDebug::saveFile() {
     OPENFILENAME ofn;
@@ -455,9 +412,9 @@ void Prisma::GUI::ImguiDebug::onLoading(std::pair<std::string, int>& data) {
             ImGui::Text("Reading prisma");
         } else {
             ImGui::Text("Loading: %s", data.first.c_str());
-            progress = static_cast<float>(data.second) / 100.0f; // Convert percentage to fraction
+            progress = static_cast<float>(data.second) / 100.0f;  // Convert percentage to fraction
         }
-        ImGui::ProgressBar(progress, ImVec2(300, 0)); // ProgressBar(width, height)
+        ImGui::ProgressBar(progress, ImVec2(300, 0));  // ProgressBar(width, height)
         ImGui::EndPopup();
     }
 }

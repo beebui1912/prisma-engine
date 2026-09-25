@@ -1,26 +1,24 @@
 #pragma once
-#include <string>
-#include "glm/glm.hpp"
-#include <memory>
-#include "../GlobalData/Platform.h"
-
-
-#include "../Helpers/Settings.h"
-#include "../GlobalData/InstanceData.h"
-#include "../Helpers/WindowsHelper.h"
-
-#include "Graphics/GraphicsEngine/interface/RenderDevice.h"
-#include "Graphics/GraphicsEngine/interface/DeviceContext.h"
-#include "Graphics/GraphicsEngine/interface/SwapChain.h"
-
-#include "Common/interface/RefCntAutoPtr.hpp"
 #include <GLFW/glfw3.h>
+
+#include <memory>
+#include <string>
+
+#include "../GlobalData/InstanceData.h"
+#include "../GlobalData/Platform.h"
+#include "../Helpers/Settings.h"
+#include "../Helpers/WindowsHelper.h"
+#include "Common/interface/RefCntAutoPtr.hpp"
+#include "Graphics/GraphicsEngine/interface/DeviceContext.h"
+#include "Graphics/GraphicsEngine/interface/RenderDevice.h"
+#include "Graphics/GraphicsEngine/interface/SwapChain.h"
+#include "glm/glm.hpp"
 
 namespace Prisma {
 struct CallbackHandler;
 
 class PrismaFunc : public InstanceData<PrismaFunc> {
-public:
+   public:
     struct ContextData {
         Diligent::RefCntAutoPtr<Diligent::IRenderDevice> device;
         Diligent::RefCntAutoPtr<Diligent::IDeviceContext> immediateContext;
@@ -67,11 +65,11 @@ public:
 
     RenderTargetFormat renderFormat() const;
 
-private:
+   private:
     GLFWwindow* m_window;
     WindowsHelper::WindowsData m_windowsData;
     ContextData m_contextData;
     RenderTargetFormat m_renderFormat;
     Settings m_settings;
 };
-}
+}  // namespace Prisma

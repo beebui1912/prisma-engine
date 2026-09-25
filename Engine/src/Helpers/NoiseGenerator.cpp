@@ -1,10 +1,10 @@
 #include "Helpers/NoiseGenerator.h"
 
+#include <Graphics/GraphicsTools/interface/MapHelper.hpp>
+
 #include "GlobalData/PrismaFunc.h"
 #include "Helpers/PrismaRender.h"
 #include "Pipelines/PipelineHandler.h"
-#include <Graphics/GraphicsTools/interface/MapHelper.hpp>
-
 
 Diligent::RefCntAutoPtr<Diligent::ITexture> Prisma::NoiseGenerator::generate(const std::string& vertex, const std::string& fragment, glm::vec2 resolution, const std::string& name, NoiseType type) {
     Diligent::RefCntAutoPtr<Diligent::IPipelineState> pso;
@@ -47,9 +47,7 @@ Diligent::RefCntAutoPtr<Diligent::ITexture> Prisma::NoiseGenerator::generate(con
     std::string widthStr = std::to_string(static_cast<int>(resolution.x));
     std::string heightStr = std::to_string(static_cast<int>(resolution.y));
 
-    Diligent::ShaderMacro Macros[] = {
-        {"WIDTH", widthStr.c_str()}, {"HEIGHT", heightStr.c_str()}
-    };
+    Diligent::ShaderMacro Macros[] = {{"WIDTH", widthStr.c_str()}, {"HEIGHT", heightStr.c_str()}};
     ShaderCI.Macros = {Macros, _countof(Macros)};
     // OpenGL backend requires emulated combined HLSL texture samplers (g_Texture + g_Texture_sampler combination)
     ShaderCI.Desc.UseCombinedTextureSamplers = true;
@@ -98,7 +96,6 @@ Diligent::RefCntAutoPtr<Diligent::ITexture> Prisma::NoiseGenerator::generate(con
     PSOCreateInfo.PSODesc.ResourceLayout.DefaultVariableType = Diligent::SHADER_RESOURCE_VARIABLE_TYPE_STATIC;
     contextData.device->CreateGraphicsPipelineState(PSOCreateInfo, &pso);
 
-    
     Diligent::RefCntAutoPtr<Diligent::ITexture> texture;
     Diligent::RefCntAutoPtr<Diligent::IBuffer> buffer;
 
@@ -112,7 +109,6 @@ Diligent::RefCntAutoPtr<Diligent::ITexture> Prisma::NoiseGenerator::generate(con
         case NoiseType::TEXTURE_3D: {
             RTColorDesc.Type = Diligent::RESOURCE_DIM_TEX_CUBE;  // Set cubemap type
             RTColorDesc.ArraySize = 6;
-
 
             Diligent::BufferDesc CBDesc;
             CBDesc.Name = "Constants";
@@ -138,13 +134,7 @@ Diligent::RefCntAutoPtr<Diligent::ITexture> Prisma::NoiseGenerator::generate(con
     // Create the cubemap texture
     contextData.device->CreateTexture(RTColorDesc, nullptr, &texture);
 
-
     pso->CreateShaderResourceBinding(&srb, true);
-
-
-
-
-
 
     switch (type) {
         case NoiseType::TEXTURE_2D: {
@@ -174,7 +164,7 @@ Diligent::RefCntAutoPtr<Diligent::ITexture> Prisma::NoiseGenerator::generate(con
             auto color = texture->GetDefaultView(Diligent::TEXTURE_VIEW_RENDER_TARGET);
             Diligent::RefCntAutoPtr<Diligent::ITextureView> pRTColor[6];
             const PipelineSkybox::IBLData transform;
-                // Create render target views for each face
+            // Create render target views for each face
             for (int i = 0; i < 6; ++i) {
                 Diligent::TextureViewDesc RTVDesc;
                 RTVDesc.ViewType = Diligent::TEXTURE_VIEW_RENDER_TARGET;
@@ -189,8 +179,6 @@ Diligent::RefCntAutoPtr<Diligent::ITexture> Prisma::NoiseGenerator::generate(con
                 Diligent::MapHelper<PipelineSkybox::IBLViewProjection> viewProjection(contextData.immediateContext, buffer, Diligent::MAP_WRITE, Diligent::MAP_FLAG_DISCARD);
                 viewProjection->view = transform.captureViews[i];
                 viewProjection->projection = transform.captureProjection;
-
-
 
                 contextData.immediateContext->SetRenderTargets(1, &pRTColor[i], nullptr, Diligent::RESOURCE_STATE_TRANSITION_MODE_TRANSITION);
 
@@ -215,11 +203,10 @@ Diligent::RefCntAutoPtr<Diligent::ITexture> Prisma::NoiseGenerator::generate(con
                 // Verify the state of vertex and index buffers
                 DrawAttrs.Flags = Diligent::DRAW_FLAG_VERIFY_ALL;
                 contextData.immediateContext->DrawIndexed(DrawAttrs);
-                //GlobalData::getInstance().addGlobalTexture({texture, name});
+                // GlobalData::getInstance().addGlobalTexture({texture, name});
             }
         } break;
     }
-
 
     return texture;
 }

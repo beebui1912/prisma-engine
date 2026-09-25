@@ -1,31 +1,29 @@
 #pragma once
 #include <memory>
-#include <vector>
 #include <string>
+#include <vector>
 
-#include "ImGuiCamera.h"
+#include "AddingMenu.h"
+#include "FolderView.h"
 #include "GlobalData/InstanceData.h"
 #include "Helpers/TimeCounter.h"
-#include "SceneData/SceneExporter.h"
-#include "FolderView.h"
-#include "AddingMenu.h"
-#include "MeshInfo.h"
-#include "LightInfo.h"
-#include "SettingsTab.h"
+#include "ImGuiCamera.h"
 #include "Imgui/interface/ImGuiImplDiligent.hpp"
+#include "LightInfo.h"
+#include "MeshInfo.h"
 #include "QueryGPU.h"
-
+#include "SceneData/SceneExporter.h"
+#include "SettingsTab.h"
 
 namespace Prisma::GUI {
 class ImguiDebug : public InstanceData<ImguiDebug> {
-public:
+   public:
     struct ImGuiData {
         std::vector<std::shared_ptr<std::pair<std::string, float>>> performances;
     };
 
-
     struct ImGuiStatus {
-        //PIPELINE DATA
+        // PIPELINE DATA
         std::vector<const char*> items;
         int currentitem = 0;
 
@@ -44,7 +42,7 @@ public:
     void start();
     void close();
     void imguiData(std::shared_ptr<ImGuiData> data);
-    //std::shared_ptr<FBO> fbo();
+    // std::shared_ptr<FBO> fbo();
 
     std::shared_ptr<SceneHandler> handlers();
 
@@ -54,12 +52,12 @@ public:
 
     float scale();
 
-private:
+   private:
     double m_lastFrameTime = 0.0;
     float m_fps;
     std::shared_ptr<ImGuiData> m_data;
-    //std::shared_ptr<FBO> m_fbo;
-    //std::shared_ptr<Shader> m_shader;
+    // std::shared_ptr<FBO> m_fbo;
+    // std::shared_ptr<Shader> m_shader;
     unsigned int m_bindlessPos;
     unsigned int m_modelPos;
     glm::mat4 m_model;
@@ -73,7 +71,6 @@ private:
     void initStatus();
     std::string saveFile();
     void onLoading(std::pair<std::string, int>& data);
-
 
     float m_initOffset = 0.0f;
 
@@ -101,7 +98,7 @@ private:
 
     bool m_settingsTabShow = false;
 
-    //PlotFPS m_plot;
+    // PlotFPS m_plot;
 
     TimeCounter m_timeCounterEngine;
 
@@ -117,4 +114,4 @@ private:
 
     std::unique_ptr<Diligent::ImGuiImplDiligent> m_imguiDiligent;
 };
-}
+}  // namespace Prisma::GUI

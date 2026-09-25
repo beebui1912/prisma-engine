@@ -1,15 +1,15 @@
 #include "../include/ParticleController.h"
 
-#include "engine.h"
-#include "SceneObjects/Sprite.h"
-#include "glm/glm.hpp"
-#include "glm/gtx/transform.hpp"
+#include <random>
+
 #include "GlobalData/GlobalShaderNames.h"
 #include "GlobalData/PrismaFunc.h"
 #include "Graphics/GraphicsTools/interface/MapHelper.hpp"
 #include "Handlers/LightHandler.h"
-#include <random>
-
+#include "SceneObjects/Sprite.h"
+#include "engine.h"
+#include "glm/glm.hpp"
+#include "glm/gtx/transform.hpp"
 
 void ParticleController::init(std::shared_ptr<Prisma::Node> root, int numParticles) {
     m_numParticles = numParticles;
@@ -22,10 +22,10 @@ void ParticleController::init(std::shared_ptr<Prisma::Node> root, int numParticl
     auto spriteBurst = std::make_shared<Prisma::Texture>();
     spriteBurst->loadTexture({"../../../Resources/DefaultScene/sprites/burst.png", true});
 
-    auto sprite = std::make_shared<Prisma::Sprite>(Prisma::Sprite::BLENDING::ADDITIVE,Prisma::Sprite::DEPTH_WRITE::FALSE);
+    auto sprite = std::make_shared<Prisma::Sprite>(Prisma::Sprite::BLENDING::ADDITIVE, Prisma::Sprite::DEPTH_WRITE::FALSE);
 
     sprite->loadSprites({spriteFire, spriteBurst});
-    sprite->numSprites(m_numParticles,{1,1,1,glm::vec3(1)});
+    sprite->numSprites(m_numParticles, {1, 1, 1, glm::vec3(1)});
     sprite->size(glm::vec2(0.1f, 0.1f));
     sprite->name("Sprite");
     /*m_compute = std::make_shared<Prisma::Shader>("../../../UserEngine/Shaders/SpriteCompute/compute.glsl");
@@ -69,7 +69,7 @@ void ParticleController::init(std::shared_ptr<Prisma::Node> root, int numParticl
     PSODesc.PipelineType = Diligent::PIPELINE_TYPE_COMPUTE;
 
     PSODesc.ResourceLayout.DefaultVariableType = Diligent::SHADER_RESOURCE_VARIABLE_TYPE_STATIC;
-	// clang-format off
+    // clang-format off
 	Diligent::ShaderResourceVariableDesc Vars[] =
 	{
 		{Diligent::SHADER_TYPE_COMPUTE, "SpritesData", Diligent::SHADER_RESOURCE_VARIABLE_TYPE_MUTABLE},
@@ -86,17 +86,13 @@ void ParticleController::init(std::shared_ptr<Prisma::Node> root, int numParticl
     contextData.device->CreateComputePipelineState(PSOCreateInfo, &m_pso);
 
     m_pso->GetStaticVariableByName(Diligent::SHADER_TYPE_COMPUTE, "TimeData")->Set(m_time);
-    m_pso->GetStaticVariableByName(Diligent::SHADER_TYPE_COMPUTE, Prisma::ShaderNames::CONSTANT_OMNI_DATA.c_str())->
-           Set(Prisma::LightHandler::getInstance().omniLights()->GetDefaultView(
-               Diligent::BUFFER_VIEW_UNORDERED_ACCESS));
+    m_pso->GetStaticVariableByName(Diligent::SHADER_TYPE_COMPUTE, Prisma::ShaderNames::CONSTANT_OMNI_DATA.c_str())->Set(Prisma::LightHandler::getInstance().omniLights()->GetDefaultView(Diligent::BUFFER_VIEW_UNORDERED_ACCESS));
 
     m_pso->CreateShaderResourceBinding(&m_srb, true);
 
-    m_srb->GetVariableByName(Diligent::SHADER_TYPE_COMPUTE, "SpritesData")->Set(
-        sprite->models()->GetDefaultView(Diligent::BUFFER_VIEW_UNORDERED_ACCESS));
+    m_srb->GetVariableByName(Diligent::SHADER_TYPE_COMPUTE, "SpritesData")->Set(sprite->models()->GetDefaultView(Diligent::BUFFER_VIEW_UNORDERED_ACCESS));
 
-    m_srb->GetVariableByName(Diligent::SHADER_TYPE_COMPUTE, "SpriteIds")->Set(
-        sprite->spriteIds()->GetDefaultView(Diligent::BUFFER_VIEW_UNORDERED_ACCESS));
+    m_srb->GetVariableByName(Diligent::SHADER_TYPE_COMPUTE, "SpriteIds")->Set(sprite->spriteIds()->GetDefaultView(Diligent::BUFFER_VIEW_UNORDERED_ACCESS));
 }
 
 void ParticleController::update() {
@@ -107,8 +103,7 @@ void ParticleController::update() {
     }
     auto end = std::chrono::high_resolution_clock::now();
     auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - m_startPoint).count();
-    Diligent::MapHelper<TimeData> timeData(contextData.immediateContext, m_time, Diligent::MAP_WRITE,
-                                           Diligent::MAP_FLAG_DISCARD);
+    Diligent::MapHelper<TimeData> timeData(contextData.immediateContext, m_time, Diligent::MAP_WRITE, Diligent::MAP_FLAG_DISCARD);
     timeData->delta = 1.0f / Prisma::Engine::getInstance().fps();
     timeData->time = static_cast<float>(duration) / 1000.0f;
     timeData->numParticles = m_numParticles;
@@ -118,8 +113,7 @@ void ParticleController::update() {
     DispatAttribs.ThreadGroupCountY = 1;
     DispatAttribs.ThreadGroupCountZ = 1;
     contextData.immediateContext->SetPipelineState(m_pso);
-    contextData.immediateContext->CommitShaderResources(
-        m_srb, Diligent::RESOURCE_STATE_TRANSITION_MODE_TRANSITION);
+    contextData.immediateContext->CommitShaderResources(m_srb, Diligent::RESOURCE_STATE_TRANSITION_MODE_TRANSITION);
     contextData.immediateContext->DispatchCompute(DispatAttribs);
 }
 

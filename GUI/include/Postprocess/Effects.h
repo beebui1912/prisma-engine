@@ -1,13 +1,13 @@
 #pragma once
-#include "Postprocess/PostprocessEffect.h"
 #include "Bloom.h"
+#include "Postprocess/PostprocessEffect.h"
+#include "Styles.h"
 #include "VolumetricLight.h"
 #include "VolumetricRays.h"
-#include "Styles.h"
 
 namespace Prisma::GUI {
 class Effects : public PostprocessEffect {
-public:
+   public:
     Effects();
 
     void effect(PostprocessingStyles::EFFECTS effect);
@@ -17,7 +17,7 @@ public:
     std::shared_ptr<VolumetricLight> volumetricRender();
     std::shared_ptr<VolumetricRays> volumetricRaysRender();
 
-private:
+   private:
     std::unique_ptr<Bloom> m_bloomRender;
     std::shared_ptr<VolumetricLight> m_volumetricRender;
     std::unique_ptr<PostprocessingStyles> m_stylesRender;
@@ -28,4 +28,4 @@ private:
     Diligent::RefCntAutoPtr<Diligent::IPipelineState> m_psoRender;
     Diligent::RefCntAutoPtr<Diligent::IShaderResourceBinding> m_srbRender;
 };
-}
+}  // namespace Prisma::GUI

@@ -1,20 +1,20 @@
 #include "Handlers/MeshHandler.h"
-#include "GlobalData/GlobalData.h"
-#include "Helpers/SettingsLoader.h"
-#include "Helpers/ClusterCalculation.h"
-#include "Pipelines/PipelineDIffuseIrradiance.h"
-#include "Pipelines/PipelinePrefilter.h"
-#include "Pipelines/PipelineLUT.h"
-#include "Helpers/AreaHandler.h"
+
 #include <glm/gtx/string_cast.hpp>
 
+#include "GlobalData/GlobalData.h"
 #include "Graphics/GraphicsTools/interface/MapHelper.hpp"
+#include "Helpers/AreaHandler.h"
+#include "Helpers/ClusterCalculation.h"
+#include "Helpers/SettingsLoader.h"
+#include "Pipelines/PipelineDIffuseIrradiance.h"
+#include "Pipelines/PipelineLUT.h"
+#include "Pipelines/PipelinePrefilter.h"
 
 void Prisma::MeshHandler::updateCamera() {
     auto camera = GlobalData::getInstance().currentGlobalScene()->camera;
     auto& contextData = PrismaFunc::getInstance().contextData();
-    Diligent::MapHelper<ViewProjectionData> viewProjection(contextData.immediateContext, m_viewProjection,
-                                                           Diligent::MAP_WRITE, Diligent::MAP_FLAG_DISCARD);
+    Diligent::MapHelper<ViewProjectionData> viewProjection(contextData.immediateContext, m_viewProjection, Diligent::MAP_WRITE, Diligent::MAP_FLAG_DISCARD);
     viewProjection->view = camera->matrix();
     viewProjection->projection = GlobalData::getInstance().currentProjection();
     viewProjection->viewPos = glm::vec4(camera->position(), 1.0);
@@ -25,7 +25,7 @@ void Prisma::MeshHandler::updateCluster() {
     m_clusterData.zFar = Prisma::GlobalData::getInstance().currentGlobalScene()->camera->farPlane();
     m_clusterData.gridSize = glm::vec4(ClusterCalculation::grids(), 1.0f);
     m_clusterData.screenDimensions = {m_settings.width, m_settings.height, 1.0f, 1.0f};*/
-    //m_uboCluster->modifyData(0, sizeof(UBOCluster), &m_uboClusterData);
+    // m_uboCluster->modifyData(0, sizeof(UBOCluster), &m_uboClusterData);
 }
 
 Prisma::MeshHandler::MeshHandler() {
@@ -40,7 +40,4 @@ Prisma::MeshHandler::MeshHandler() {
     contextData.device->CreateBuffer(CBDesc, nullptr, &m_viewProjection);
 }
 
-
-Diligent::RefCntAutoPtr<Diligent::IBuffer> Prisma::MeshHandler::viewProjection() const {
-    return m_viewProjection;
-}
+Diligent::RefCntAutoPtr<Diligent::IBuffer> Prisma::MeshHandler::viewProjection() const { return m_viewProjection; }

@@ -1,19 +1,19 @@
 #pragma once
 
-#include "../SceneObjects/Camera.h"
-#include "../SceneData/SceneLoader.h"
-#include "../Handlers/MeshHandler.h"
-#include "../SceneData/MeshIndirect.h"
-#include "PipelineFullScreen.h"
-#include "../Helpers/Settings.h"
 #include <memory>
 
+#include "../Handlers/MeshHandler.h"
+#include "../Helpers/Settings.h"
+#include "../SceneData/MeshIndirect.h"
+#include "../SceneData/SceneLoader.h"
+#include "../SceneObjects/Camera.h"
 #include "PipelineBlitRT.h"
+#include "PipelineFullScreen.h"
 #include "PipelinePrePass.h"
 
 namespace Prisma {
 class PipelineRayTracing {
-public:
+   public:
     PipelineRayTracing(const unsigned int& width = 1920, const unsigned int& height = 1080);
     void render();
     Diligent::RefCntAutoPtr<Diligent::IPipelineState> pso();
@@ -28,7 +28,7 @@ public:
     bool raytracingEasy();
     ~PipelineRayTracing();
 
-private:
+   private:
     unsigned int m_width;
     unsigned int m_height;
 
@@ -71,4 +71,4 @@ private:
 
     bool m_raytracingEasy = false;
 };
-}
+}  // namespace Prisma

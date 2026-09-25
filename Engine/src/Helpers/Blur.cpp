@@ -1,8 +1,10 @@
-#include "GlobalData/PrismaFunc.h"
 #include "Helpers/Blur.h"
+
+#include <Graphics/GraphicsTools/interface/MapHelper.hpp>
+
+#include "GlobalData/PrismaFunc.h"
 #include "Helpers/PrismaRender.h"
 #include "Pipelines/PipelineHandler.h"
-#include <Graphics/GraphicsTools/interface/MapHelper.hpp>
 
 Prisma::Blur::Blur(Diligent::RefCntAutoPtr<Diligent::ITexture> texture) {
     auto& contextData = PrismaFunc::getInstance().contextData();

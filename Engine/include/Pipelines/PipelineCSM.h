@@ -1,11 +1,12 @@
 #pragma once
 
 #include <vector>
-#include "GenericShadow.h"
-#include "glm/glm.hpp"
+
 #include "../Helpers/Settings.h"
 #include "Common/interface/RefCntAutoPtr.hpp"
+#include "GenericShadow.h"
 #include "Handlers/CSMHandler.h"
+#include "glm/glm.hpp"
 
 namespace Diligent {
 struct ITexture;
@@ -13,7 +14,7 @@ struct ITexture;
 
 namespace Prisma {
 class PipelineCSM : public GenericShadow {
-public:
+   public:
     PipelineCSM(unsigned int width, unsigned int height, bool post = false);
     float farPlane() override;
     void farPlane(float farPlane) override;
@@ -38,7 +39,7 @@ public:
 
     float bias();
 
-private:
+   private:
     unsigned int m_width;
 
     unsigned int m_height;
@@ -64,6 +65,5 @@ private:
     CSMHandler::CSMShadow m_lightMatrices;
 
     Diligent::RefCntAutoPtr<Diligent::ITexture> m_depth;
-
 };
-}
+}  // namespace Prisma

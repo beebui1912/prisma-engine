@@ -12,12 +12,10 @@ std::string Prisma::StringHelper::toRelativePath(const std::string& absolutePath
     // Convert to relative path
     fs::path relativePath = relative(absPath, base);
 
-    return relativePath.string(); // Return as string
+    return relativePath.string();  // Return as string
 }
 
 std::string Prisma::StringHelper::toLower(std::string s) {
-    std::transform(s.begin(), s.end(), s.begin(),
-                   [](unsigned char c) { return std::tolower(c); }
-        );
+    std::transform(s.begin(), s.end(), s.begin(), [](unsigned char c) { return std::tolower(c); });
     return s;
 }

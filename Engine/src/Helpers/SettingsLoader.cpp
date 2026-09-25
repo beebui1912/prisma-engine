@@ -1,10 +1,8 @@
 #include "Helpers/SettingsLoader.h"
+
 #include "nlohmann/json.hpp"
 
-
-void to_json(nlohmann::json& j, const Prisma::Settings& s) {
-    j = nlohmann::json{{"name", s.name}, {"width", s.width}, {"height", s.height}, {"fullscreen", s.fullscreen}};
-}
+void to_json(nlohmann::json& j, const Prisma::Settings& s) { j = nlohmann::json{{"name", s.name}, {"width", s.width}, {"height", s.height}, {"fullscreen", s.fullscreen}}; }
 
 void from_json(const nlohmann::json& j, Prisma::Settings& s) {
     j.at("name").get_to(s.name);
@@ -27,7 +25,7 @@ void Prisma::SettingsLoader::load(const std::string& filename) {
             // Handle parsing errors
             std::cerr << "Error parsing JSON: " << e.what() << std::endl;
             // Set default values in case of an error
-            setDefaultSettings(filename); // Pass the filename to save default settings
+            setDefaultSettings(filename);  // Pass the filename to save default settings
         }
     } else {
         // Set default values and create the config file if not open
@@ -38,16 +36,11 @@ void Prisma::SettingsLoader::load(const std::string& filename) {
 }
 
 // Accessor method to get the loaded settings
-const Prisma::Settings& Prisma::SettingsLoader::getSettings() const {
-    return m_settings;
-}
+const Prisma::Settings& Prisma::SettingsLoader::getSettings() const { return m_settings; }
 
-void Prisma::SettingsLoader::settings(Settings settings) {
-    m_settings = settings;
-}
+void Prisma::SettingsLoader::settings(Settings settings) { m_settings = settings; }
 
-Prisma::SettingsLoader::SettingsLoader() {
-}
+Prisma::SettingsLoader::SettingsLoader() {}
 
 // Default settings and create the config file
 void Prisma::SettingsLoader::setDefaultSettings(const std::string& filename) {
@@ -61,7 +54,7 @@ void Prisma::SettingsLoader::setDefaultSettings(const std::string& filename) {
     if (defaultFile.is_open()) {
         nlohmann::json defaultJson;
         to_json(defaultJson, m_settings);
-        defaultFile << defaultJson.dump(4); // Dump with indentation for better readability
+        defaultFile << defaultJson.dump(4);  // Dump with indentation for better readability
         defaultFile.close();
     } else {
         std::cerr << "Error creating default config file: " << filename << std::endl;

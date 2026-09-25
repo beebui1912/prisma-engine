@@ -1,21 +1,21 @@
 #pragma once
-#include "GlobalData/Platform.h"
-#include "Graphics/GraphicsEngine/interface/Buffer.h"
-#include "Graphics/GraphicsEngine/interface/Texture.h"
-#include "Graphics/GraphicsEngine/interface/PipelineState.h"
-#include <Common/interface/RefCntAutoPtr.hpp>
-
-#include "Helpers/Blit.h"
 #include <Helpers/Blur.h>
 
+#include <Common/interface/RefCntAutoPtr.hpp>
+
+#include "GlobalData/Platform.h"
+#include "Graphics/GraphicsEngine/interface/Buffer.h"
+#include "Graphics/GraphicsEngine/interface/PipelineState.h"
+#include "Graphics/GraphicsEngine/interface/Texture.h"
+#include "Helpers/Blit.h"
 
 namespace Prisma::GUI {
 class Bloom {
-public:
+   public:
     void render();
     Bloom();
 
-private:
+   private:
     void createShaderBrightness();
     void createShaderRender();
 
@@ -33,4 +33,4 @@ private:
     std::unique_ptr<Blit> m_blit;
     std::unique_ptr<Blur> m_blur;
 };
-}
+}  // namespace Prisma::GUI

@@ -1,22 +1,21 @@
 #pragma once
-#include "GlobalData/Platform.h"
-#include "Graphics/GraphicsEngine/interface/Buffer.h"
-#include "Graphics/GraphicsEngine/interface/Texture.h"
-#include "Graphics/GraphicsEngine/interface/PipelineState.h"
 #include <Common/interface/RefCntAutoPtr.hpp>
 
+#include "GlobalData/Platform.h"
+#include "Graphics/GraphicsEngine/interface/Buffer.h"
+#include "Graphics/GraphicsEngine/interface/PipelineState.h"
+#include "Graphics/GraphicsEngine/interface/Texture.h"
 #include "Helpers/Blit.h"
-
 
 namespace Prisma::GUI {
 class PostprocessingStyles {
-public:
-    enum class EFFECTS { NORMAL, SEPPIA, CARTOON, VIGNETTE, BLOOM, VOLUMETRIC,RAYS };
+   public:
+    enum class EFFECTS { NORMAL, SEPPIA, CARTOON, VIGNETTE, BLOOM, VOLUMETRIC, RAYS };
 
     void render(EFFECTS effect);
     PostprocessingStyles();
 
-private:
+   private:
     Diligent::RefCntAutoPtr<Diligent::IPipelineState> m_pso;
     Diligent::RefCntAutoPtr<Diligent::IShaderResourceBinding> m_srb;
 
@@ -28,4 +27,4 @@ private:
     void createShaderEffects();
     void renderEffects(EFFECTS effect);
 };
-}
+}  // namespace Prisma::GUI

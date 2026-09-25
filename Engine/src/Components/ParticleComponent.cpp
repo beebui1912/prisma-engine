@@ -1,4 +1,5 @@
 #include "Components/ParticleComponent.h"
+
 #include "GlobalData/GlobalShaderNames.h"
 #include "GlobalData/PrismaFunc.h"
 #include "Handlers/LightHandler.h"
@@ -19,7 +20,6 @@ void Prisma::ParticleComponent::start() {
 
     m_sprite = std::make_shared<Prisma::Sprite>(Prisma::Sprite::BLENDING::ALPHA, Prisma::Sprite::DEPTH_WRITE::FALSE);
 
-
     m_width = 15;
     m_height = 4;
     m_speed = 20;
@@ -36,20 +36,15 @@ void Prisma::ParticleComponent::start() {
     parent()->addChild(m_sprite);
 }
 
-void Prisma::ParticleComponent::destroy()
-{
-    Component::destroy();
-}
+void Prisma::ParticleComponent::destroy() { Component::destroy(); }
 
-void Prisma::ParticleComponent::ui() { 
-    Component::ui(); 
-
+void Prisma::ParticleComponent::ui() {
+    Component::ui();
 
     m_updateUI = [&]() {
         if (!isStart()) {
             start();
         }
-
     };
 
     m_loadTexture = [&]() {
@@ -58,12 +53,12 @@ void Prisma::ParticleComponent::ui() {
         }
 
         auto openFolder = WindowsHelper::getInstance().openFolder("All Files");
-        if (!openFolder.empty() && Prisma::StringHelper::getInstance().endsWith(openFolder,"png")) {
-                auto sprite = std::make_shared<Prisma::Texture>();
-                sprite->loadTexture({openFolder, true});
-                m_sprite->loadSprites({sprite});
-            }
-        };
+        if (!openFolder.empty() && Prisma::StringHelper::getInstance().endsWith(openFolder, "png")) {
+            auto sprite = std::make_shared<Prisma::Texture>();
+            sprite->loadTexture({openFolder, true});
+            m_sprite->loadSprites({sprite});
+        }
+    };
 
     m_apply = [&]() {
         if (!isStart()) {
@@ -91,10 +86,10 @@ void Prisma::ParticleComponent::ui() {
 
     ComponentType componentTexture;
     componentTexture = std::make_tuple(TYPES::BUTTON, "Load Texture", &m_loadTexture);
-    
+
     ComponentType componentButton;
     componentButton = std::make_tuple(TYPES::BUTTON, "Update UI", &m_updateUI);
-    
+
     addGlobal({componentSize, false});
     addGlobal({componentWidth, false});
     addGlobal({componentHeight, false});
@@ -102,5 +97,4 @@ void Prisma::ParticleComponent::ui() {
     addGlobal({componentApply, false});
     addGlobal({componentTexture, false});
     addGlobal({componentButton, false});
-
 }

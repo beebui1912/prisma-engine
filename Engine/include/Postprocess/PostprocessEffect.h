@@ -3,7 +3,7 @@
 
 namespace Prisma {
 class PostprocessEffect {
-public:
+   public:
     virtual void render() = 0;
 };
-}
+}  // namespace Prisma

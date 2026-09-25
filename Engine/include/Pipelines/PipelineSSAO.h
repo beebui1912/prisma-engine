@@ -17,7 +17,6 @@ class PipelineSSAO {
 
     Diligent::RefCntAutoPtr<Diligent::ITexture> ssaoTexture();
 
-
    private:
     Diligent::RefCntAutoPtr<Diligent::IPipelineState> m_pso;
     Diligent::RefCntAutoPtr<Diligent::IShaderResourceBinding> m_srb;
@@ -30,4 +29,4 @@ class PipelineSSAO {
 
     float ourLerp(float a, float b, float f);
 };
-}  // namespace Prisma::GUI
+}  // namespace Prisma

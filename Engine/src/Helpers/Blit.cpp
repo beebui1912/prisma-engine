@@ -1,4 +1,4 @@
-# include "Helpers/Blit.h"
+#include "Helpers/Blit.h"
 
 #include "GlobalData/PrismaFunc.h"
 #include "Helpers/PrismaRender.h"
@@ -129,8 +129,8 @@ void Prisma::Blit::render(Diligent::RefCntAutoPtr<Diligent::ITexture> texture) {
     // Set texture SRV in the SRB
     contextData.immediateContext->CommitShaderResources(m_srb, Diligent::RESOURCE_STATE_TRANSITION_MODE_TRANSITION);
 
-    Diligent::DrawIndexedAttribs DrawAttrs; // This is an indexed draw call
-    DrawAttrs.IndexType = Diligent::VT_UINT32; // Index type
+    Diligent::DrawIndexedAttribs DrawAttrs;     // This is an indexed draw call
+    DrawAttrs.IndexType = Diligent::VT_UINT32;  // Index type
     DrawAttrs.NumIndices = quadBuffer.iBufferSize;
     // Verify the state of vertex and index buffers
     DrawAttrs.Flags = Diligent::DRAW_FLAG_VERIFY_ALL;

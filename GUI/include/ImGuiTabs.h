@@ -1,21 +1,22 @@
 #pragma once
 
 #include <memory>
-#include "SceneObjects/Node.h"
-#include "ImGuiCamera.h"
+
 #include "Containers/Texture.h"
 #include "GlobalData/InstanceData.h"
+#include "ImGuiCamera.h"
+#include "SceneObjects/Node.h"
 
 namespace Prisma::GUI {
 class ImGuiTabs : public InstanceData<ImGuiTabs> {
-public:
+   public:
     void showNodes(std::shared_ptr<Node> root, ImGuiCamera& camera);
 
     ImGuiTabs();
 
     void updateTabs(std::shared_ptr<Node> root, int depth);
 
-private:
+   private:
     void updateCurrentNodes(std::shared_ptr<Node> root, int depth);
     void showCurrentNodes(ImGuiCamera& camera);
 
@@ -30,4 +31,4 @@ private:
 
     void dispatch(std::shared_ptr<Node> node, glm::vec2 size);
 };
-}
+}  // namespace Prisma::GUI

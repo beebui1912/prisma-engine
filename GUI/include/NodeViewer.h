@@ -1,17 +1,17 @@
 #pragma once
-#include "GlobalData/InstanceData.h"
-#include "Components/Component.h"
 #include <functional>
 #include <glm/gtc/type_ptr.hpp>
-#include "SceneObjects/Camera.h"
-#include "Containers/Texture.h"
 #include <iostream>
-#include "Helpers/NodeHelper.h"
 
+#include "Components/Component.h"
+#include "Containers/Texture.h"
+#include "GlobalData/InstanceData.h"
+#include "Helpers/NodeHelper.h"
+#include "SceneObjects/Camera.h"
 
 namespace Prisma::GUI {
 class NodeViewer : public InstanceData<NodeViewer> {
-public:
+   public:
     struct NodeData {
         std::shared_ptr<Node> node;
         std::shared_ptr<Camera> camera;
@@ -29,8 +29,7 @@ public:
 
     void showComponents(std::shared_ptr<Node> nodeData);
 
-    void showSelected(const NodeData& nodeData, bool end = true, bool showData = true,
-                      std::shared_ptr<Node> componentAdding = nullptr);
+    void showSelected(const NodeData& nodeData, bool end = true, bool showData = true, std::shared_ptr<Node> componentAdding = nullptr);
     // Getters for textures
     const std::shared_ptr<Texture>& rotateTexture() const;
 
@@ -44,7 +43,7 @@ public:
 
     void drawGizmo(const NodeData& nodeData);
 
-private:
+   private:
     glm::vec3 m_scale;
     glm::vec3 m_rotation;
     glm::vec3 m_translation;
@@ -65,4 +64,4 @@ private:
 
     void recompose(const NodeData& nodeData);
 };
-}
+}  // namespace Prisma::GUI

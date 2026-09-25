@@ -1,6 +1,5 @@
 #include "PostProcess/VolumetricLight.h"
 
-#include "engine.h"
 #include "GlobalData/GlobalShaderNames.h"
 #include "GlobalData/PrismaFunc.h"
 #include "Graphics/GraphicsTools/interface/MapHelper.hpp"
@@ -9,7 +8,7 @@
 #include "Pipelines/PipelineHandler.h"
 #include "TextureLoader/interface/TextureLoader.h"
 #include "TextureLoader/interface/TextureUtilities.h"
-
+#include "engine.h"
 
 Prisma::GUI::VolumetricLight::VolumetricLight() {
     createShaderVolumetric();
@@ -323,8 +322,8 @@ void Prisma::GUI::VolumetricLight::renderVolumetric() {
     // Set texture SRV in the SRB
     contextData.immediateContext->CommitShaderResources(m_srbVolumetric, Diligent::RESOURCE_STATE_TRANSITION_MODE_TRANSITION);
 
-    Diligent::DrawIndexedAttribs DrawAttrs; // This is an indexed draw call
-    DrawAttrs.IndexType = Diligent::VT_UINT32; // Index type
+    Diligent::DrawIndexedAttribs DrawAttrs;     // This is an indexed draw call
+    DrawAttrs.IndexType = Diligent::VT_UINT32;  // Index type
     DrawAttrs.NumIndices = quadBuffer.iBufferSize;
     // Verify the state of vertex and index buffers
     DrawAttrs.Flags = Diligent::DRAW_FLAG_VERIFY_ALL;
@@ -352,8 +351,8 @@ void Prisma::GUI::VolumetricLight::renderBlit() {
     // Set texture SRV in the SRB
     contextData.immediateContext->CommitShaderResources(m_srbBlit, Diligent::RESOURCE_STATE_TRANSITION_MODE_TRANSITION);
 
-    Diligent::DrawIndexedAttribs DrawAttrs; // This is an indexed draw call
-    DrawAttrs.IndexType = Diligent::VT_UINT32; // Index type
+    Diligent::DrawIndexedAttribs DrawAttrs;     // This is an indexed draw call
+    DrawAttrs.IndexType = Diligent::VT_UINT32;  // Index type
     DrawAttrs.NumIndices = quadBuffer.iBufferSize;
     // Verify the state of vertex and index buffers
     DrawAttrs.Flags = Diligent::DRAW_FLAG_VERIFY_ALL;

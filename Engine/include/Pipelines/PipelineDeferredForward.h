@@ -8,12 +8,12 @@
 #include "../SceneData/MeshIndirect.h"
 #include "../SceneData/SceneLoader.h"
 #include "../SceneObjects/Camera.h"
+#include "PipelineDeferred.h"
 #include "PipelineForwardTransparent.h"
 #include "PipelineFullScreen.h"
 #include "PipelinePrePass.h"
-#include "PipelineDeferred.h"
-#include "PipelineSSR.h"
 #include "PipelineSSAO.h"
+#include "PipelineSSR.h"
 
 namespace Prisma {
 class PipelineDeferredForward {
@@ -24,6 +24,7 @@ class PipelineDeferredForward {
     Diligent::RefCntAutoPtr<Diligent::ITexture> positionTexture();
     Diligent::RefCntAutoPtr<Diligent::ITexture> normalTexture();
     Diligent::RefCntAutoPtr<Diligent::ITexture> albedoTexture();
+
    private:
     unsigned int m_width;
     unsigned int m_height;

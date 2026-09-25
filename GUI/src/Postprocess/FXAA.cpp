@@ -3,8 +3,8 @@
 #include "GlobalData/PrismaFunc.h"
 #include "Graphics/GraphicsTools/interface/MapHelper.hpp"
 #include "Helpers/PrismaRender.h"
-#include "Pipelines/PipelineHandler.h"
 #include "Helpers/SettingsLoader.h"
+#include "Pipelines/PipelineHandler.h"
 
 Prisma::GUI::FXAA::FXAA() {
     auto& contextData = PrismaFunc::getInstance().contextData();
@@ -150,10 +150,9 @@ void Prisma::GUI::FXAA::render() {
         Diligent::IBuffer* pBuffs[] = {quadBuffer.vBuffer};
         contextData.immediateContext->SetVertexBuffers(0, 1, pBuffs, &offset, Diligent::RESOURCE_STATE_TRANSITION_MODE_TRANSITION, Diligent::SET_VERTEX_BUFFERS_FLAG_RESET);
         contextData.immediateContext->SetIndexBuffer(quadBuffer.iBuffer, 0, Diligent::RESOURCE_STATE_TRANSITION_MODE_TRANSITION);
-         {
+        {
             // Map the buffer and write current world-view-projection matrix
             Diligent::MapHelper<FXAAData> constants(contextData.immediateContext, m_current, Diligent::MAP_WRITE, Diligent::MAP_FLAG_DISCARD);
-
 
             constants->resolution = glm::vec4(m_settings.width, m_settings.height, 0, 0);
         }

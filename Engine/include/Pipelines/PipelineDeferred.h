@@ -20,7 +20,6 @@ class PipelineDeferred {
     ~PipelineDeferred();
 
    private:
-
     void create();
 
     Diligent::RefCntAutoPtr<Diligent::IPipelineState> m_pso;

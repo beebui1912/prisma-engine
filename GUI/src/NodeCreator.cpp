@@ -6,50 +6,50 @@ std::shared_ptr<Prisma::Node> Prisma::GUI::NodeCreator::createCube() {
     // Define the vertices for each face of the cube
     std::vector<Mesh::Vertex> vertices = {
         // Front face
-        {{-1, -1, 1}, {0, 0, 1}, {0, 0}}, // Bottom-left
-        {{1, -1, 1}, {0, 0, 1}, {1, 0}}, // Bottom-right
-        {{1, 1, 1}, {0, 0, 1}, {1, 1}}, // Top-right
-        {{-1, 1, 1}, {0, 0, 1}, {0, 1}}, // Top-left
+        {{-1, -1, 1}, {0, 0, 1}, {0, 0}},  // Bottom-left
+        {{1, -1, 1}, {0, 0, 1}, {1, 0}},   // Bottom-right
+        {{1, 1, 1}, {0, 0, 1}, {1, 1}},    // Top-right
+        {{-1, 1, 1}, {0, 0, 1}, {0, 1}},   // Top-left
 
         // Back face
-        {{1, -1, -1}, {0, 0, -1}, {0, 0}}, // Bottom-left
-        {{-1, -1, -1}, {0, 0, -1}, {1, 0}}, // Bottom-right
-        {{-1, 1, -1}, {0, 0, -1}, {1, 1}}, // Top-right
-        {{1, 1, -1}, {0, 0, -1}, {0, 1}}, // Top-left
+        {{1, -1, -1}, {0, 0, -1}, {0, 0}},   // Bottom-left
+        {{-1, -1, -1}, {0, 0, -1}, {1, 0}},  // Bottom-right
+        {{-1, 1, -1}, {0, 0, -1}, {1, 1}},   // Top-right
+        {{1, 1, -1}, {0, 0, -1}, {0, 1}},    // Top-left
 
         // Left face
-        {{-1, -1, -1}, {-1, 0, 0}, {0, 0}}, // Bottom-left
-        {{-1, -1, 1}, {-1, 0, 0}, {1, 0}}, // Bottom-right
-        {{-1, 1, 1}, {-1, 0, 0}, {1, 1}}, // Top-right
-        {{-1, 1, -1}, {-1, 0, 0}, {0, 1}}, // Top-left
+        {{-1, -1, -1}, {-1, 0, 0}, {0, 0}},  // Bottom-left
+        {{-1, -1, 1}, {-1, 0, 0}, {1, 0}},   // Bottom-right
+        {{-1, 1, 1}, {-1, 0, 0}, {1, 1}},    // Top-right
+        {{-1, 1, -1}, {-1, 0, 0}, {0, 1}},   // Top-left
 
         // Right face
-        {{1, -1, 1}, {1, 0, 0}, {0, 0}}, // Bottom-left
-        {{1, -1, -1}, {1, 0, 0}, {1, 0}}, // Bottom-right
-        {{1, 1, -1}, {1, 0, 0}, {1, 1}}, // Top-right
-        {{1, 1, 1}, {1, 0, 0}, {0, 1}}, // Top-left
+        {{1, -1, 1}, {1, 0, 0}, {0, 0}},   // Bottom-left
+        {{1, -1, -1}, {1, 0, 0}, {1, 0}},  // Bottom-right
+        {{1, 1, -1}, {1, 0, 0}, {1, 1}},   // Top-right
+        {{1, 1, 1}, {1, 0, 0}, {0, 1}},    // Top-left
 
         // Top face
-        {{-1, 1, 1}, {0, 1, 0}, {0, 0}}, // Bottom-left
-        {{1, 1, 1}, {0, 1, 0}, {1, 0}}, // Bottom-right
-        {{1, 1, -1}, {0, 1, 0}, {1, 1}}, // Top-right
-        {{-1, 1, -1}, {0, 1, 0}, {0, 1}}, // Top-left
+        {{-1, 1, 1}, {0, 1, 0}, {0, 0}},   // Bottom-left
+        {{1, 1, 1}, {0, 1, 0}, {1, 0}},    // Bottom-right
+        {{1, 1, -1}, {0, 1, 0}, {1, 1}},   // Top-right
+        {{-1, 1, -1}, {0, 1, 0}, {0, 1}},  // Top-left
 
         // Bottom face
-        {{-1, -1, -1}, {0, -1, 0}, {0, 0}}, // Bottom-left
-        {{1, -1, -1}, {0, -1, 0}, {1, 0}}, // Bottom-right
-        {{1, -1, 1}, {0, -1, 0}, {1, 1}}, // Top-right
-        {{-1, -1, 1}, {0, -1, 0}, {0, 1}} // Top-left
+        {{-1, -1, -1}, {0, -1, 0}, {0, 0}},  // Bottom-left
+        {{1, -1, -1}, {0, -1, 0}, {1, 0}},   // Bottom-right
+        {{1, -1, 1}, {0, -1, 0}, {1, 1}},    // Top-right
+        {{-1, -1, 1}, {0, -1, 0}, {0, 1}}    // Top-left
     };
 
     // Define indices for each face (two triangles per face)
     std::vector<unsigned int> indices = {
-        0, 1, 2, 2, 3, 0, // Front
-        4, 5, 6, 6, 7, 4, // Back
-        8, 9, 10, 10, 11, 8, // Left
-        12, 13, 14, 14, 15, 12, // Right
-        16, 17, 18, 18, 19, 16, // Top
-        20, 21, 22, 22, 23, 20 // Bottom
+        0,  1,  2,  2,  3,  0,   // Front
+        4,  5,  6,  6,  7,  4,   // Back
+        8,  9,  10, 10, 11, 8,   // Left
+        12, 13, 14, 14, 15, 12,  // Right
+        16, 17, 18, 18, 19, 16,  // Top
+        20, 21, 22, 22, 23, 20   // Bottom
     };
 
     // Calculate tangent and bitangent for each face
@@ -91,7 +91,7 @@ std::shared_ptr<Prisma::Node> Prisma::GUI::NodeCreator::createSphere(int subDivi
     std::vector<Mesh::Vertex> vertices;
     std::vector<unsigned int> indices;
 
-for (int lat = 0; lat <= subDivisions; ++lat) {
+    for (int lat = 0; lat <= subDivisions; ++lat) {
         float theta = lat * PI / subDivisions;
         float sinTheta = sin(theta);
         float cosTheta = cos(theta);
@@ -227,8 +227,7 @@ std::shared_ptr<Prisma::Node> Prisma::GUI::NodeCreator::createNode() {
     return newInstance;
 }
 
-std::shared_ptr<Prisma::Node> Prisma::GUI::NodeCreator::createMesh(std::shared_ptr<Mesh::VerticesData> verticesData,
-                                                                   const std::string& name) {
+std::shared_ptr<Prisma::Node> Prisma::GUI::NodeCreator::createMesh(std::shared_ptr<Mesh::VerticesData> verticesData, const std::string& name) {
     auto newInstance = std::make_shared<Mesh>();
     newInstance->loadModel(verticesData);
     auto currentMaterial = getEmptyMaterial();

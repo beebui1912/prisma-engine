@@ -3,7 +3,6 @@
 #include "Helpers/Logger.h"
 #include "ThirdParty/imgui/imgui.h"
 
-
 void Prisma::GUI::ImGuiLog::render() {
     // Get the instance of the Logger
     Logger& logger = Logger::getInstance();
@@ -18,7 +17,7 @@ void Prisma::GUI::ImGuiLog::render() {
 }
 
 void Prisma::GUI::ImGuiLog::print(const glm::vec4& color, const std::string& text) {
-    ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(color.x, color.y, color.z, color.w)); // Green color
+    ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(color.x, color.y, color.z, color.w));  // Green color
 
     ImGui::TextUnformatted(text.c_str());
 

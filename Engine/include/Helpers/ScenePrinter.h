@@ -1,11 +1,12 @@
 #pragma once
-#include <memory>
 #include <iostream>
+#include <memory>
+
 #include "../SceneObjects/Node.h"
 
 namespace Prisma {
 class ScenePrinter {
-public:
+   public:
     void printScene(std::shared_ptr<Node> nodeRoot, int depth);
 };
-}
+}  // namespace Prisma

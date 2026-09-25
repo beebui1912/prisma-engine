@@ -2,12 +2,11 @@
 
 #include <algorithm>
 
-#include "GlobalData/GlobalData.h"
 #include "../include/ImGuiHelper.h"
+#include "GlobalData/GlobalData.h"
 #include "ThirdParty/imgui/imgui.h"
 
-Prisma::GUI::TextureInfo::TextureInfo() : m_index{-1} {
-}
+Prisma::GUI::TextureInfo::TextureInfo() : m_index{-1} {}
 
 void Prisma::GUI::TextureInfo::showTextures() {
     constexpr int numColumns = 5;
@@ -17,15 +16,13 @@ void Prisma::GUI::TextureInfo::showTextures() {
         if (ImGui::BeginTable("TextureTable", numColumns)) {
             for (int j = 0; j < numColumns; j++) {
                 if (i * numColumns + j < GlobalData::getInstance().globalTextures().size()) {
-                    ImGui::TableNextColumn(); // Move to the next column
+                    ImGui::TableNextColumn();  // Move to the next column
 
                     auto texture = GlobalData::getInstance().globalTextures()[i * numColumns + j];
 
                     // Display the image
                     ImGui::PushID(i * numColumns + j);
-                    if (ImGui::ImageButton(
-                        texture.texture->GetDefaultView(Diligent::TEXTURE_VIEW_SHADER_RESOURCE),
-                        ImVec2(100, 100))) {
+                    if (ImGui::ImageButton(texture.texture->GetDefaultView(Diligent::TEXTURE_VIEW_SHADER_RESOURCE), ImVec2(100, 100))) {
                         m_index = i * numColumns + j;
                         m_textureTab = true;
                     }
@@ -62,8 +59,7 @@ void Prisma::GUI::TextureInfo::showTextures() {
             m_scale = 1;
         }
         ImGui::Text("Selected Texture:");
-        ImGui::Image(texture.texture->GetDefaultView(Diligent::TEXTURE_VIEW_SHADER_RESOURCE),
-                     ImVec2(texture.size.x * m_scale, texture.size.y * m_scale));
+        ImGui::Image(texture.texture->GetDefaultView(Diligent::TEXTURE_VIEW_SHADER_RESOURCE), ImVec2(texture.size.x * m_scale, texture.size.y * m_scale));
         ImGui::TextWrapped("%s", texture.name.c_str());
         ImGui::End();
         if (!m_textureTab) {
@@ -72,6 +68,4 @@ void Prisma::GUI::TextureInfo::showTextures() {
     }
 }
 
-bool Prisma::GUI::TextureInfo::textureTab() {
-    return m_textureTab;
-}
+bool Prisma::GUI::TextureInfo::textureTab() { return m_textureTab; }

@@ -1,16 +1,15 @@
 #pragma once
-#include <vector>
-#include <memory>
-#include "Node.h"
-#include "../Containers/Texture.h"
-#include "../Components/MaterialComponent.h"
-#include "../Physics/Physics.h"
-#include "../Components/Component.h"
 #include <map>
+#include <memory>
+#include <vector>
+
+#include "../Components/Component.h"
+#include "../Components/MaterialComponent.h"
+#include "../Containers/Texture.h"
 #include "../GlobalData/Platform.h"
-
+#include "../Physics/Physics.h"
 #include "Common/interface/RefCntAutoPtr.hpp"
-
+#include "Node.h"
 
 namespace Diligent {
 struct IBottomLevelAS;
@@ -18,7 +17,7 @@ struct IBottomLevelAS;
 
 namespace Prisma {
 class Mesh : public Node {
-public:
+   public:
     struct Vertex {
         glm::vec3 position = glm::vec3(0, 0, 0);
         glm::vec3 normal = glm::vec3(0, 0, 0);
@@ -78,7 +77,7 @@ public:
 
     Diligent::RefCntAutoPtr<Diligent::IBottomLevelAS> blas();
 
-protected:
+   protected:
     std::shared_ptr<VerticesData> m_vertices;
     std::shared_ptr<MaterialComponent> m_material;
 
@@ -91,4 +90,4 @@ protected:
     Diligent::RefCntAutoPtr<Diligent::IBuffer> m_vBuffer;
     Diligent::RefCntAutoPtr<Diligent::IBuffer> m_iBuffer;
 };
-}
+}  // namespace Prisma

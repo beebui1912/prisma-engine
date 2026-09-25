@@ -1,15 +1,15 @@
 #include "../include/TerrainComponent.h"
-#include "Components/Component.h"
+
 #include <glm/glm.hpp>
-#include "Helpers/PrismaRender.h"
-#include "Components/PhysicsMeshComponent.h"
 #include <glm/gtx/rotate_vector.hpp>
 #include <glm/gtx/string_cast.hpp>
+
+#include "Components/Component.h"
+#include "Components/PhysicsMeshComponent.h"
+#include "Helpers/PrismaRender.h"
 #include "Helpers/SettingsLoader.h"
 
-Prisma::TerrainComponent::TerrainComponent() : Component{} {
-    name("Terrain");
-}
+Prisma::TerrainComponent::TerrainComponent() : Component{} { name("Terrain"); }
 
 void Prisma::TerrainComponent::ui() {
     std::vector<ComponentType> components;
@@ -30,11 +30,8 @@ void Prisma::TerrainComponent::ui() {
     m_apply = [&]() {
         if (isStart()) {
             auto settings = SettingsLoader::getInstance().getSettings();
-            m_grassRenderer.projection(glm::perspective(
-                glm::radians(GlobalData::getInstance().currentGlobalScene()->camera->angle()),
-                static_cast<float>(settings.width) / static_cast<float>(settings
-                    .height), GlobalData::getInstance().currentGlobalScene()->camera->nearPlane(),
-                m_farPlane));
+            m_grassRenderer.projection(glm::perspective(glm::radians(GlobalData::getInstance().currentGlobalScene()->camera->angle()), static_cast<float>(settings.width) / static_cast<float>(settings.height),
+                                                        GlobalData::getInstance().currentGlobalScene()->camera->nearPlane(), m_farPlane));
         }
     };
     componentApply = std::make_tuple(TYPES::BUTTON, "Apply", &m_apply);
@@ -46,7 +43,7 @@ void Prisma::TerrainComponent::ui() {
     addGlobal({componentApply, false});
 }
 
-//void Prisma::TerrainComponent::updateRender(std::shared_ptr<FBO> fbo)
+// void Prisma::TerrainComponent::updateRender(std::shared_ptr<FBO> fbo)
 //{
 //	glDisable(GL_CULL_FACE);
 //	m_shader->use();
@@ -70,7 +67,7 @@ void Prisma::TerrainComponent::ui() {
 //	m_grassRenderer.renderGrass(parent()->finalMatrix());
 //
 //	glEnable(GL_CULL_FACE);
-//}
+// }
 
 void Prisma::TerrainComponent::generateCpu() {
     m_grassRenderer.generateGrassPoints(8, m_mult, m_shift);
@@ -78,64 +75,64 @@ void Prisma::TerrainComponent::generateCpu() {
 }
 
 void Prisma::TerrainComponent::start() {
-    //Component::start();
-    //m_vertices = std::make_shared<Prisma::Mesh::VerticesData>();
-    //Shader::ShaderHeaders headers;
-    //m_shader = std::make_shared<Shader>("../../../UserEngine/Shaders/TerrainPipeline/vertex.glsl",
-    //                                    "../../../UserEngine/Shaders/TerrainPipeline/fragment.glsl");
-    //m_csmShader = std::make_shared<Shader>("../../../UserEngine/Shaders/TerrainShadowPipeline/vertex.glsl",
-    //                                       "../../../UserEngine/Shaders/TerrainShadowPipeline/fragment.glsl",
-    //                                       "../../../UserEngine/Shaders/TerrainShadowPipeline/geometry.glsl", headers,
-    //                                       "../../../UserEngine/Shaders/TerrainShadowPipeline/tcsdata.glsl",
-    //                                       "../../../UserEngine/Shaders/TerrainShadowPipeline/tesdata.glsl");
+    // Component::start();
+    // m_vertices = std::make_shared<Prisma::Mesh::VerticesData>();
+    // Shader::ShaderHeaders headers;
+    // m_shader = std::make_shared<Shader>("../../../UserEngine/Shaders/TerrainPipeline/vertex.glsl",
+    //                                     "../../../UserEngine/Shaders/TerrainPipeline/fragment.glsl");
+    // m_csmShader = std::make_shared<Shader>("../../../UserEngine/Shaders/TerrainShadowPipeline/vertex.glsl",
+    //                                        "../../../UserEngine/Shaders/TerrainShadowPipeline/fragment.glsl",
+    //                                        "../../../UserEngine/Shaders/TerrainShadowPipeline/geometry.glsl", headers,
+    //                                        "../../../UserEngine/Shaders/TerrainShadowPipeline/tcsdata.glsl",
+    //                                        "../../../UserEngine/Shaders/TerrainShadowPipeline/tesdata.glsl");
 
-    //m_grass = std::make_shared<Texture>();
-    //m_stone = std::make_shared<Texture>();
-    //m_snow = std::make_shared<Texture>();
-    //m_grassNormal = std::make_shared<Texture>();
-    //m_stoneNormal = std::make_shared<Texture>();
-    //m_snowNormal = std::make_shared<Texture>();
-    //m_grassRoughness = std::make_shared<Texture>();
-    //m_stoneRoughness = std::make_shared<Texture>();
-    //m_snowRoughness = std::make_shared<Texture>();
-    //m_grass->loadTexture({"../../../Resources/DefaultScene/Heightmaps/Levels/grass.jpg"});
-    //m_stone->loadTexture({"../../../Resources/DefaultScene/Heightmaps/Levels/stone.jpg"});
-    //m_snow->loadTexture({"../../../Resources/DefaultScene/Heightmaps/Levels/snow.jpg"});
-    //m_grassNormal->loadTexture({"../../../Resources/DefaultScene/Heightmaps/Levels/grassNormal.jpg"});
-    //m_stoneNormal->loadTexture({"../../../Resources/DefaultScene/Heightmaps/Levels/stoneNormal.jpg"});
-    //m_snowNormal->loadTexture({"../../../Resources/DefaultScene/Heightmaps/Levels/snowNormal.jpg"});
-    //m_grassRoughness->loadTexture({"../../../Resources/DefaultScene/Heightmaps/Levels/grassRoughness.jpg"});
-    //m_stoneRoughness->loadTexture({"../../../Resources/DefaultScene/Heightmaps/Levels/stoneRoughness.jpg"});
-    //m_snowRoughness->loadTexture({"../../../Resources/DefaultScene/Heightmaps/Levels/snowRoughness.jpg"});
+    // m_grass = std::make_shared<Texture>();
+    // m_stone = std::make_shared<Texture>();
+    // m_snow = std::make_shared<Texture>();
+    // m_grassNormal = std::make_shared<Texture>();
+    // m_stoneNormal = std::make_shared<Texture>();
+    // m_snowNormal = std::make_shared<Texture>();
+    // m_grassRoughness = std::make_shared<Texture>();
+    // m_stoneRoughness = std::make_shared<Texture>();
+    // m_snowRoughness = std::make_shared<Texture>();
+    // m_grass->loadTexture({"../../../Resources/DefaultScene/Heightmaps/Levels/grass.jpg"});
+    // m_stone->loadTexture({"../../../Resources/DefaultScene/Heightmaps/Levels/stone.jpg"});
+    // m_snow->loadTexture({"../../../Resources/DefaultScene/Heightmaps/Levels/snow.jpg"});
+    // m_grassNormal->loadTexture({"../../../Resources/DefaultScene/Heightmaps/Levels/grassNormal.jpg"});
+    // m_stoneNormal->loadTexture({"../../../Resources/DefaultScene/Heightmaps/Levels/stoneNormal.jpg"});
+    // m_snowNormal->loadTexture({"../../../Resources/DefaultScene/Heightmaps/Levels/snowNormal.jpg"});
+    // m_grassRoughness->loadTexture({"../../../Resources/DefaultScene/Heightmaps/Levels/grassRoughness.jpg"});
+    // m_stoneRoughness->loadTexture({"../../../Resources/DefaultScene/Heightmaps/Levels/stoneRoughness.jpg"});
+    // m_snowRoughness->loadTexture({"../../../Resources/DefaultScene/Heightmaps/Levels/snowRoughness.jpg"});
 
-    //m_shader->use();
-    //m_modelPos = m_shader->getUniformPosition("model");
-    //m_heightPos = m_shader->getUniformPosition("heightMap");
-    //m_multPos = m_shader->getUniformPosition("mult");
-    //m_shiftPos = m_shader->getUniformPosition("shift");
-    //m_grassPos = m_shader->getUniformPosition("grass");
-    //m_stonePos = m_shader->getUniformPosition("stone");
-    //m_snowPos = m_shader->getUniformPosition("snow");
-    //m_scalePos = m_shader->getUniformPosition("textureScaling");
-    //m_grassNormalPos = m_shader->getUniformPosition("grassNormal");
-    //m_stoneNormalPos = m_shader->getUniformPosition("stoneNormal");
-    //m_snowNormalPos = m_shader->getUniformPosition("snowNormal");
-    //m_grassRoughnessPos = m_shader->getUniformPosition("grassRoughness");
-    //m_stoneRoughnessPos = m_shader->getUniformPosition("stoneRoughness");
-    //m_snowRoughnessPos = m_shader->getUniformPosition("snowRoughness");
-    //m_grassRenderer.start(m_heightMap);
-    //m_farPlane = Prisma::GlobalData::getInstance().currentGlobalScene()->camera->farPlane();
-    //auto settings = SettingsLoader::getInstance().getSettings();
-    //m_grassRenderer.projection(glm::perspective(
+    // m_shader->use();
+    // m_modelPos = m_shader->getUniformPosition("model");
+    // m_heightPos = m_shader->getUniformPosition("heightMap");
+    // m_multPos = m_shader->getUniformPosition("mult");
+    // m_shiftPos = m_shader->getUniformPosition("shift");
+    // m_grassPos = m_shader->getUniformPosition("grass");
+    // m_stonePos = m_shader->getUniformPosition("stone");
+    // m_snowPos = m_shader->getUniformPosition("snow");
+    // m_scalePos = m_shader->getUniformPosition("textureScaling");
+    // m_grassNormalPos = m_shader->getUniformPosition("grassNormal");
+    // m_stoneNormalPos = m_shader->getUniformPosition("stoneNormal");
+    // m_snowNormalPos = m_shader->getUniformPosition("snowNormal");
+    // m_grassRoughnessPos = m_shader->getUniformPosition("grassRoughness");
+    // m_stoneRoughnessPos = m_shader->getUniformPosition("stoneRoughness");
+    // m_snowRoughnessPos = m_shader->getUniformPosition("snowRoughness");
+    // m_grassRenderer.start(m_heightMap);
+    // m_farPlane = Prisma::GlobalData::getInstance().currentGlobalScene()->camera->farPlane();
+    // auto settings = SettingsLoader::getInstance().getSettings();
+    // m_grassRenderer.projection(glm::perspective(
     //	glm::radians(Prisma::GlobalData::getInstance().currentGlobalScene()->camera->angle()),
     //	static_cast<float>(settings.width) / static_cast<float>(settings.
     //		height), Prisma::GlobalData::getInstance().currentGlobalScene()->camera->nearPlane(), m_farPlane));
-    //generateCpu();
-    //int rez = 1;
-    //int width = m_heightMap.data().width;
-    //int height = m_heightMap.data().height;
-    //unsigned bytePerPixel = m_heightMap.data().nrComponents;
-    //for (int i = 0; i < height; i++)
+    // generateCpu();
+    // int rez = 1;
+    // int width = m_heightMap.data().width;
+    // int height = m_heightMap.data().height;
+    // unsigned bytePerPixel = m_heightMap.data().nrComponents;
+    // for (int i = 0; i < height; i++)
     //{
     //	for (int j = 0; j < width; j++)
     //	{
@@ -153,7 +150,7 @@ void Prisma::TerrainComponent::start() {
     //}
 
     //// Calculate normals
-    //for (int i = 0; i < height; i++)
+    // for (int i = 0; i < height; i++)
     //{
     //	for (int j = 0; j < width; j++)
     //	{
@@ -187,7 +184,7 @@ void Prisma::TerrainComponent::start() {
     //	}
     //}
 
-    //for (unsigned i = 0; i < height - 1; i++)
+    // for (unsigned i = 0; i < height - 1; i++)
     //{
     //	for (unsigned j = 0; j < width - 1; j++)
     //	{
@@ -208,24 +205,22 @@ void Prisma::TerrainComponent::start() {
     //	}
     //}
 
-    //m_strips = (height - 1) / rez;
-    //m_stripTris = (width / rez) * 2 - 2;
+    // m_strips = (height - 1) / rez;
+    // m_stripTris = (width / rez) * 2 - 2;
 
-    //m_vao.bind();
-    //VBO vbo;
-    //EBO ebo;
-    //vbo.writeData(m_vertices->vertices.size() * sizeof(Mesh::Vertex), &m_vertices->vertices[0]);
-    //ebo.writeData(sizeof(unsigned int) * m_vertices->indices.size(), m_vertices->indices.data());
+    // m_vao.bind();
+    // VBO vbo;
+    // EBO ebo;
+    // vbo.writeData(m_vertices->vertices.size() * sizeof(Mesh::Vertex), &m_vertices->vertices[0]);
+    // ebo.writeData(sizeof(unsigned int) * m_vertices->indices.size(), m_vertices->indices.data());
     //// link vertex attributes
-    //m_vao.addAttribPointer(0, 3, sizeof(Mesh::Vertex), nullptr);
-    //m_vao.addAttribPointer(1, 3, sizeof(Mesh::Vertex), (void*)offsetof(Prisma::Mesh::Vertex, normal));
-    //m_vao.addAttribPointer(2, 2, sizeof(Mesh::Vertex), (void*)offsetof(Prisma::Mesh::Vertex, texCoords));
-    //m_mesh->loadModel(m_vertices);
+    // m_vao.addAttribPointer(0, 3, sizeof(Mesh::Vertex), nullptr);
+    // m_vao.addAttribPointer(1, 3, sizeof(Mesh::Vertex), (void*)offsetof(Prisma::Mesh::Vertex, normal));
+    // m_vao.addAttribPointer(2, 2, sizeof(Mesh::Vertex), (void*)offsetof(Prisma::Mesh::Vertex, texCoords));
+    // m_mesh->loadModel(m_vertices);
 }
 
-void Prisma::TerrainComponent::heightMap(Texture heightMap) {
-    m_heightMap = heightMap;
-}
+void Prisma::TerrainComponent::heightMap(Texture heightMap) { m_heightMap = heightMap; }
 
 void Prisma::TerrainComponent::generatePhysics() {
     int width = m_heightMap.data().width;

@@ -1,22 +1,21 @@
 #pragma once
 
-#include "../GlobalData/GlobalData.h"
 #include "../Components/Component.h"
-#include "../Components/RenderComponent.h"
-#include "../GlobalData/InstanceData.h"
 #include "../Components/RegisterCreator.h"
-
+#include "../Components/RenderComponent.h"
+#include "../GlobalData/GlobalData.h"
+#include "../GlobalData/InstanceData.h"
 
 namespace Prisma {
 class ComponentsHandler : public InstanceData<ComponentsHandler> {
-public:
+   public:
     void updateStart();
 
     void updateUi();
 
     void updateComponents();
 
-    //void updateRender(std::shared_ptr<FBO> fbo = nullptr);
+    // void updateRender(std::shared_ptr<FBO> fbo = nullptr);
 
     void updatePostRender(Diligent::RefCntAutoPtr<Diligent::ITexture> texture, Diligent::RefCntAutoPtr<Diligent::ITexture> depth);
 
@@ -28,11 +27,11 @@ public:
 
     ComponentsHandler();
 
-private:
+   private:
     std::vector<std::shared_ptr<Component>> m_components;
     std::vector<std::shared_ptr<Component>> m_start;
     std::vector<std::shared_ptr<Component>> m_ui;
     std::vector<std::shared_ptr<RenderComponent>> m_renderComponents;
     RegisterData m_registerData;
 };
-}
+}  // namespace Prisma

@@ -1,10 +1,11 @@
 #include "Components/RegisterCreator.h"
-#include "Components/PhysicsMeshComponent.h"
+
+#include <Components/WaterComponent.h>
+
 #include "Components/CloudComponent.h"
 #include "Components/DecalComponent.h"
-#include <Components/WaterComponent.h>
 #include "Components/ParticleComponent.h"
-
+#include "Components/PhysicsMeshComponent.h"
 
 void Prisma::RegisterData::init() {
     Registrar<PhysicsMeshComponent> physicsComponent("Physics");

@@ -1,4 +1,5 @@
 #include "../../include/Postprocess/Effects.h"
+
 #include "../../include/TextureInfo.h"
 
 Prisma::GUI::Effects::Effects() {
@@ -8,9 +9,7 @@ Prisma::GUI::Effects::Effects() {
     m_raysRender = std::make_shared<VolumetricRays>();
 }
 
-void Prisma::GUI::Effects::effect(PostprocessingStyles::EFFECTS effect) {
-    m_effects = effect;
-}
+void Prisma::GUI::Effects::effect(PostprocessingStyles::EFFECTS effect) { m_effects = effect; }
 
 void Prisma::GUI::Effects::render() {
     m_stylesRender->render(m_effects);

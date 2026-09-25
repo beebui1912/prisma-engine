@@ -1,11 +1,12 @@
 #pragma once
-#include "SceneObjects/Camera.h"
-#include "Helpers/Settings.h"
 #include <memory>
+
+#include "Helpers/Settings.h"
+#include "SceneObjects/Camera.h"
 
 namespace Prisma::GUI {
 class ImGuiCamera {
-public:
+   public:
     struct CameraConstarints {
         float minX;
         float minY;
@@ -33,7 +34,7 @@ public:
 
     void openPopup(bool openPopup);
 
-private:
+   private:
     glm::vec3 m_position = glm::vec3(0.0f);
     glm::vec3 m_front = glm::vec3(0.0f, 0.0f, -1.0f);
     glm::vec3 m_up = glm::vec3(0.0f, 1.0f, 0.0f);
@@ -59,4 +60,4 @@ private:
     std::shared_ptr<Node> m_currentSelect;
     CameraConstarints m_constraints;
 };
-}
+}  // namespace Prisma::GUI

@@ -1,35 +1,23 @@
 #pragma once
 
 #include <memory>
-#include <tuple>
-#include "../SceneObjects/Node.h"
 #include <nlohmann/json.hpp>
+#include <tuple>
 
 #include "../Containers/Texture.h"
+#include "../SceneObjects/Node.h"
 
 namespace Prisma {
 class Node;
 
 class Component {
-public:
+   public:
     struct ComponentList {
         std::vector<const char*> items;
         int currentitem = 0;
     };
 
-    enum class TYPES {
-        INT,
-        FLOAT,
-        STRING,
-        BOOL,
-        STRINGLIST,
-        BUTTON,
-        VEC2,
-        VEC3,
-        COLOR,
-        TEXTURE,
-        TEXTURE_BUTTON
-    };
+    enum class TYPES { INT, FLOAT, STRING, BOOL, STRINGLIST, BUTTON, VEC2, VEC3, COLOR, TEXTURE, TEXTURE_BUTTON };
 
     struct ImageButton {
         std::function<void()> handler;
@@ -53,7 +41,7 @@ public:
 
     virtual void update();
 
-    //virtual void updateRender(std::shared_ptr<FBO> fbo = nullptr);
+    // virtual void updateRender(std::shared_ptr<FBO> fbo = nullptr);
 
     virtual void onParent(std::shared_ptr<Node> parent);
 
@@ -93,10 +81,10 @@ public:
 
     bool uiRemovable();
 
-protected:
+   protected:
     ComponentTypeVector m_globalVars;
 
-private:
+   private:
     std::weak_ptr<Node> m_parent;
     bool m_start = false;
     bool m_ui = false;
@@ -104,4 +92,4 @@ private:
     uint64_t m_uuid;
     bool m_uiRemovable = true;
 };
-}
+}  // namespace Prisma

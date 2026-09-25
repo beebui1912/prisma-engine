@@ -1,10 +1,9 @@
 #pragma once
 #include "Node.h"
 
-
 namespace Prisma {
 class Camera : public Node {
-public:
+   public:
     void position(const glm::vec3& position);
     glm::vec3 position() const;
     void center(const glm::vec3& center);
@@ -29,7 +28,7 @@ public:
     void matrix(const glm::mat4& matrix, bool update = true) override;
     glm::mat4 matrix() const override;
 
-private:
+   private:
     float m_nearPlane = 0.1f;
     float m_farPlane = 1000.0f;
     float m_angle = 45.0f;
@@ -39,4 +38,4 @@ private:
     glm::vec3 m_right;
     glm::vec3 m_front = glm::vec3(0, 0, 1);
 };
-}
+}  // namespace Prisma

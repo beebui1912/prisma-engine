@@ -1,5 +1,6 @@
-#include "GlobalData/PrismaFunc.h"
 #include "Pipelines/PipelineDepthResolve.h"
+
+#include "GlobalData/PrismaFunc.h"
 #include "Helpers/PrismaRender.h"
 #include "Pipelines/PipelineHandler.h"
 

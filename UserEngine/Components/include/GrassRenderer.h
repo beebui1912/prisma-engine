@@ -1,15 +1,15 @@
 #pragma once
-#include <memory>
-#include "Containers/Texture.h"
-#include "SceneObjects/Mesh.h"
-#include <glm/glm.hpp>
-#include <glm/ext/matrix_transform.hpp>
-#include "Helpers/PrismaRender.h"
 #include <chrono>
+#include <glm/ext/matrix_transform.hpp>
+#include <glm/glm.hpp>
+#include <memory>
 
+#include "Containers/Texture.h"
+#include "Helpers/PrismaRender.h"
+#include "SceneObjects/Mesh.h"
 
 class GrassRenderer {
-public:
+   public:
     void start(Prisma::Texture heightMap);
 
     void renderGrass(glm::mat4 translation);
@@ -18,7 +18,7 @@ public:
 
     void projection(glm::mat4 projection);
 
-private:
+   private:
     struct DrawElementsIndirectCommandPadded {
         unsigned int count;
         unsigned int instanceCount;
@@ -34,10 +34,10 @@ private:
     };
 
     std::shared_ptr<Prisma::Texture> m_grassSprite = nullptr;
-    //Prisma::VAO m_vao;
+    // Prisma::VAO m_vao;
     Prisma::Texture m_heightMap;
-    //std::shared_ptr<Prisma::Shader> m_spriteShader;
-    //std::shared_ptr<Prisma::Shader> m_cullShader;
+    // std::shared_ptr<Prisma::Shader> m_spriteShader;
+    // std::shared_ptr<Prisma::Shader> m_cullShader;
 
     unsigned int m_spritePos;
     unsigned int m_spriteModelPos;
@@ -45,15 +45,15 @@ private:
     unsigned int m_modelComputePos;
     unsigned int m_percentPos;
 
-    //std::shared_ptr<Prisma::SSBO> m_ssbo;
-    //std::shared_ptr<Prisma::SSBO> m_ssboCull;
+    // std::shared_ptr<Prisma::SSBO> m_ssbo;
+    // std::shared_ptr<Prisma::SSBO> m_ssboCull;
     std::vector<GrassPosition> m_grassPositions;
 
     std::vector<Prisma::Mesh::Vertex> m_grassVertices;
     Prisma::Mesh::VerticesData m_verticesData;
     std::shared_ptr<Prisma::Mesh> m_grassMesh;
 
-    //Prisma::DrawElementsIndirectCommand m_command;
+    // Prisma::DrawElementsIndirectCommand m_command;
     unsigned int m_indirectId;
 
     float m_percentValue;

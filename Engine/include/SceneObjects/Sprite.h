@@ -1,30 +1,25 @@
 #pragma once
-#include <vector>
 #include <memory>
-#include "Node.h"
-#include "GlobalData/Platform.h"
-#include "Containers/Texture.h"
+#include <vector>
+
 #include "Common/interface/RefCntAutoPtr.hpp"
+#include "Containers/Texture.h"
+#include "GlobalData/Platform.h"
 #include "Graphics/GraphicsEngine/interface/RenderDevice.h"
 #include "Helpers/TimeCounter.h"
+#include "Node.h"
 
 namespace Diligent {
 struct IPipelineResourceSignature;
 struct IPipelineState;
-}
+}  // namespace Diligent
 
 namespace Prisma {
 class Sprite : public Node {
-public:
-    enum class BLENDING {
-        ALPHA,
-        ADDITIVE
-    };
+   public:
+    enum class BLENDING { ALPHA, ADDITIVE };
 
-    enum class DEPTH_WRITE {
-        FALSE,
-        TRUE
-    };
+    enum class DEPTH_WRITE { FALSE, TRUE };
 
     struct SpriteUserData {
         unsigned int width = 1;
@@ -41,7 +36,7 @@ public:
     Diligent::RefCntAutoPtr<Diligent::IBuffer> models();
     Diligent::RefCntAutoPtr<Diligent::IBuffer> spriteIds();
 
-private:
+   private:
     std::vector<Diligent::RefCntAutoPtr<Diligent::ITexture>> m_sprites;
 
     struct ModelSizes {
@@ -52,8 +47,8 @@ private:
     };
 
     struct SpriteData {
-        glm::mat4 model=glm::mat4(1);
-        glm::vec4 color=glm::vec4(1);
+        glm::mat4 model = glm::mat4(1);
+        glm::vec4 color = glm::vec4(1);
     };
 
     struct SpriteIds {
@@ -78,4 +73,4 @@ private:
 
     Prisma::TimeCounter m_counter;
 };
-}
+}  // namespace Prisma

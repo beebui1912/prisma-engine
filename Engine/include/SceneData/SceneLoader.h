@@ -1,20 +1,21 @@
 #pragma once
-#include "../SceneObjects/Node.h"
-#include "../SceneObjects/Mesh.h"
-#include "../SceneObjects/Light.h"
 #include <memory>
-#include <vector>
 #include <string>
-#include "assimp/Importer.hpp"
-#include "assimp/scene.h"
-#include "assimp/postprocess.h"
+#include <vector>
+
 #include "../Helpers/NodeHelper.h"
+#include "../SceneObjects/Light.h"
+#include "../SceneObjects/Mesh.h"
+#include "../SceneObjects/Node.h"
 #include "SceneData.h"
 #include "SceneExporter.h"
+#include "assimp/Importer.hpp"
+#include "assimp/postprocess.h"
+#include "assimp/scene.h"
 
 namespace Prisma {
 class SceneLoader {
-public:
+   public:
     struct SceneParameters {
         bool srgb = false;
         std::function<void(std::shared_ptr<Scene>)> onLoad = nullptr;
@@ -34,7 +35,7 @@ public:
 
     void onLoading(std::function<void()> loading);
 
-private:
+   private:
     float calculateOmniLightRadius(float Kc, float Kl, float Kq, float I_threshold);
 
     void nodeIteration(std::shared_ptr<Node> nodeRoot, aiNode* node, const aiScene* scene);
@@ -43,9 +44,7 @@ private:
 
     void setVertexBoneData(AnimatedMesh::AnimateVertex& vertex, int boneID, float weight);
 
-    void extractBoneWeightForVertices(std::shared_ptr<AnimatedMesh> animatedMesh,
-                                      std::shared_ptr<AnimatedMesh::AnimateVerticesData> vertices, aiMesh* mesh,
-                                      const aiScene* scene);
+    void extractBoneWeightForVertices(std::shared_ptr<AnimatedMesh> animatedMesh, std::shared_ptr<AnimatedMesh::AnimateVerticesData> vertices, aiMesh* mesh, const aiScene* scene);
     Exporter m_exporter;
 
     std::shared_ptr<Mesh> getMesh(aiMesh* mesh, const aiScene* scene);
@@ -63,4 +62,4 @@ private:
 
     std::string m_path = "";
 };
-}
+}  // namespace Prisma

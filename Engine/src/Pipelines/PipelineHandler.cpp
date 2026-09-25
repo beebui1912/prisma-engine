@@ -1,6 +1,7 @@
 #include "Pipelines/PipelineHandler.h"
-#include "Helpers/SettingsLoader.h"
+
 #include "Helpers/ScenePipeline.h"
+#include "Helpers/SettingsLoader.h"
 #include "engine.h"
 
 void Prisma::PipelineHandler::initScene(bool init) {
@@ -110,6 +111,4 @@ void Prisma::PipelineHandler::render(Prisma::EngineSettings::Pipeline pipeline) 
 
 Diligent::TEXTURE_FORMAT Prisma::PipelineHandler::textureFormat() { return m_format; }
 
-Prisma::PipelineHandler::TextureData Prisma::PipelineHandler::textureData() {
-    return m_textureData;
-}
+Prisma::PipelineHandler::TextureData Prisma::PipelineHandler::textureData() { return m_textureData; }

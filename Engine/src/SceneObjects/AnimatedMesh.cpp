@@ -1,4 +1,5 @@
 #include "SceneObjects/AnimatedMesh.h"
+
 #include "GlobalData/GlobalData.h"
 #include "SceneData/MeshIndirect.h"
 
@@ -44,13 +45,9 @@ void Prisma::AnimatedMesh::finalMatrix(const glm::mat4& matrix, bool update) {
     CacheScene::getInstance().updateData(true);
 }
 
-glm::mat4 Prisma::AnimatedMesh::finalMatrix() const {
-    return Mesh::finalMatrix();
-}
+glm::mat4 Prisma::AnimatedMesh::finalMatrix() const { return Mesh::finalMatrix(); }
 
-std::shared_ptr<Prisma::AnimatedMesh::AnimateVerticesData> Prisma::AnimatedMesh::animateVerticesData() {
-    return m_animateVertices;
-}
+std::shared_ptr<Prisma::AnimatedMesh::AnimateVerticesData> Prisma::AnimatedMesh::animateVerticesData() { return m_animateVertices; }
 
 std::shared_ptr<Prisma::AnimatedMesh> Prisma::AnimatedMesh::instantiate(std::shared_ptr<AnimatedMesh> mesh) {
     std::shared_ptr<AnimatedMesh> newInstance = nullptr;
@@ -77,13 +74,9 @@ std::shared_ptr<Prisma::AnimatedMesh> Prisma::AnimatedMesh::instantiate(std::sha
     return newInstance;
 }
 
-std::map<std::string, Prisma::BoneInfo>& Prisma::AnimatedMesh::boneInfoMap() {
-    return m_BoneInfoMap;
-}
+std::map<std::string, Prisma::BoneInfo>& Prisma::AnimatedMesh::boneInfoMap() { return m_BoneInfoMap; }
 
-int& Prisma::AnimatedMesh::boneInfoCounter() {
-    return m_BoneCounter;
-}
+int& Prisma::AnimatedMesh::boneInfoCounter() { return m_BoneCounter; }
 
 void Prisma::AnimatedMesh::animator(std::shared_ptr<Animator> animator) {
     m_animator = animator;
@@ -91,13 +84,8 @@ void Prisma::AnimatedMesh::animator(std::shared_ptr<Animator> animator) {
     m_animator->mesh(this);
 }
 
-std::shared_ptr<Prisma::Animator> Prisma::AnimatedMesh::animator() {
-    return m_animator; }
+std::shared_ptr<Prisma::Animator> Prisma::AnimatedMesh::animator() { return m_animator; }
 
-std::string Prisma::AnimatedMesh::path() const { 
-    return m_path; 
-}
+std::string Prisma::AnimatedMesh::path() const { return m_path; }
 
-void Prisma::AnimatedMesh::path(std::string path) { 
-    m_path=path; 
-}
+void Prisma::AnimatedMesh::path(std::string path) { m_path = path; }

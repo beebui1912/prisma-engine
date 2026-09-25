@@ -14,18 +14,14 @@ void Prisma::PipelineSkyboxRenderer::render() {
     // Bind vertex and index buffers
     constexpr Diligent::Uint64 offset = 0;
     Diligent::IBuffer* pBuffs[] = {cubeBuffer.vBuffer};
-    contextData.immediateContext->SetVertexBuffers(0, 1, pBuffs, &offset,
-                                                   Diligent::RESOURCE_STATE_TRANSITION_MODE_TRANSITION,
-                                                   Diligent::SET_VERTEX_BUFFERS_FLAG_RESET);
-    contextData.immediateContext->SetIndexBuffer(cubeBuffer.iBuffer, 0,
-                                                 Diligent::RESOURCE_STATE_TRANSITION_MODE_TRANSITION);
+    contextData.immediateContext->SetVertexBuffers(0, 1, pBuffs, &offset, Diligent::RESOURCE_STATE_TRANSITION_MODE_TRANSITION, Diligent::SET_VERTEX_BUFFERS_FLAG_RESET);
+    contextData.immediateContext->SetIndexBuffer(cubeBuffer.iBuffer, 0, Diligent::RESOURCE_STATE_TRANSITION_MODE_TRANSITION);
 
     // Set texture SRV in the SRB
-    contextData.immediateContext->CommitShaderResources(
-        m_srb, Diligent::RESOURCE_STATE_TRANSITION_MODE_TRANSITION);
+    contextData.immediateContext->CommitShaderResources(m_srb, Diligent::RESOURCE_STATE_TRANSITION_MODE_TRANSITION);
 
-    Diligent::DrawIndexedAttribs DrawAttrs; // This is an indexed draw call
-    DrawAttrs.IndexType = Diligent::VT_UINT32; // Index type
+    Diligent::DrawIndexedAttribs DrawAttrs;     // This is an indexed draw call
+    DrawAttrs.IndexType = Diligent::VT_UINT32;  // Index type
     DrawAttrs.NumIndices = cubeBuffer.iBufferSize;
     // Verify the state of vertex and index buffers
     DrawAttrs.Flags = Diligent::DRAW_FLAG_VERIFY_ALL;
@@ -36,8 +32,7 @@ void Prisma::PipelineSkyboxRenderer::texture(Diligent::RefCntAutoPtr<Diligent::I
     m_texture = texture;
     m_srb.Release();
     m_pso->CreateShaderResourceBinding(&m_srb, true);
-    m_srb->GetVariableByName(Diligent::SHADER_TYPE_PIXEL, "g_Texture")->Set(
-        m_texture->GetDefaultView(Diligent::TEXTURE_VIEW_SHADER_RESOURCE));
+    m_srb->GetVariableByName(Diligent::SHADER_TYPE_PIXEL, "g_Texture")->Set(m_texture->GetDefaultView(Diligent::TEXTURE_VIEW_SHADER_RESOURCE));
 }
 
 Prisma::PipelineSkyboxRenderer::PipelineSkyboxRenderer() {
@@ -85,8 +80,7 @@ Prisma::PipelineSkyboxRenderer::PipelineSkyboxRenderer() {
     // In this tutorial, we will load shaders from file. To be able to do that,
     // we need to create a shader source stream factory
     Diligent::RefCntAutoPtr<Diligent::IShaderSourceInputStreamFactory> pShaderSourceFactory;
-    PrismaFunc::getInstance().contextData().engineFactory->CreateDefaultShaderSourceStreamFactory(
-        nullptr, &pShaderSourceFactory);
+    PrismaFunc::getInstance().contextData().engineFactory->CreateDefaultShaderSourceStreamFactory(nullptr, &pShaderSourceFactory);
     ShaderCI.pShaderSourceStreamFactory = pShaderSourceFactory;
     // Create a vertex shader
     Diligent::RefCntAutoPtr<Diligent::IShader> pVS;
@@ -136,10 +130,7 @@ Prisma::PipelineSkyboxRenderer::PipelineSkyboxRenderer() {
     // Define variable type that will be used by default
     PSOCreateInfo.PSODesc.ResourceLayout.DefaultVariableType = Diligent::SHADER_RESOURCE_VARIABLE_TYPE_STATIC;
 
-    Diligent::ShaderResourceVariableDesc Vars[] =
-    {
-        {Diligent::SHADER_TYPE_PIXEL, "g_Texture", Diligent::SHADER_RESOURCE_VARIABLE_TYPE_MUTABLE}
-    };
+    Diligent::ShaderResourceVariableDesc Vars[] = {{Diligent::SHADER_TYPE_PIXEL, "g_Texture", Diligent::SHADER_RESOURCE_VARIABLE_TYPE_MUTABLE}};
     // clang-format on
     PSOCreateInfo.PSODesc.ResourceLayout.Variables = Vars;
     PSOCreateInfo.PSODesc.ResourceLayout.NumVariables = _countof(Vars);
@@ -161,8 +152,7 @@ Prisma::PipelineSkyboxRenderer::PipelineSkyboxRenderer() {
     PSOCreateInfo.PSODesc.ResourceLayout.NumImmutableSamplers = _countof(ImtblSamplers);
     contextData.device->CreateGraphicsPipelineState(PSOCreateInfo, &m_pso);
 
-    m_pso->GetStaticVariableByName(Diligent::SHADER_TYPE_VERTEX, ShaderNames::CONSTANT_VIEW_PROJECTION.c_str())->
-           Set(MeshHandler::getInstance().viewProjection());
+    m_pso->GetStaticVariableByName(Diligent::SHADER_TYPE_VERTEX, ShaderNames::CONSTANT_VIEW_PROJECTION.c_str())->Set(MeshHandler::getInstance().viewProjection());
 
     m_pso->CreateShaderResourceBinding(&m_srb, true);
 }

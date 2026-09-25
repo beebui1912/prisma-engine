@@ -1,6 +1,5 @@
 #include "Pipelines/PipelineSSAO.h"
 
-
 #include <GlobalData/GlobalShaderNames.h>
 
 #include "GlobalData/PrismaFunc.h"
@@ -10,30 +9,30 @@
 #include "Pipelines/PipelineHandler.h"
 
 void Prisma::PipelineSSAO::render() {
-        auto& contextData = PrismaFunc::getInstance().contextData();
+    auto& contextData = PrismaFunc::getInstance().contextData();
 
-        auto color = m_texture->GetDefaultView(Diligent::TEXTURE_VIEW_RENDER_TARGET);
+    auto color = m_texture->GetDefaultView(Diligent::TEXTURE_VIEW_RENDER_TARGET);
 
-        contextData.immediateContext->SetRenderTargets(1, &color, nullptr, Diligent::RESOURCE_STATE_TRANSITION_MODE_TRANSITION);
-        contextData.immediateContext->SetPipelineState(m_pso);
+    contextData.immediateContext->SetRenderTargets(1, &color, nullptr, Diligent::RESOURCE_STATE_TRANSITION_MODE_TRANSITION);
+    contextData.immediateContext->SetPipelineState(m_pso);
 
-        auto quadBuffer = PrismaRender::getInstance().quadBuffer();
+    auto quadBuffer = PrismaRender::getInstance().quadBuffer();
 
-        // Bind vertex and index buffers
-        constexpr Diligent::Uint64 offset = 0;
-        Diligent::IBuffer* pBuffs[] = {quadBuffer.vBuffer};
-        contextData.immediateContext->SetVertexBuffers(0, 1, pBuffs, &offset, Diligent::RESOURCE_STATE_TRANSITION_MODE_TRANSITION, Diligent::SET_VERTEX_BUFFERS_FLAG_RESET);
-        contextData.immediateContext->SetIndexBuffer(quadBuffer.iBuffer, 0, Diligent::RESOURCE_STATE_TRANSITION_MODE_TRANSITION);
-        // Set texture SRV in the SRB
-        contextData.immediateContext->CommitShaderResources(m_srb, Diligent::RESOURCE_STATE_TRANSITION_MODE_TRANSITION);
+    // Bind vertex and index buffers
+    constexpr Diligent::Uint64 offset = 0;
+    Diligent::IBuffer* pBuffs[] = {quadBuffer.vBuffer};
+    contextData.immediateContext->SetVertexBuffers(0, 1, pBuffs, &offset, Diligent::RESOURCE_STATE_TRANSITION_MODE_TRANSITION, Diligent::SET_VERTEX_BUFFERS_FLAG_RESET);
+    contextData.immediateContext->SetIndexBuffer(quadBuffer.iBuffer, 0, Diligent::RESOURCE_STATE_TRANSITION_MODE_TRANSITION);
+    // Set texture SRV in the SRB
+    contextData.immediateContext->CommitShaderResources(m_srb, Diligent::RESOURCE_STATE_TRANSITION_MODE_TRANSITION);
 
-        Diligent::DrawIndexedAttribs DrawAttrs;     // This is an indexed draw call
-        DrawAttrs.IndexType = Diligent::VT_UINT32;  // Index type
-        DrawAttrs.NumIndices = quadBuffer.iBufferSize;
-        // Verify the state of vertex and index buffers
-        DrawAttrs.Flags = Diligent::DRAW_FLAG_VERIFY_ALL;
-        contextData.immediateContext->DrawIndexed(DrawAttrs);
-        m_blur->render(2);
+    Diligent::DrawIndexedAttribs DrawAttrs;     // This is an indexed draw call
+    DrawAttrs.IndexType = Diligent::VT_UINT32;  // Index type
+    DrawAttrs.NumIndices = quadBuffer.iBufferSize;
+    // Verify the state of vertex and index buffers
+    DrawAttrs.Flags = Diligent::DRAW_FLAG_VERIFY_ALL;
+    contextData.immediateContext->DrawIndexed(DrawAttrs);
+    m_blur->render(2);
 }
 
 Prisma::PipelineSSAO::PipelineSSAO(Diligent::RefCntAutoPtr<Diligent::ITexture> normal, Diligent::RefCntAutoPtr<Diligent::ITexture> position) {
@@ -223,8 +222,6 @@ Prisma::PipelineSSAO::PipelineSSAO(Diligent::RefCntAutoPtr<Diligent::ITexture> n
     GlobalData::getInstance().addGlobalTexture({m_noiseTexture, "SSAO noise"});
 }
 
-Diligent::RefCntAutoPtr<Diligent::ITexture> Prisma::PipelineSSAO::ssaoTexture() {
-    return m_blur->pingPong()[0];
-}
+Diligent::RefCntAutoPtr<Diligent::ITexture> Prisma::PipelineSSAO::ssaoTexture() { return m_blur->pingPong()[0]; }
 
 float Prisma::PipelineSSAO::ourLerp(float a, float b, float f) { return a + f * (b - a); }

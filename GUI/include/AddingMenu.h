@@ -4,10 +4,10 @@
 
 namespace Prisma::GUI {
 class ImGuiAddingMenu {
-public:
+   public:
     void addMenu(ImGuiCamera& camera) const;
 
-private:
+   private:
     const int m_subDivisions = 16;
 };
-}
+}  // namespace Prisma::GUI

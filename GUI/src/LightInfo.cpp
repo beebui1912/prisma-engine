@@ -1,13 +1,13 @@
 #include "../include/LightInfo.h"
-#include "glm/gtc/type_ptr.hpp"
-#include <glm/gtx/string_cast.hpp>
+
 #include <glm/gtx/euler_angles.hpp>
-#include "GlobalData/CacheScene.h"
+#include <glm/gtx/string_cast.hpp>
+
 #include "../include/ImGuiStyle.h"
+#include "GlobalData/CacheScene.h"
+#include "glm/gtc/type_ptr.hpp"
 
-
-void Prisma::GUI::LightInfo::showSelectedDir(std::shared_ptr<Light<LightType::LightDir>> lightData,
-                                             const NodeViewer::NodeData& meshData) {
+void Prisma::GUI::LightInfo::showSelectedDir(std::shared_ptr<Light<LightType::LightDir>> lightData, const NodeViewer::NodeData& meshData) {
     auto type = lightData->type();
     float windowWidth = meshData.translate * meshData.width / 2.0f;
     auto nextRight = [&](float pos) {
@@ -15,8 +15,7 @@ void Prisma::GUI::LightInfo::showSelectedDir(std::shared_ptr<Light<LightType::Li
         ImGui::SetNextWindowSize(ImVec2(windowWidth, 0));
     };
     nextRight(meshData.initOffset);
-    ImGui::Begin(lightData->name().c_str(), nullptr,
-                 ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse);
+    ImGui::Begin(lightData->name().c_str(), nullptr, ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse);
     ImGuiStyles::getInstance().treeStyle();
     if (ImGui::CollapsingHeader("Directional data")) {
         ImGuiStyles::getInstance().clearTreeStyle();
@@ -89,12 +88,10 @@ void Prisma::GUI::LightInfo::showSelectedSpot(std::shared_ptr<Light<LightType::L
             lightData->intensity(intensity);
         }
 
-        
         if (ImGui::InputFloat("Inner Cutoff ", &type.innerCutoff)) {
             lightData->type(type);
         }
 
-        
         if (ImGui::InputFloat("Outer Cutoff ", &type.outerCutoff)) {
             lightData->type(type);
         }
@@ -106,8 +103,7 @@ void Prisma::GUI::LightInfo::showSelectedSpot(std::shared_ptr<Light<LightType::L
     ImGui::End();
 }
 
-void Prisma::GUI::LightInfo::showSelectedOmni(std::shared_ptr<Light<LightType::LightOmni>> lightData,
-                                              const NodeViewer::NodeData& meshData) {
+void Prisma::GUI::LightInfo::showSelectedOmni(std::shared_ptr<Light<LightType::LightOmni>> lightData, const NodeViewer::NodeData& meshData) {
     auto type = lightData->type();
     float windowWidth = meshData.translate * meshData.width / 2.0f;
     auto nextRight = [&](float pos) {
@@ -115,8 +111,7 @@ void Prisma::GUI::LightInfo::showSelectedOmni(std::shared_ptr<Light<LightType::L
         ImGui::SetNextWindowSize(ImVec2(windowWidth, 0));
     };
     nextRight(meshData.initOffset);
-    ImGui::Begin(lightData->name().c_str(), nullptr,
-                 ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse);
+    ImGui::Begin(lightData->name().c_str(), nullptr, ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse);
     ImGuiStyles::getInstance().treeStyle();
     if (ImGui::CollapsingHeader("Omnidirectional data")) {
         ImGuiStyles::getInstance().clearTreeStyle();

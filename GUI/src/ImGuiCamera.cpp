@@ -1,15 +1,17 @@
 #include "../include/ImGuiCamera.h"
-#include "GlobalData/Keys.h"
-#include "SceneObjects/Mesh.h"
-#include <iostream>
-#include "Helpers/SettingsLoader.h"
-#include "SceneData/SceneExporter.h"
-#include "engine.h"
+
 #include <imgui.h>
+
+#include <iostream>
 
 #include "../imguizmo/imguizmo.h"
 #include "../include/PixelCapture.h"
 #include "../include/TextureInfo.h"
+#include "GlobalData/Keys.h"
+#include "Helpers/SettingsLoader.h"
+#include "SceneData/SceneExporter.h"
+#include "SceneObjects/Mesh.h"
+#include "engine.h"
 
 Prisma::GUI::ImGuiCamera::ImGuiCamera() {
     m_callback = std::make_shared<CallbackHandler>();
@@ -27,7 +29,7 @@ void Prisma::GUI::ImGuiCamera::updateCamera(std::shared_ptr<Camera> camera) {
 
 void Prisma::GUI::ImGuiCamera::keyboardUpdate(void* windowData) {
     auto window = static_cast<GLFWwindow*>(windowData);
-    //auto textureInfo = !Prisma::TextureInfo::getInstance().textureTab();
+    // auto textureInfo = !Prisma::TextureInfo::getInstance().textureTab();
     if (!ImGui::GetIO().WantTextInput) {
         if (glfwGetKey(window, KEY_DELETE) == GLFW_PRESS) {
             if (m_currentSelect) {
@@ -43,20 +45,14 @@ void Prisma::GUI::ImGuiCamera::keyboardUpdate(void* windowData) {
             m_position -= normalize(cross(m_front, m_up)) * m_totalVelocity;
         }
 
-        if (glfwGetKey(window, KEY_S) == GLFW_PRESS && (
-                glfwGetKey(window, GLFW_KEY_LEFT_CONTROL) == GLFW_PRESS ||
-                glfwGetKey(window, GLFW_KEY_RIGHT_CONTROL) == GLFW_PRESS) && !m_save) {
+        if (glfwGetKey(window, KEY_S) == GLFW_PRESS && (glfwGetKey(window, GLFW_KEY_LEFT_CONTROL) == GLFW_PRESS || glfwGetKey(window, GLFW_KEY_RIGHT_CONTROL) == GLFW_PRESS) && !m_save) {
             Exporter::getInstance().exportScene();
             m_save = true;
-        } else if (glfwGetKey(window, KEY_S) == GLFW_PRESS && !(
-                       glfwGetKey(window, GLFW_KEY_LEFT_CONTROL) == GLFW_PRESS ||
-                       glfwGetKey(window, GLFW_KEY_RIGHT_CONTROL) == GLFW_PRESS)) {
+        } else if (glfwGetKey(window, KEY_S) == GLFW_PRESS && !(glfwGetKey(window, GLFW_KEY_LEFT_CONTROL) == GLFW_PRESS || glfwGetKey(window, GLFW_KEY_RIGHT_CONTROL) == GLFW_PRESS)) {
             m_position -= m_front * m_totalVelocity;
         }
 
-        if (glfwGetKey(window, KEY_S) == GLFW_RELEASE || glfwGetKey(
-                window, GLFW_KEY_LEFT_CONTROL == GLFW_RELEASE) ||
-            glfwGetKey(window, GLFW_KEY_RIGHT_CONTROL == GLFW_RELEASE)) {
+        if (glfwGetKey(window, KEY_S) == GLFW_RELEASE || glfwGetKey(window, GLFW_KEY_LEFT_CONTROL == GLFW_RELEASE) || glfwGetKey(window, GLFW_KEY_RIGHT_CONTROL == GLFW_RELEASE)) {
             m_save = false;
         }
 
@@ -72,10 +68,8 @@ void Prisma::GUI::ImGuiCamera::keyboardUpdate(void* windowData) {
 
 void Prisma::GUI::ImGuiCamera::mouseCallback() {
     m_callback->mouse = [this](float x, float y) {
-        //auto textureInfo = !Prisma::TextureInfo::getInstance().textureTab();
-        if (m_right && x < m_constraints.maxX && y < m_constraints.maxY && x > m_constraints.minX && y >
-            m_constraints.
-            minY) {
+        // auto textureInfo = !Prisma::TextureInfo::getInstance().textureTab();
+        if (m_right && x < m_constraints.maxX && y < m_constraints.maxY && x > m_constraints.minX && y > m_constraints.minY) {
             float xpos = x;
             float ypos = y;
 
@@ -86,11 +80,11 @@ void Prisma::GUI::ImGuiCamera::mouseCallback() {
             }
 
             float xoffset = xpos - m_lastX;
-            float yoffset = m_lastY - ypos; // reversed since y-coordinates go from bottom to top
+            float yoffset = m_lastY - ypos;  // reversed since y-coordinates go from bottom to top
             m_lastX = xpos;
             m_lastY = ypos;
 
-            float sensitivity = 0.1f; // change this value to your liking
+            float sensitivity = 0.1f;  // change this value to your liking
             xoffset *= sensitivity;
             yoffset *= sensitivity;
 
@@ -98,10 +92,8 @@ void Prisma::GUI::ImGuiCamera::mouseCallback() {
             m_pitch += yoffset;
 
             // make sure that when pitch is out of bounds, screen doesn't get flipped
-            if (m_pitch > 89.0f)
-                m_pitch = 89.0f;
-            if (m_pitch < -89.0f)
-                m_pitch = -89.0f;
+            if (m_pitch > 89.0f) m_pitch = 89.0f;
+            if (m_pitch < -89.0f) m_pitch = -89.0f;
 
             glm::vec3 front;
             front.x = cos(glm::radians(m_yaw)) * cos(glm::radians(m_pitch));
@@ -112,35 +104,22 @@ void Prisma::GUI::ImGuiCamera::mouseCallback() {
     };
 }
 
-void Prisma::GUI::ImGuiCamera::velocity(float velocity) {
-    m_velocity = velocity;
-}
+void Prisma::GUI::ImGuiCamera::velocity(float velocity) { m_velocity = velocity; }
 
-void Prisma::GUI::ImGuiCamera::currentSelect(std::shared_ptr<Node> currentSelect) {
-    m_currentSelect = currentSelect;
-}
+void Prisma::GUI::ImGuiCamera::currentSelect(std::shared_ptr<Node> currentSelect) { m_currentSelect = currentSelect; }
 
-std::shared_ptr<Prisma::CallbackHandler> Prisma::GUI::ImGuiCamera::callback() {
-    return m_callback;
-}
+std::shared_ptr<Prisma::CallbackHandler> Prisma::GUI::ImGuiCamera::callback() { return m_callback; }
 
-bool Prisma::GUI::ImGuiCamera::openPopup() const {
-    return m_openPopup;
-}
+bool Prisma::GUI::ImGuiCamera::openPopup() const { return m_openPopup; }
 
-void Prisma::GUI::ImGuiCamera::openPopup(bool openPopup) {
-    m_openPopup = openPopup;
-}
+void Prisma::GUI::ImGuiCamera::openPopup(bool openPopup) { m_openPopup = openPopup; }
 
 int id = 0;
 
 void Prisma::GUI::ImGuiCamera::mouseButtonCallback() {
     m_callback->mouseClick = [this](int button, int action, float x, float y) {
-        //ISOVER BUGGED IMGUIZMO RETURN TRUE RANDOMLY
-        if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS && x < m_constraints.maxX && y <
-            m_constraints.maxY
-            && x > m_constraints.minX && y > m_constraints.minY && !ImGuizmo::IsOver() && !
-            TextureInfo::getInstance().textureTab()) {
+        // ISOVER BUGGED IMGUIZMO RETURN TRUE RANDOMLY
+        if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS && x < m_constraints.maxX && y < m_constraints.maxY && x > m_constraints.minX && y > m_constraints.minY && !ImGuizmo::IsOver() && !TextureInfo::getInstance().textureTab()) {
             auto settings = SettingsLoader::getInstance().getSettings();
             y = settings.height - y;
             auto result = PixelCapture::getInstance().capture(glm::vec2(x, y), m_constraints.model);
@@ -170,20 +149,16 @@ void Prisma::GUI::ImGuiCamera::mouseButtonCallback() {
 
     m_callback->rollMouse = [this](double xOffset, double yOffset) {
         if (yOffset > 0) {
-            m_velocity += 1.0f; // Increase velocity when scrolling up
+            m_velocity += 1.0f;  // Increase velocity when scrolling up
         } else if (yOffset < 0) {
-            m_velocity -= 1.0f; // Decrease velocity when scrolling down
+            m_velocity -= 1.0f;  // Decrease velocity when scrolling down
             if (m_velocity < 0.1f) {
-                m_velocity = 1.0f; // Prevent velocity from becoming too small or negative
+                m_velocity = 1.0f;  // Prevent velocity from becoming too small or negative
             }
         }
     };
 }
 
-std::shared_ptr<Prisma::Node> Prisma::GUI::ImGuiCamera::currentSelect() {
-    return m_currentSelect;
-}
+std::shared_ptr<Prisma::Node> Prisma::GUI::ImGuiCamera::currentSelect() { return m_currentSelect; }
 
-void Prisma::GUI::ImGuiCamera::constraints(CameraConstarints constraints) {
-    m_constraints = constraints;
-}
+void Prisma::GUI::ImGuiCamera::constraints(CameraConstarints constraints) { m_constraints = constraints; }

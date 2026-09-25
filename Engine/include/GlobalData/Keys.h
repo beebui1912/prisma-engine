@@ -4,10 +4,10 @@ namespace Prisma {
 constexpr unsigned int KEY_UNKNOWN = -1;
 constexpr unsigned int KEY_SPACE = 32;
 constexpr unsigned int KEY_APOSTROPHE = 39; /* ' */
-constexpr unsigned int KEY_COMMA = 44; /* , */
-constexpr unsigned int KEY_MINUS = 45; /* - */
-constexpr unsigned int KEY_PERIOD = 46; /* . */
-constexpr unsigned int KEY_SLASH = 47; /* / */
+constexpr unsigned int KEY_COMMA = 44;      /* , */
+constexpr unsigned int KEY_MINUS = 45;      /* - */
+constexpr unsigned int KEY_PERIOD = 46;     /* . */
+constexpr unsigned int KEY_SLASH = 47;      /* / */
 constexpr unsigned int KEY_0 = 48;
 constexpr unsigned int KEY_1 = 49;
 constexpr unsigned int KEY_2 = 50;
@@ -19,7 +19,7 @@ constexpr unsigned int KEY_7 = 55;
 constexpr unsigned int KEY_8 = 56;
 constexpr unsigned int KEY_9 = 57;
 constexpr unsigned int KEY_SEMICOLON = 59; /* ; */
-constexpr unsigned int KEY_EQUAL = 61; /* = */
+constexpr unsigned int KEY_EQUAL = 61;     /* = */
 constexpr unsigned int KEY_A = 65;
 constexpr unsigned int KEY_B = 66;
 constexpr unsigned int KEY_C = 67;
@@ -46,12 +46,12 @@ constexpr unsigned int KEY_W = 87;
 constexpr unsigned int KEY_X = 88;
 constexpr unsigned int KEY_Y = 89;
 constexpr unsigned int KEY_Z = 90;
-constexpr unsigned int KEY_LEFT_BRACKET = 91; /* [ */
-constexpr unsigned int KEY_BACKSLASH = 92; /* \ */
+constexpr unsigned int KEY_LEFT_BRACKET = 91;  /* [ */
+constexpr unsigned int KEY_BACKSLASH = 92;     /* \ */
 constexpr unsigned int KEY_RIGHT_BRACKET = 93; /* ] */
-constexpr unsigned int KEY_GRAVE_ACCENT = 96; /* ` */
-constexpr unsigned int KEY_WORLD_1 = 161; /* non-US #1 */
-constexpr unsigned int KEY_WORLD_2 = 162; /* non-US #2 */
+constexpr unsigned int KEY_GRAVE_ACCENT = 96;  /* ` */
+constexpr unsigned int KEY_WORLD_1 = 161;      /* non-US #1 */
+constexpr unsigned int KEY_WORLD_2 = 162;      /* non-US #2 */
 constexpr unsigned int KEY_ESCAPE = 256;
 constexpr unsigned int KEY_ENTER = 257;
 constexpr unsigned int KEY_TAB = 258;
@@ -123,4 +123,4 @@ constexpr unsigned int KEY_RIGHT_ALT = 346;
 constexpr unsigned int KEY_RIGHT_SUPER = 347;
 constexpr unsigned int KEY_MENU = 348;
 constexpr unsigned int KEY_LAST = KEY_MENU;
-}
+}  // namespace Prisma

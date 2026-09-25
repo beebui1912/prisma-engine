@@ -1,12 +1,10 @@
 #pragma once
-#include "Node.h"
-
-#include "../GlobalData/GlobalData.h"
 #include "../GlobalData/CacheScene.h"
-
+#include "../GlobalData/GlobalData.h"
 #include "../Pipelines/GenericShadow.h"
 #include "../Pipelines/PipelineCSM.h"
 #include "../Pipelines/PipelineOmniShadow.h"
+#include "Node.h"
 
 namespace Prisma {
 namespace LightType {
@@ -36,30 +34,25 @@ struct LightSpot {
     glm::vec4 diffuse = glm::vec4(1, 1, 1, 0);
     glm::vec4 specular = glm::vec4(1, 1, 1, 0);
     glm::vec4 position = glm::vec4(0, 0, 0, 0);
-    float innerCutoff=12.5;
-    float outerCutoff=17.5;
+    float innerCutoff = 12.5;
+    float outerCutoff = 17.5;
     glm::vec2 padding;
-
 };
-};
+};  // namespace LightType
 
 template <typename T>
 class Light : public Node {
-public:
-    Light() {
-    }
+   public:
+    Light() {}
 
-    T type() const {
-        return m_type;
-    }
+    T type() const { return m_type; }
 
     void type(T p_type) {
         m_type = p_type;
         CacheScene::getInstance().updateLights(true);
     }
 
-    ~Light() {
-    }
+    ~Light() {}
 
     void matrix(const glm::mat4& matrix, bool update) override {
         Node::matrix(matrix);
@@ -71,17 +64,11 @@ public:
         CacheScene::getInstance().updateLights(true);
     }
 
-    glm::mat4 matrix() const override {
-        return Node::matrix();
-    }
+    glm::mat4 matrix() const override { return Node::matrix(); }
 
-    glm::mat4 finalMatrix() const override {
-        return Node::finalMatrix();
-    }
+    glm::mat4 finalMatrix() const override { return Node::finalMatrix(); }
 
-    std::shared_ptr<GenericShadow> shadow() {
-        return m_shadow;
-    }
+    std::shared_ptr<GenericShadow> shadow() { return m_shadow; }
 
     void createShadow(unsigned int width, unsigned int height, bool post = false) {
         if (std::is_same<LightType::LightOmni, T>()) {
@@ -100,9 +87,7 @@ public:
         CacheScene::getInstance().updateSizeLights(true);
     }
 
-    bool hasShadow() {
-        return m_hasShadow;
-    }
+    bool hasShadow() { return m_hasShadow; }
 
     static std::shared_ptr<Light<T>> instantiate(std::shared_ptr<Light<T>> light) {
         std::shared_ptr<Light<T>> newInstance = nullptr;
@@ -126,14 +111,12 @@ public:
         CacheScene::getInstance().updateLights(true);
     }
 
-    float intensity() {
-        return m_intensity;
-    }
+    float intensity() { return m_intensity; }
 
-private:
+   private:
     T m_type;
     std::shared_ptr<GenericShadow> m_shadow = nullptr;
     bool m_hasShadow = false;
     float m_intensity = 1;
 };
-}
+}  // namespace Prisma

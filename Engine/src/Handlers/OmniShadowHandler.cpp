@@ -1,18 +1,17 @@
 #include "Handlers/OmniShadowHandler.h"
 
-#include "PipelineState.h"
-#include "GlobalData/PrismaFunc.h"
 #include <GlobalData/GlobalShaderNames.h>
 
-#include "glm/gtc/type_ptr.hpp"
 #include "GlobalData/GlobalData.h"
+#include "GlobalData/PrismaFunc.h"
+#include "PipelineState.h"
 #include "SceneData/MeshIndirect.h"
+#include "glm/gtc/type_ptr.hpp"
 
 Prisma::OmniShadowHandler::OmniShadowHandler() {
     create();
     createAnimation();
 }
-
 
 void Prisma::OmniShadowHandler::create() {
     // Pipeline state object encompasses configuration of all GPU stages
@@ -104,12 +103,9 @@ void Prisma::OmniShadowHandler::create() {
     std::string lightPlane = "LightPlane";
     std::string shadowMatrices = "ShadowMatrices";
 
-    Diligent::ShaderResourceVariableDesc Vars[] =
-    {
-        {Diligent::SHADER_TYPE_VERTEX, ShaderNames::MUTABLE_MODELS.c_str(),
-         Diligent::SHADER_RESOURCE_VARIABLE_TYPE_MUTABLE},
-        {Diligent::SHADER_TYPE_GEOMETRY, shadowMatrices.c_str(),
-         Diligent::SHADER_RESOURCE_VARIABLE_TYPE_STATIC},
+    Diligent::ShaderResourceVariableDesc Vars[] = {
+        {Diligent::SHADER_TYPE_VERTEX, ShaderNames::MUTABLE_MODELS.c_str(), Diligent::SHADER_RESOURCE_VARIABLE_TYPE_MUTABLE},
+        {Diligent::SHADER_TYPE_GEOMETRY, shadowMatrices.c_str(), Diligent::SHADER_RESOURCE_VARIABLE_TYPE_STATIC},
         {Diligent::SHADER_TYPE_PIXEL, lightPlane.c_str(), Diligent::SHADER_RESOURCE_VARIABLE_TYPE_STATIC},
     };
     // clang-format on
@@ -141,9 +137,7 @@ void Prisma::OmniShadowHandler::create() {
 
     m_pso->CreateShaderResourceBinding(&m_srb, true);
     if (MeshIndirect::getInstance().modelBuffer()) {
-        m_srb->GetVariableByName(Diligent::SHADER_TYPE_VERTEX, ShaderNames::MUTABLE_MODELS.c_str())->Set(
-            MeshIndirect::getInstance().modelBuffer()->
-                                        GetDefaultView(Diligent::BUFFER_VIEW_SHADER_RESOURCE));
+        m_srb->GetVariableByName(Diligent::SHADER_TYPE_VERTEX, ShaderNames::MUTABLE_MODELS.c_str())->Set(MeshIndirect::getInstance().modelBuffer()->GetDefaultView(Diligent::BUFFER_VIEW_SHADER_RESOURCE));
     }
     MeshIndirect::getInstance().addResizeHandler({"OmniMesh handler", [&](Diligent::RefCntAutoPtr<Diligent::IBuffer> buffers, MeshIndirect::MaterialView& materials) {
                                                       m_srb.Release();
@@ -247,12 +241,9 @@ void Prisma::OmniShadowHandler::createAnimation() {
     std::string lightPlane = "LightPlane";
     std::string shadowMatrices = "ShadowMatrices";
 
-    Diligent::ShaderResourceVariableDesc Vars[] =
-    {
-        {Diligent::SHADER_TYPE_VERTEX, ShaderNames::MUTABLE_MODELS.c_str(),
-         Diligent::SHADER_RESOURCE_VARIABLE_TYPE_MUTABLE},
-        {Diligent::SHADER_TYPE_GEOMETRY, shadowMatrices.c_str(),
-         Diligent::SHADER_RESOURCE_VARIABLE_TYPE_STATIC},
+    Diligent::ShaderResourceVariableDesc Vars[] = {
+        {Diligent::SHADER_TYPE_VERTEX, ShaderNames::MUTABLE_MODELS.c_str(), Diligent::SHADER_RESOURCE_VARIABLE_TYPE_MUTABLE},
+        {Diligent::SHADER_TYPE_GEOMETRY, shadowMatrices.c_str(), Diligent::SHADER_RESOURCE_VARIABLE_TYPE_STATIC},
         {Diligent::SHADER_TYPE_PIXEL, lightPlane.c_str(), Diligent::SHADER_RESOURCE_VARIABLE_TYPE_STATIC},
     };
     // clang-format on
@@ -261,18 +252,13 @@ void Prisma::OmniShadowHandler::createAnimation() {
     PSOCreateInfo.GraphicsPipeline.RasterizerDesc.DepthClipEnable = Diligent::False;
 
     contextData.device->CreateGraphicsPipelineState(PSOCreateInfo, &m_psoAnimation);
-    m_psoAnimation->GetStaticVariableByName(Diligent::SHADER_TYPE_GEOMETRY, shadowMatrices.c_str())->Set(
-        m_shadowBuffer);
+    m_psoAnimation->GetStaticVariableByName(Diligent::SHADER_TYPE_GEOMETRY, shadowMatrices.c_str())->Set(m_shadowBuffer);
     m_psoAnimation->GetStaticVariableByName(Diligent::SHADER_TYPE_PIXEL, lightPlane.c_str())->Set(m_lightBuffer);
-    m_psoAnimation->GetStaticVariableByName(Diligent::SHADER_TYPE_VERTEX, ShaderNames::CONSTANT_ANIMATION.c_str())->
-                    Set(AnimationHandler::getInstance().animation()->GetDefaultView(
-                        Diligent::BUFFER_VIEW_SHADER_RESOURCE));
+    m_psoAnimation->GetStaticVariableByName(Diligent::SHADER_TYPE_VERTEX, ShaderNames::CONSTANT_ANIMATION.c_str())->Set(AnimationHandler::getInstance().animation()->GetDefaultView(Diligent::BUFFER_VIEW_SHADER_RESOURCE));
 
     m_psoAnimation->CreateShaderResourceBinding(&m_srbAnimation, true);
     if (MeshIndirect::getInstance().modelBufferAnimation()) {
-        m_srbAnimation->GetVariableByName(Diligent::SHADER_TYPE_VERTEX, ShaderNames::MUTABLE_MODELS.c_str())->
-                        Set(MeshIndirect::getInstance().modelBufferAnimation()->GetDefaultView(
-                            Diligent::BUFFER_VIEW_SHADER_RESOURCE));
+        m_srbAnimation->GetVariableByName(Diligent::SHADER_TYPE_VERTEX, ShaderNames::MUTABLE_MODELS.c_str())->Set(MeshIndirect::getInstance().modelBufferAnimation()->GetDefaultView(Diligent::BUFFER_VIEW_SHADER_RESOURCE));
     }
     MeshIndirect::getInstance().addResizeHandler(
         {"OmniAnimation handler", [&](Diligent::RefCntAutoPtr<Diligent::IBuffer> buffers, MeshIndirect::MaterialView& materials) {
@@ -283,42 +269,29 @@ void Prisma::OmniShadowHandler::createAnimation() {
 }
 
 void Prisma::OmniShadowHandler::render(OmniShadowData data) {
-    m_shadowProj = oglToVkProjection * glm::perspective(glm::radians(90.0f),
-                                                        static_cast<float>(data.width) / static_cast<float>(data.
-                                                            height),
-                                                        data.nearPlane, data.farPlane);
+    m_shadowProj = oglToVkProjection * glm::perspective(glm::radians(90.0f), static_cast<float>(data.width) / static_cast<float>(data.height), data.nearPlane, data.farPlane);
 
     m_shadowTransforms.clear();
-    m_shadows.shadows[0] = m_shadowProj * lookAt(data.lightPos, data.lightPos + glm::vec3(1.0f, 0.0f, 0.0f),
-                                                 glm::vec3(0.0f, -1.0f, 0.0f));
-    m_shadows.shadows[1] = m_shadowProj * lookAt(data.lightPos, data.lightPos + glm::vec3(-1.0f, 0.0f, 0.0f),
-                                                 glm::vec3(0.0f, -1.0f, 0.0f));
-    m_shadows.shadows[2] = m_shadowProj * lookAt(data.lightPos, data.lightPos + glm::vec3(0.0f, 1.0f, 0.0f),
-                                                 glm::vec3(0.0f, 0.0f, 1.0f));
-    m_shadows.shadows[3] = m_shadowProj * lookAt(data.lightPos, data.lightPos + glm::vec3(0.0f, -1.0f, 0.0f),
-                                                 glm::vec3(0.0f, 0.0f, -1.0f));
-    m_shadows.shadows[4] = m_shadowProj * lookAt(data.lightPos, data.lightPos + glm::vec3(0.0f, 0.0f, 1.0f),
-                                                 glm::vec3(0.0f, -1.0f, 0.0f));
-    m_shadows.shadows[5] = m_shadowProj * lookAt(data.lightPos, data.lightPos + glm::vec3(0.0f, 0.0f, -1.0f),
-                                                 glm::vec3(0.0f, -1.0f, 0.0f));
+    m_shadows.shadows[0] = m_shadowProj * lookAt(data.lightPos, data.lightPos + glm::vec3(1.0f, 0.0f, 0.0f), glm::vec3(0.0f, -1.0f, 0.0f));
+    m_shadows.shadows[1] = m_shadowProj * lookAt(data.lightPos, data.lightPos + glm::vec3(-1.0f, 0.0f, 0.0f), glm::vec3(0.0f, -1.0f, 0.0f));
+    m_shadows.shadows[2] = m_shadowProj * lookAt(data.lightPos, data.lightPos + glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+    m_shadows.shadows[3] = m_shadowProj * lookAt(data.lightPos, data.lightPos + glm::vec3(0.0f, -1.0f, 0.0f), glm::vec3(0.0f, 0.0f, -1.0f));
+    m_shadows.shadows[4] = m_shadowProj * lookAt(data.lightPos, data.lightPos + glm::vec3(0.0f, 0.0f, 1.0f), glm::vec3(0.0f, -1.0f, 0.0f));
+    m_shadows.shadows[5] = m_shadowProj * lookAt(data.lightPos, data.lightPos + glm::vec3(0.0f, 0.0f, -1.0f), glm::vec3(0.0f, -1.0f, 0.0f));
     auto& contextData = PrismaFunc::getInstance().contextData();
 
-    contextData.immediateContext->UpdateBuffer(m_shadowBuffer, 0, sizeof(OmniShadow), &m_shadows,
-                                               Diligent::RESOURCE_STATE_TRANSITION_MODE_TRANSITION);
+    contextData.immediateContext->UpdateBuffer(m_shadowBuffer, 0, sizeof(OmniShadow), &m_shadows, Diligent::RESOURCE_STATE_TRANSITION_MODE_TRANSITION);
 
     m_lightPlane.far_plane = data.farPlane;
     m_lightPlane.lightPos = data.lightPos;
 
-    contextData.immediateContext->UpdateBuffer(m_lightBuffer, 0, sizeof(LightPlane), &m_lightPlane,
-                                               Diligent::RESOURCE_STATE_TRANSITION_MODE_TRANSITION);
+    contextData.immediateContext->UpdateBuffer(m_lightBuffer, 0, sizeof(LightPlane), &m_lightPlane, Diligent::RESOURCE_STATE_TRANSITION_MODE_TRANSITION);
 
     auto depth = data.depth->GetDefaultView(Diligent::TEXTURE_VIEW_DEPTH_STENCIL);
     // Clear the back buffer
-    contextData.immediateContext->SetRenderTargets(0, nullptr, depth,
-                                                   Diligent::RESOURCE_STATE_TRANSITION_MODE_TRANSITION);
+    contextData.immediateContext->SetRenderTargets(0, nullptr, depth, Diligent::RESOURCE_STATE_TRANSITION_MODE_TRANSITION);
 
-    contextData.immediateContext->ClearDepthStencil(depth, Diligent::CLEAR_DEPTH_FLAG, 1.f, 0,
-                                                    Diligent::RESOURCE_STATE_TRANSITION_MODE_TRANSITION);
+    contextData.immediateContext->ClearDepthStencil(depth, Diligent::CLEAR_DEPTH_FLAG, 1.f, 0, Diligent::RESOURCE_STATE_TRANSITION_MODE_TRANSITION);
 
     // Set the pipeline state
     contextData.immediateContext->SetPipelineState(m_pso);
@@ -328,8 +301,7 @@ void Prisma::OmniShadowHandler::render(OmniShadowData data) {
     if (!meshes.empty()) {
         MeshIndirect::getInstance().setupBuffers();
         // Set texture SRV in the SRB
-        contextData.immediateContext->CommitShaderResources(
-            m_srb, Diligent::RESOURCE_STATE_TRANSITION_MODE_TRANSITION);
+        contextData.immediateContext->CommitShaderResources(m_srb, Diligent::RESOURCE_STATE_TRANSITION_MODE_TRANSITION);
         MeshIndirect::getInstance().renderMeshes();
     }
 
@@ -340,8 +312,7 @@ void Prisma::OmniShadowHandler::render(OmniShadowData data) {
     auto& meshesAnimation = GlobalData::getInstance().currentGlobalScene()->animateMeshes;
     if (!meshesAnimation.empty()) {
         MeshIndirect::getInstance().setupBuffersAnimation();
-        contextData.immediateContext->CommitShaderResources(m_srbAnimation,
-                                                            Diligent::RESOURCE_STATE_TRANSITION_MODE_TRANSITION);
+        contextData.immediateContext->CommitShaderResources(m_srbAnimation, Diligent::RESOURCE_STATE_TRANSITION_MODE_TRANSITION);
         MeshIndirect::getInstance().renderAnimateMeshes();
     }
 
